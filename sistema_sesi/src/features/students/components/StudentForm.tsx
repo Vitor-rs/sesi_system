@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { X } from 'lucide-react'
 import type { Student } from '../../../stores/useStudentStore'
+import { formatStudentName } from '../../../utils/formatters'
 
 interface StudentFormProps {
     initialData?: Student | null
@@ -14,7 +15,13 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (name.trim()) {
-            onSubmit(name.trim())
+            onSubmit(formatStudentName(name.trim()))
+        }
+    }
+
+    const handleBlur = () => {
+        if (name.trim()) {
+            setName(formatStudentName(name.trim()))
         }
     }
 
@@ -23,7 +30,7 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md border border-gray-100 animate-in fade-in zoom-in-95 duration-200">
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                     <h2 className="text-lg font-semibold text-gray-800">
-                        {initialData ? 'Editar Aluno' : 'Novo Aluno'}
+                        {initialData ? 'Editar Estudante' : 'Novo Estudante'}
                     </h2>
                     <button
                         onClick={onCancel}
@@ -42,13 +49,14 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder-gray-400 uppercase"
-                            placeholder="Ex: ANA SILVA"
+                            onBlur={handleBlur}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder-gray-400"
+                            placeholder="Ex: Ana da Silva"
                             autoFocus
                             required
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Recomendamos usar letras maiúsculas para padronização.
+                            O nome será formatado automaticamente (Ex: ana da silva {'>'} Ana da Silva).
                         </p>
                     </div>
 
@@ -64,7 +72,7 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
                             type="submit"
                             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors"
                         >
-                            {initialData ? 'Salvar Alterações' : 'Adicionar Aluno'}
+                            {initialData ? 'Salvar Alterações' : 'Adicionar Estudante'}
                         </button>
                     </div>
                 </form>

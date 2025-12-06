@@ -1,11 +1,25 @@
 import { Bell, Search } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 export function Header() {
+    const location = useLocation();
+
+    const getPageTitle = (path: string) => {
+        switch (path) {
+            case '/': return 'Dashboard';
+            case '/alunos': return 'Estudantes';
+            case '/disciplinas': return 'Disciplinas';
+            case '/formativas': return 'Formativas';
+            case '/configuracoes': return 'Configurações';
+            default: return 'Dashboard';
+        }
+    };
+
     return (
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
             <div className="flex items-center gap-4">
                 <h1 className="text-xl font-semibold text-sesi-dark">
-                    Dashboard
+                    {getPageTitle(location.pathname)}
                 </h1>
             </div>
 

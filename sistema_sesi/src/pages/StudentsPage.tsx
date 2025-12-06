@@ -35,10 +35,10 @@ export function StudentsPage() {
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                         <Users className="text-blue-600" />
-                        Alunos
+                        Estudantes
                     </h1>
                     <p className="text-gray-500 mt-1">
-                        Gerencie o cadastro de alunos da turma.
+                        Gerencie o cadastro de estudantes da turma.
                     </p>
                 </div>
 
@@ -47,7 +47,7 @@ export function StudentsPage() {
                     className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
                 >
                     <Plus size={20} />
-                    Novo Aluno
+                    Novo Estudante
                 </button>
             </header>
 

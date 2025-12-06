@@ -11,7 +11,7 @@ export function StudentList({ onEdit }: StudentListProps) {
     if (students.length === 0) {
         return (
             <div className="text-center py-10 text-gray-500 bg-white rounded-lg shadow-sm border border-gray-100">
-                Nenhum aluno cadastrado. Adicione alunos para começar.
+                Nenhum estudante cadastrado. Adicione estudantes para começar.
             </div>
         )
     }
@@ -23,7 +23,7 @@ export function StudentList({ onEdit }: StudentListProps) {
                     <thead className="bg-gray-50 text-gray-700 font-medium uppercase text-xs">
                         <tr>
                             <th className="px-6 py-4 w-16">Nº</th>
-                            <th className="px-6 py-4">Nome do Aluno</th>
+                            <th className="px-6 py-4">Nome do Estudante</th>
                             <th className="px-6 py-4 w-32 text-right">Ações</th>
                         </tr>
                     </thead>
