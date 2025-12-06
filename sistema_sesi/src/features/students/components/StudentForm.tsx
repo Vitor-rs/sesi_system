@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { X } from 'lucide-react'
+import { X, Check, AlertCircle } from 'lucide-react'
 import type { Student } from '../../../stores/useStudentStore'
 import { useClassStore } from '../../../stores/useClassStore'
 import { formatStudentName } from '../../../utils/formatters'
@@ -76,65 +76,94 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Turma
+                            Turma <span className="text-red-500">*</span>
                         </label>
                         <select
                             value={classId}
                             onChange={(e) => setClassId(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white invalid:border-red-300 invalid:text-red-600"
+                            required
                         >
                             <option value="">Selecione uma turma...</option>
                             {classes.map((cls) => (
                                 <option key={cls.id} value={cls.id}>
-                                    {cls.name} ({cls.shift})
+                                    {cls.name} ({cls.period})
                                 </option>
                             ))}
                         </select>
-                        {classes.length === 0 && (
-                            <p className="text-xs text-amber-600 mt-1">
-                                Nenhuma turma cadastrada. Crie turmas em "Disciplinas" ou "Configurações".
+                        {classes.length === 0 ? (
+                            <p className="text-xs text-red-600 mt-1 font-medium flex items-center gap-1">
+                                <AlertCircle size={12} />
+                                É necessário criar uma turma antes de cadastrar estudantes.
+                            </p>
+                        ) : (
+                            <p className="text-xs text-gray-500 mt-1">
+                                O estudante deve ser vinculado a uma turma.
                             </p>
                         )}
                     </div>
 
                     {initialData && (
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Status
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Status da Matrícula
                             </label>
-                            <div className="flex gap-4">
-                                <label className="flex items-center gap-2 cursor-pointer">
+                            <div className="flex flex-col gap-2">
+                                <label className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'active' ? 'bg-green-50 border-green-200 ring-1 ring-green-500' : 'border-gray-200 hover:bg-gray-50'}`}>
                                     <input
                                         type="radio"
                                         name="status"
                                         value="active"
                                         checked={status === 'active'}
                                         onChange={() => setStatus('active')}
-                                        className="text-blue-600 focus:ring-blue-500"
+                                        className="sr-only"
                                     />
-                                    <span className="text-sm text-gray-700">Ativo</span>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-2 h-2 rounded-full ${status === 'active' ? 'bg-green-500' : 'bg-gray-300'}`} />
+                                            <span className={`font-medium ${status === 'active' ? 'text-green-900' : 'text-gray-700'}`}>Ativo</span>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-0.5">Estudante frequentando aulas normalmente.</p>
+                                    </div>
+                                    {status === 'active' && <Check size={16} className="text-green-600" />}
                                 </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
+
+                                <label className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'inactive' ? 'bg-gray-50 border-gray-300 ring-1 ring-gray-500' : 'border-gray-200 hover:bg-gray-50'}`}>
                                     <input
                                         type="radio"
                                         name="status"
                                         value="inactive"
                                         checked={status === 'inactive'}
                                         onChange={() => setStatus('inactive')}
-                                        className="text-gray-600 focus:ring-gray-500"
+                                        className="sr-only"
                                     />
-                                    <span className="text-sm text-gray-700">Arquivado</span>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-2 h-2 rounded-full ${status === 'inactive' ? 'bg-gray-500' : 'bg-gray-300'}`} />
+                                            <span className={`font-medium ${status === 'inactive' ? 'text-gray-900' : 'text-gray-700'}`}>Arquivado / Inativo</span>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-0.5">Matrícula trancada ou desistente.</p>
+                                    </div>
+                                    {status === 'inactive' && <Check size={16} className="text-gray-600" />}
                                 </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
+
+                                <label className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'transferred' ? 'bg-red-50 border-red-200 ring-1 ring-red-500' : 'border-gray-200 hover:bg-gray-50'}`}>
                                     <input
                                         type="radio"
                                         name="status"
                                         value="transferred"
                                         checked={status === 'transferred'}
                                         onChange={() => setStatus('transferred')}
-                                        className="text-red-600 focus:ring-red-500"
+                                        className="sr-only"
                                     />
-                                    <span className="text-sm text-gray-700">Transferido</span>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-2 h-2 rounded-full ${status === 'transferred' ? 'bg-red-500' : 'bg-gray-300'}`} />
+                                            <span className={`font-medium ${status === 'transferred' ? 'text-red-900' : 'text-gray-700'}`}>Transferido</span>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-0.5">Transferido para outra escola.</p>
+                                    </div>
+                                    {status === 'transferred' && <Check size={16} className="text-red-600" />}
                                 </label>
                             </div>
                         </div>

@@ -1,0 +1,212 @@
+import React, { useState } from 'react'
+import { Plus, Edit2, Trash2, X, School } from 'lucide-react'
+import { useClassStore, type Class } from '../../../stores/useClassStore'
+import { useStudentStore } from '../../../stores/useStudentStore'
+import { ConfirmModal } from '../../../components/ui/ConfirmModal'
+
+export function ClassManager() {
+    const { classes, addClass, updateClass, removeClass } = useClassStore()
+    const { students } = useStudentStore()
+
+    // Modal States
+    const [isFormOpen, setIsFormOpen] = useState(false)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
+    // Selection States
+    const [editingClass, setEditingClass] = useState<Class | null>(null)
+    const [classToDelete, setClassToDelete] = useState<Class | null>(null)
+
+    const [formData, setFormData] = useState({
+        grade: '',
+        letter: '',
+        period: 'Matutino' as Class['period']
+    })
+
+    const handleOpenForm = (cls?: Class) => {
+        if (cls) {
+            setEditingClass(cls)
+            setFormData({
+                grade: cls.grade,
+                letter: cls.letter,
+                period: cls.period
+            })
+        } else {
+            setEditingClass(null)
+            setFormData({
+                grade: '',
+                letter: '',
+                period: 'Matutino'
+            })
+        }
+        setIsFormOpen(true)
+    }
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        if (editingClass) {
+            updateClass(editingClass.id, formData)
+        } else {
+            addClass(formData)
+        }
+        setIsFormOpen(false)
+    }
+
+    const handleDeleteClick = (cls: Class) => {
+        // Referral Integrity Check
+        const linkedStudents = students.filter(s => s.classId === cls.id && s.status === 'active')
+
+        if (linkedStudents.length > 0) {
+            alert(`Não é possível excluir a turma "${cls.name}".\n\nExistem ${linkedStudents.length} estudantes ativos vinculados a ela.\nRemova ou transfira os estudantes antes de excluir a turma.`)
+            return
+        }
+
+        setClassToDelete(cls)
+        setIsDeleteModalOpen(true)
+    }
+
+    const confirmDelete = () => {
+        if (classToDelete) {
+            removeClass(classToDelete.id)
+            setIsDeleteModalOpen(false)
+            setClassToDelete(null)
+        }
+    }
+
+    const periodColors = {
+        Matutino: 'bg-yellow-100 text-yellow-800',
+        Vespertino: 'bg-orange-100 text-orange-800',
+        Noturno: 'bg-indigo-100 text-indigo-800'
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-lg font-semibold text-gray-800">Gerenciamento de Turmas</h2>
+                    <p className="text-sm text-gray-500">Cadastre e organize as turmas da escola.</p>
+                </div>
+                <button
+                    onClick={() => handleOpenForm()}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+                >
+                    <Plus size={20} />
+                    Nova Turma
+                </button>
+            </div>
+
+            {classes.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                    <School className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900">Nenhuma turma cadastrada</h3>
+                    <p className="text-gray-500 mt-2">Comece criando a primeira turma para vincular alunos.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {classes.map((cls) => (
+                        <div key={cls.id} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow relative group">
+                            <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-2">
+                                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                                        <School size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-800">{cls.grade} {cls.letter}</h3>
+                                        <span className={`text-xs px-2 py-0.5 rounded-full ${periodColors[cls.period]}`}>
+                                            {cls.period}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                        onClick={() => handleOpenForm(cls)}
+                                        className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full"
+                                        title="Editar"
+                                    >
+                                        <Edit2 size={16} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteClick(cls)}
+                                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full"
+                                        title="Excluir"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Form Modal */}
+            {isFormOpen && (
+                <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-sm border border-gray-100 animate-in fade-in zoom-in-95">
+                        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                            <h3 className="font-semibold text-gray-800">
+                                {editingClass ? 'Editar Turma' : 'Nova Turma'}
+                            </h3>
+                            <button onClick={() => setIsFormOpen(false)} className="text-gray-400 hover:text-gray-600">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Série / Ano</label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Ex: 4º Ano"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                                    value={formData.grade}
+                                    onChange={e => setFormData({ ...formData, grade: e.target.value })}
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Letra</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Ex: A"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase"
+                                        maxLength={3}
+                                        value={formData.letter}
+                                        onChange={e => setFormData({ ...formData, letter: e.target.value.toUpperCase() })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Período</label>
+                                    <select
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none bg-white"
+                                        value={formData.period}
+                                        onChange={e => setFormData({ ...formData, period: e.target.value as Class['period'] })}
+                                    >
+                                        <option value="Matutino">Matutino</option>
+                                        <option value="Vespertino">Vespertino</option>
+                                        <option value="Noturno">Noturno</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="flex justify-end pt-2">
+                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+                                    Salvar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            <ConfirmModal
+                isOpen={isDeleteModalOpen}
+                title="Excluir Turma"
+                description={`Tem certeza que deseja excluir a turma "${classToDelete?.name}"? Esta ação não pode ser desfeita.`}
+                confirmLabel="Excluir Turma"
+                variant="danger"
+                onConfirm={confirmDelete}
+                onCancel={() => setIsDeleteModalOpen(false)}
+            />
+        </div>
+    )
+}
