@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Plus, Users } from 'lucide-react'
-import { StudentList } from '../features/students/components/StudentList'
+import { StudentsDashboard } from '../features/students/components/StudentsDashboard'
 import { StudentForm } from '../features/students/components/StudentForm'
 import { useStudentStore, type Student } from '../stores/useStudentStore'
 
@@ -19,11 +19,11 @@ export function StudentsPage() {
         setIsFormOpen(true)
     }
 
-    const handleFormSubmit = (name: string) => {
+    const handleFormSubmit = (data: { name: string; classId?: string; status?: Student['status'] }) => {
         if (editingStudent) {
-            updateStudent(editingStudent.id, name)
+            updateStudent(editingStudent.id, data)
         } else {
-            addStudent(name)
+            addStudent(data.name, data.classId)
         }
         setIsFormOpen(false)
         setEditingStudent(null)
@@ -38,7 +38,7 @@ export function StudentsPage() {
                         Estudantes
                     </h1>
                     <p className="text-gray-500 mt-1">
-                        Gerencie o cadastro de estudantes da turma.
+                        Gerencie o cadastro de estudantes, turmas e enturmação.
                     </p>
                 </div>
 
@@ -52,7 +52,7 @@ export function StudentsPage() {
             </header>
 
             <main>
-                <StudentList onEdit={handleEditClick} />
+                <StudentsDashboard onEdit={handleEditClick} />
             </main>
 
             {isFormOpen && (

@@ -1,21 +1,35 @@
 import React, { useState } from 'react'
 import { X } from 'lucide-react'
 import type { Student } from '../../../stores/useStudentStore'
+import { useClassStore } from '../../../stores/useClassStore'
 import { formatStudentName } from '../../../utils/formatters'
+
+interface StudentFormData {
+    name: string
+    classId?: string
+    status?: Student['status']
+}
 
 interface StudentFormProps {
     initialData?: Student | null
-    onSubmit: (name: string) => void
+    onSubmit: (data: StudentFormData) => void
     onCancel: () => void
 }
 
 export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProps) {
+    const { classes } = useClassStore()
     const [name, setName] = useState(initialData?.name ?? '')
+    const [classId, setClassId] = useState(initialData?.classId ?? '')
+    const [status, setStatus] = useState<Student['status']>(initialData?.status ?? 'active')
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (name.trim()) {
-            onSubmit(formatStudentName(name.trim()))
+            onSubmit({
+                name: formatStudentName(name.trim()),
+                classId: classId || undefined,
+                status
+            })
         }
     }
 
@@ -56,9 +70,75 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
                             required
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            O nome será formatado automaticamente (Ex: ana da silva {'>'} Ana da Silva).
+                            O nome será formatado automaticamente.
                         </p>
                     </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Turma
+                        </label>
+                        <select
+                            value={classId}
+                            onChange={(e) => setClassId(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white"
+                        >
+                            <option value="">Selecione uma turma...</option>
+                            {classes.map((cls) => (
+                                <option key={cls.id} value={cls.id}>
+                                    {cls.name} ({cls.shift})
+                                </option>
+                            ))}
+                        </select>
+                        {classes.length === 0 && (
+                            <p className="text-xs text-amber-600 mt-1">
+                                Nenhuma turma cadastrada. Crie turmas em "Disciplinas" ou "Configurações".
+                            </p>
+                        )}
+                    </div>
+
+                    {initialData && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Status
+                            </label>
+                            <div className="flex gap-4">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        value="active"
+                                        checked={status === 'active'}
+                                        onChange={() => setStatus('active')}
+                                        className="text-blue-600 focus:ring-blue-500"
+                                    />
+                                    <span className="text-sm text-gray-700">Ativo</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        value="inactive"
+                                        checked={status === 'inactive'}
+                                        onChange={() => setStatus('inactive')}
+                                        className="text-gray-600 focus:ring-gray-500"
+                                    />
+                                    <span className="text-sm text-gray-700">Arquivado</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        value="transferred"
+                                        checked={status === 'transferred'}
+                                        onChange={() => setStatus('transferred')}
+                                        className="text-red-600 focus:ring-red-500"
+                                    />
+                                    <span className="text-sm text-gray-700">Transferido</span>
+                                </label>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex justify-end gap-2 pt-2">
                         <button

@@ -83,7 +83,7 @@ export function Sidebar() {
 
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-1">
-                    {menuStructure.map((entry, index) => {
+                    {menuStructure.map((entry) => {
                         if (isSection(entry)) {
                             const isExpanded = expandedSections.includes(entry.id);
                             const SectionIcon = entry.icon;
@@ -117,8 +117,8 @@ export function Sidebar() {
                                                         <Link
                                                             to={subItem.href}
                                                             className={`flex items-center px-4 py-2 pl-12 transition-colors gap-3 text-sm ${isActive
-                                                                    ? 'bg-sesi-blue text-white'
-                                                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                                                ? 'bg-sesi-blue text-white'
+                                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                                                 }`}
                                                             title={!isOpen ? subItem.label : undefined}
                                                         >
@@ -142,8 +142,8 @@ export function Sidebar() {
                                     <Link
                                         to={entry.href}
                                         className={`flex items-center px-4 py-3 transition-colors gap-3 ${isActive
-                                                ? 'bg-sesi-blue text-white'
-                                                : 'hover:bg-white/10 text-gray-300'
+                                            ? 'bg-sesi-blue text-white'
+                                            : 'hover:bg-white/10 text-gray-300'
                                             }`}
                                         title={!isOpen ? entry.label : undefined}
                                     >
