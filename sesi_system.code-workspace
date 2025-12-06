@@ -1,0 +1,24 @@
+{
+    "folders": [
+        {
+            "name": "Sistema SESI (App)",
+            "path": "sistema_sesi"
+        },
+        {
+            "name": "Documentação",
+            "path": "docs"
+        },
+        {
+            "name": "Arquivos de Contexto",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "files.exclude": {
+            "**/node_modules": true,
+            "**/.git": true
+        },
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+}
