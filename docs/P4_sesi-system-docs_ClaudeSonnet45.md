@@ -19,7 +19,7 @@ O **SESI System** é um sistema de gerenciamento acadêmico para professores da 
 
 ### 1.2 Estrutura de Avaliações
 
-```
+```txt
 MÉDIA BIMESTRAL = (AV.1 + AV.2 + AV.3) / 3
 
 Onde:
@@ -30,7 +30,7 @@ Onde:
 
 ### 1.3 Taxonomia das Formativas
 
-```
+```txt
 FORMATIVAS
 ├── Por Escopo
 │   ├── GENÉRICA → Pode ser usada em qualquer disciplina
@@ -42,6 +42,7 @@ FORMATIVAS
 ```
 
 **Combinações possíveis:**
+
 - Genérica Simples (ex: Participação, Disciplina/Comportamento)
 - Genérica Composta (ex: Tarefas)
 - Exclusiva Simples (ex: Prática de Tabuada para Matemática)
@@ -54,6 +55,7 @@ FORMATIVAS
 ### 2.1 Regras de Cálculo de Notas
 
 #### 2.1.1 Média Bimestral
+
 ```typescript
 // Só calcula se todas as avaliações estiverem preenchidas
 // Retorna vazio se qualquer valor estiver ausente
@@ -65,6 +67,7 @@ calcularMediaBimestral(mensal, bimestral, formativa): number | null {
 ```
 
 #### 2.1.2 Nota da Avaliação Formativa (AV.3)
+
 ```typescript
 // Média de todas as formativas da disciplina naquele bimestre
 // O número de formativas varia por disciplina (4, 5, 6...)
@@ -76,6 +79,7 @@ calcularNotaFormativa(formativas: number[]): number | null {
 ```
 
 #### 2.1.3 Pontuação de Formativa Composta (ex: Tarefas)
+
 ```typescript
 // A pontuação máxima é dividida igualmente entre as atividades
 // Apenas atividades com status "entregue" (✓) pontuam
@@ -120,6 +124,7 @@ calcularFormativaComposta(
 ### 3.1 Requisitos Funcionais
 
 #### RF01 - Gestão de Configurações Globais
+
 - RF01.1: Definir ano letivo da turma (ex: "4º Ano A")
 - RF01.2: Definir período (Matutino/Vespertino)
 - RF01.3: Definir nota de corte padrão (ex: 6.5)
@@ -127,6 +132,7 @@ calcularFormativaComposta(
 - RF01.5: Configurar pontuações padrão das formativas genéricas
 
 #### RF02 - Gestão de Alunos
+
 - RF02.1: Cadastrar aluno individualmente (nome completo)
 - RF02.2: Importar alunos em lote via CSV/XLSX
 - RF02.3: Editar nome do aluno
@@ -135,6 +141,7 @@ calcularFormativaComposta(
 - RF02.6: Gerar número sequencial automático
 
 #### RF03 - Gestão de Disciplinas
+
 - RF03.1: Cadastrar nova disciplina
 - RF03.2: Associar formativas à disciplina
 - RF03.3: Configurar pontuação específica por disciplina/formativa
@@ -142,6 +149,7 @@ calcularFormativaComposta(
 - RF03.5: Distinguir modo pedagogo (múltiplas disciplinas) vs especialista
 
 #### RF04 - Gestão de Formativas
+
 - RF04.1: Cadastrar formativa genérica simples
 - RF04.2: Cadastrar formativa genérica composta
 - RF04.3: Cadastrar formativa exclusiva simples
@@ -150,6 +158,7 @@ calcularFormativaComposta(
 - RF04.6: Vincular formativa exclusiva a disciplina específica
 
 #### RF05 - Lançamento de Notas
+
 - RF05.1: Lançar nota da prova mensal (AV.1)
 - RF05.2: Lançar nota da prova bimestral (AV.2)
 - RF05.3: Lançar pontuação de formativa simples
@@ -158,18 +167,21 @@ calcularFormativaComposta(
 - RF05.6: Calcular automaticamente Média Bimestral
 
 #### RF06 - Gestão de Atividades (Formativas Compostas)
+
 - RF06.1: Criar nova atividade (nome, data início, data fim, descrição)
 - RF06.2: Visualizar detalhes da atividade
 - RF06.3: Editar/excluir atividade
 - RF06.4: Distribuir pontuação automaticamente entre atividades
 
 #### RF07 - Visualização e Relatórios
+
 - RF07.1: Visualizar tabela por disciplina/bimestre
 - RF07.2: Destacar notas abaixo da corte (formatação condicional)
 - RF07.3: Alternar visualização soma total vs média (formativas)
 - RF07.4: Resumo anual com médias de todos os bimestres
 
 #### RF08 - Backup e Persistência
+
 - RF08.1: Salvar dados automaticamente
 - RF08.2: Exportar backup manualmente
 - RF08.3: Importar backup
@@ -191,7 +203,7 @@ calcularFormativaComposta(
 
 ### 4.1 Diagrama Entidade-Relacionamento (Conceitual)
 
-```
+```txt
 ┌─────────────────┐       ┌─────────────────┐
 │  CONFIGURACAO   │       │     TURMA       │
 ├─────────────────┤       ├─────────────────┤
@@ -284,7 +296,7 @@ enum Periodo {
 
 ### 5.1 Visão Geral da Stack
 
-```
+```txt
 ┌─────────────────────────────────────────────────────────┐
 │                    APRESENTAÇÃO                         │
 │  React 18 + TypeScript + Tailwind CSS + Vite            │
@@ -302,7 +314,7 @@ enum Periodo {
 
 ### 5.2 Estrutura de Pastas
 
-```
+```txt
 sesi-system/
 ├── src/
 │   ├── components/
@@ -355,7 +367,8 @@ sesi-system/
 ### 5.3 Componentes Principais
 
 #### 5.3.1 Sidebar (Navegação)
-```
+
+```txt
 ┌──────────────────────┐
 │ 🏫 SESI System       │
 ├──────────────────────┤
@@ -373,7 +386,8 @@ sesi-system/
 ```
 
 #### 5.3.2 Tabela de Disciplina (Core)
-```
+
+```txt
 ┌─────────────────────────────────────────────────────────────────┐
 │ Disciplina: Ciências | Turma: 4º Ano A | Matutino | 1º Bimestre │
 ├────┬──────────────────────┬───────┬─────────────────────────────┤
@@ -389,7 +403,8 @@ sesi-system/
 ### 5.4 Fluxos de Dados
 
 #### Fluxo: Lançamento de Nota em Formativa Composta
-```
+
+```txt
 1. Professor clica na célula de atividade
 2. Seleciona status (✓/✖/🟡)
 3. Store atualiza registro_atividade
@@ -408,7 +423,7 @@ sesi-system/
 
 A Caligrafia é o caso mais complexo do sistema:
 
-```
+```txt
 LÍNGUA PORTUGUESA
 └── Formativas
     ├── Participação (genérica simples)
@@ -426,7 +441,7 @@ LÍNGUA PORTUGUESA
 
 Uma formativa genérica pode ter pontuação diferente em disciplinas diferentes:
 
-```
+```txt
 Formativa: Comportamento (genérica simples)
 ├── Pontuação Padrão: 2 pontos
 ├── Em Ciências: 2 pontos (usa padrão)
@@ -437,6 +452,7 @@ Formativa: Comportamento (genérica simples)
 ### 6.3 Média vs Soma (Visualização)
 
 O sistema deve permitir alternar entre duas visualizações:
+
 - **Padrão:** Média das formativas (valor que vai para AV.3)
 - **Alternativa:** Soma total (para métricas internas)
 
@@ -445,6 +461,7 @@ A soma pode passar de 10, mas a média nunca ultrapassa a pontuação máxima.
 ### 6.4 Recuperação e RPA (6º ano em diante)
 
 No 2º Fundamental, há colunas adicionais:
+
 - `recup01`, `recup02`: Notas de recuperação
 - `RPA`: Simulado (opcional)
 - Lógica de substituição de nota mais baixa
@@ -479,6 +496,7 @@ No 2º Fundamental, há colunas adicionais:
 ## 8. PRÓXIMOS PASSOS (Roadmap)
 
 ### Fase 1: MVP (Web/Dev)
+
 - [ ] Setup projeto (Vite + React + TS + Tailwind)
 - [ ] Implementar stores (Zustand)
 - [ ] CRUD de Alunos
@@ -489,6 +507,7 @@ No 2º Fundamental, há colunas adicionais:
 - [ ] Persistência com JSON/IndexedDB
 
 ### Fase 2: Funcionalidades Avançadas
+
 - [ ] Importação CSV/XLSX
 - [ ] Exportação de backup
 - [ ] Formatação condicional completa
@@ -496,6 +515,7 @@ No 2º Fundamental, há colunas adicionais:
 - [ ] Resumo Anual
 
 ### Fase 3: Desktop (Electron)
+
 - [ ] Migrar para Electron
 - [ ] Implementar SQLite
 - [ ] Build portável (electron-builder)
