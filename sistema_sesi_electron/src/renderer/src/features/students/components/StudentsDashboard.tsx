@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Plus,
   Search,
@@ -21,8 +21,13 @@ import { ConfirmModal } from '../../../components/ui/ConfirmModal'
 import { StudentHistory } from './StudentHistory'
 
 export function StudentsDashboard(): React.ReactElement {
-  const { students, removeStudent, toggleStatus } = useStudentStore()
-  const { classes } = useClassStore()
+  const { students, removeStudent, toggleStatus, fetchStudents } = useStudentStore()
+  const { classes, fetchClasses } = useClassStore()
+
+  useEffect(() => {
+    fetchStudents()
+    fetchClasses()
+  }, [fetchStudents, fetchClasses])
 
   // Dashboard State
   const [activeTab, setActiveTab] = useState<'students' | 'classes'>('students')

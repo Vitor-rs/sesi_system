@@ -5,7 +5,20 @@ import type { Class } from '../../shared/types'
 
 export class ClassService {
   static async getAll(): Promise<Class[]> {
-    return getDb().select().from(classes).all() as unknown as Class[]
+    const result = await getDb().select().from(classes)
+
+    return result.map((c) => {
+      const lastSpace = c.name.lastIndexOf(' ')
+      const grade = lastSpace !== -1 ? c.name.substring(0, lastSpace) : c.name
+      const letter = lastSpace !== -1 ? c.name.substring(lastSpace + 1) : ''
+
+      return {
+        ...c,
+        grade,
+        letter,
+        period: c.period as 'Matutino' | 'Vespertino' | 'Noturno'
+      }
+    })
   }
 
   static async create(data: typeof classes.$inferInsert): Promise<Class> {

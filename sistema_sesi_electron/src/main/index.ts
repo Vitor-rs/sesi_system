@@ -1,8 +1,11 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
+import { unlinkSync, existsSync } from 'fs'
 import icon from '../../resources/icon.png?asset'
 import { registerHandlers } from './ipc/handlers'
 import { initDb } from './db/client'
+import { runMigrations } from './db/migrator'
+import { seedDatabase } from './db/seed'
 import { appConfig } from './config'
 
 function createWindow(): void {
@@ -59,7 +62,23 @@ app.whenReady().then(() => {
     app.setAppUserModelId('com.sistema_sesi.app')
   }
 
+  // Check for --reset-db flag
+  if (process.argv.includes('--reset-db')) {
+    const dbPath = join(app.getPath('userData'), 'sistema_sesi.db')
+    if (existsSync(dbPath)) {
+      try {
+        console.log('[Main] Resetting database...')
+        unlinkSync(dbPath)
+        console.log('[Main] Database deleted.')
+      } catch (error) {
+        console.error('[Main] Failed to delete database:', error)
+      }
+    }
+  }
+
   initDb()
+  runMigrations()
+  seedDatabase().catch((err) => console.error(err))
   registerHandlers()
 
   // IPC test
