@@ -20,13 +20,30 @@ export interface Student {
   name: string;
   classId?: string;
   status: "active" | "inactive" | "transferred";
+  enrollmentType: "regular" | "transfer";
+  createdAt: string; // ISO string for sorting by admission
+  transferDate?: string; // ISO string
+  transferOrigin?: string;
+  transferCity?: string;
+  transferState?: string;
+  transferObservation?: string;
   number?: number;
   history: StudentHistoryEvent[];
 }
 
 interface StudentState {
   students: Student[];
-  addStudent: (name: string, classId?: string, number?: number) => void;
+  addStudent: (data: {
+    name: string;
+    classId?: string;
+    number?: number;
+    enrollmentType?: "regular" | "transfer";
+    transferDate?: string;
+    transferOrigin?: string;
+    transferCity?: string;
+    transferState?: string;
+    transferObservation?: string;
+  }) => void;
   removeStudent: (id: string) => void;
   updateStudent: (
     id: string,
@@ -48,20 +65,47 @@ export const useStudentStore = create<StudentState>()(
   persist(
     (set) => ({
       students: [],
-      addStudent: (name, classId, number) =>
+      addStudent: ({
+        name,
+        classId,
+        number,
+        enrollmentType = "regular",
+        transferDate,
+        transferOrigin,
+        transferCity,
+        transferState,
+        transferObservation,
+      }) =>
         set((state) => {
+          const createdAt = new Date().toISOString();
           const newStudent: Student = {
             id: crypto.randomUUID(),
             name,
             classId,
             status: "active",
+            enrollmentType,
+            createdAt,
+            transferDate,
+            transferOrigin,
+            transferCity,
+            transferState,
+            transferObservation,
             number: number || state.students.length + 1,
             history: [
               {
                 id: crypto.randomUUID(),
                 type: "created",
-                date: new Date().toISOString(),
-                description: "Estudante cadastrado no sistema.",
+                date: createdAt,
+                description:
+                  enrollmentType === "transfer"
+                    ? `Estudante transferido de ${
+                        transferOrigin || "Outra escola"
+                      }${
+                        transferCity
+                          ? ` (${transferCity}-${transferState})`
+                          : ""
+                      }.`
+                    : "Estudante cadastrado no sistema (Matrícula Regular).",
               },
             ],
           };
@@ -70,6 +114,7 @@ export const useStudentStore = create<StudentState>()(
           );
           return { students: updatedStudents };
         }),
+      // ... (rest of the store remains unchanged)
       removeStudent: (id) =>
         set((state) => ({
           students: state.students.filter((s) => s.id !== id),
@@ -100,6 +145,7 @@ export const useStudentStore = create<StudentState>()(
         })),
       toggleStatus: (id, status, reason) =>
         set((state) => ({
+          // ... (rest of implementation)
           students: state.students.map((s) => {
             if (s.id !== id) return s;
 
