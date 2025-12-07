@@ -21,7 +21,12 @@ const api = {
   uploadIcon: (buffer: ArrayBuffer, fileName: string) =>
     ipcRenderer.invoke('settings:uploadIcon', { buffer, fileName }),
   getIcons: () => ipcRenderer.invoke('settings:getIcons'),
-  applyIcon: (path: string) => ipcRenderer.invoke('settings:applyIcon', path)
+  applyIcon: (path: string) => ipcRenderer.invoke('settings:applyIcon', path),
+
+  // Backup
+  detectBackups: () => ipcRenderer.invoke('settings:detectBackups'),
+  createBackup: (customPath?: string) => ipcRenderer.invoke('settings:createBackup', customPath),
+  selectBackupFolder: () => ipcRenderer.invoke('settings:selectBackupFolder')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

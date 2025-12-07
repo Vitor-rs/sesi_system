@@ -6,7 +6,12 @@ import {
   CheckCircle,
   User,
   Palette,
-  Image as LucideImage
+  Image as LucideImage,
+  Database,
+  Cloud,
+  FolderOpen,
+  HardDrive,
+  RefreshCw
 } from 'lucide-react'
 
 type IconData = {
@@ -15,8 +20,16 @@ type IconData = {
   preview: string
 }
 
+type BackupLocation = {
+  provider: 'onedrive' | 'googledrive' | 'local'
+  path: string
+  isAvailable: boolean
+}
+
 export function SettingsPage(): React.ReactElement {
-  const [activeTab, setActiveTab] = useState<'personalization' | 'profile'>('personalization')
+  const [activeTab, setActiveTab] = useState<'personalization' | 'profile' | 'backup'>(
+    'personalization'
+  )
 
   // Icon State
   const [icons, setIcons] = useState<IconData[]>([])
@@ -25,10 +38,57 @@ export function SettingsPage(): React.ReactElement {
   const [isUploading, setIsUploading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
+  // Backup State
+  const [backupLocations, setBackupLocations] = useState<BackupLocation[]>([])
+  const [isBackingUp, setIsBackingUp] = useState(false)
+  const [isScanning, setIsScanning] = useState(false)
+  const [backupMessage, setBackupMessage] = useState<string | null>(null)
+  const [customBackupPath, setCustomBackupPath] = useState<string | null>(null)
+
   useEffect(() => {
     loadIcons()
     loadCurrentSettings()
+    detectBackups()
   }, [])
+
+  const detectBackups = async (): Promise<void> => {
+    setIsScanning(true)
+    try {
+      // Small delay to make the interaction feel substantial
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      const locations = await window.api.detectBackups()
+      setBackupLocations(locations)
+    } catch (error) {
+      console.error('Failed to detect backups', error)
+    } finally {
+      setIsScanning(false)
+    }
+  }
+
+  const handleBackup = async (): Promise<void> => {
+    setIsBackingUp(true)
+    setBackupMessage('Iniciando backup...')
+    try {
+      const result = await window.api.createBackup(customBackupPath ?? undefined)
+      if (result.success) {
+        setBackupMessage(`Backup concluído com sucesso em ${result.paths.length} locais!`)
+      }
+    } catch (error) {
+      console.error('Backup failed', error)
+      setBackupMessage('Erro ao realizar backup.')
+    } finally {
+      setIsBackingUp(false)
+      // Clear message after 5s
+      setTimeout(() => setBackupMessage(null), 5000)
+    }
+  }
+
+  const handleSelectFolder = async (): Promise<void> => {
+    const path = await window.api.selectBackupFolder()
+    if (path) {
+      setCustomBackupPath(path)
+    }
+  }
 
   const loadIcons = async (): Promise<void> => {
     try {
@@ -112,6 +172,16 @@ export function SettingsPage(): React.ReactElement {
           }`}
         >
           <User size={18} /> Perfil
+        </button>
+        <button
+          onClick={() => setActiveTab('backup')}
+          className={`px-6 py-3 text-sm font-medium flex items-center gap-2 transition-colors border-b-2 ${
+            activeTab === 'backup'
+              ? 'border-sesi-red text-sesi-red'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Database size={18} /> Backup e Dados
         </button>
       </div>
 
@@ -227,6 +297,163 @@ export function SettingsPage(): React.ReactElement {
             <div className="mt-8 p-4 bg-yellow-50 text-yellow-800 rounded-lg inline-block text-sm">
               Edição de perfil será implementada em breve.
             </div>
+          </div>
+        )}
+
+        {activeTab === 'backup' && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                    <Cloud size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Cópia de Segurança Inteligente
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      O sistema detecta automaticamente unidades de nuvem (OneDrive/Google Drive) e
+                      cria cópias redundantes.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={detectBackups}
+                  disabled={isScanning}
+                  className="p-2 text-gray-400 hover:text-sesi-blue hover:bg-blue-50 rounded-lg transition-colors"
+                  title="Atualizar detecção de nuvem"
+                >
+                  <RefreshCw size={20} className={isScanning ? 'animate-spin' : ''} />
+                </button>
+              </div>
+
+              {/* Detected Locations */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                {/* Local Safe Storage */}
+                <div className="p-4 border border-gray-200 rounded-xl flex flex-col gap-3">
+                  <div className="flex items-center gap-2 text-gray-700 font-medium">
+                    <HardDrive size={18} /> Sistema Interno (Oculto)
+                  </div>
+                  <div className="flex items-center gap-2 text-green-600 text-sm bg-green-50 px-2 py-1 rounded w-fit">
+                    <CheckCircle size={12} /> Fonte da Verdade
+                  </div>
+                  <p
+                    className="text-xs text-gray-400 mt-auto truncate"
+                    title={backupLocations.find((l) => l.provider === 'local')?.path}
+                  >
+                    {backupLocations.find((l) => l.provider === 'local')?.path ||
+                      'AppData/Roaming/.../Backups'}
+                  </p>
+                </div>
+
+                {/* OneDrive */}
+                <div
+                  className={`p-4 border rounded-xl flex flex-col gap-3 transition-colors ${
+                    backupLocations.some((l) => l.provider === 'onedrive')
+                      ? 'border-blue-200 bg-blue-50/50'
+                      : 'border-gray-100 opacity-60'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 text-gray-700 font-medium">
+                    <Cloud size={18} className="text-blue-500" /> OneDrive
+                  </div>
+                  {backupLocations.some((l) => l.provider === 'onedrive') ? (
+                    <div className="flex items-center gap-2 text-blue-600 text-sm bg-blue-100 px-2 py-1 rounded w-fit">
+                      <CheckCircle size={12} /> Detectado
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-400">Não detectado</div>
+                  )}
+                  <p
+                    className="text-xs text-gray-400 mt-auto truncate"
+                    title={backupLocations.find((l) => l.provider === 'onedrive')?.path}
+                  >
+                    {backupLocations.find((l) => l.provider === 'onedrive')?.path ||
+                      'Não disponível'}
+                  </p>
+                </div>
+
+                {/* Google Drive */}
+                <div
+                  className={`p-4 border rounded-xl flex flex-col gap-3 transition-colors ${
+                    backupLocations.some((l) => l.provider === 'googledrive')
+                      ? 'border-green-200 bg-green-50/50'
+                      : 'border-gray-100 opacity-60'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 text-gray-700 font-medium">
+                    <Cloud size={18} className="text-green-500" /> Google Drive
+                  </div>
+                  {backupLocations.some((l) => l.provider === 'googledrive') ? (
+                    <div className="flex items-center gap-2 text-green-600 text-sm bg-green-100 px-2 py-1 rounded w-fit">
+                      <CheckCircle size={12} /> Detectado
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-400">Não detectado</div>
+                  )}
+                  <p
+                    className="text-xs text-gray-400 mt-auto truncate"
+                    title={backupLocations.find((l) => l.provider === 'googledrive')?.path}
+                  >
+                    {backupLocations.find((l) => l.provider === 'googledrive')?.path ||
+                      'Não disponível'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Manual Override */}
+              <div className="border-t border-gray-100 pt-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-4">
+                  Local Personalizado (Opcional)
+                </h3>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    readOnly
+                    value={customBackupPath || ''}
+                    placeholder="Nenhuma pasta selecionada (usando padrão)"
+                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-600"
+                  />
+                  <button
+                    onClick={handleSelectFolder}
+                    className="px-4 py-2 border border-gray-200 hover:bg-gray-50 rounded-lg text-gray-600 text-sm flex items-center gap-2"
+                  >
+                    <FolderOpen size={16} /> Escolher Pasta
+                  </button>
+                </div>
+              </div>
+
+              {/* Action */}
+              <div className="mt-8 flex items-center justify-between">
+                <div className="text-sm">
+                  {backupMessage && (
+                    <span
+                      className={`flex items-center gap-2 ${
+                        backupMessage.includes('Erro')
+                          ? 'text-red-600'
+                          : 'text-green-600 animate-in fade-in'
+                      }`}
+                    >
+                      {backupMessage.includes('Erro') ? null : <CheckCircle size={16} />}
+                      {backupMessage}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={handleBackup}
+                  disabled={isBackingUp}
+                  className="px-6 py-3 bg-sesi-blue text-white rounded-lg hover:bg-blue-700 shadow-sm shadow-blue-200 disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                >
+                  {isBackingUp ? (
+                    <RefreshCw size={18} className="animate-spin" />
+                  ) : (
+                    <Save size={18} />
+                  )}
+                  {isBackingUp ? 'Realizando Backup...' : 'Realizar Backup Agora'}
+                </button>
+              </div>
+            </section>
           </div>
         )}
       </div>

@@ -2,7 +2,8 @@ import { ipcMain } from 'electron'
 import { StudentService } from '../services/StudentService'
 import { ClassService } from '../services/ClassService'
 import { SettingsService } from '../services/SettingsService'
-import { app, BrowserWindow } from 'electron'
+import { BackupService } from '../services/BackupService'
+import { app, BrowserWindow, dialog } from 'electron'
 import { join } from 'path'
 import { writeFileSync, mkdirSync, existsSync, readdirSync, readFileSync } from 'fs'
 export function registerHandlers(): void {
@@ -113,5 +114,21 @@ export function registerHandlers(): void {
       console.error('Failed to apply icon:', error)
       throw error
     }
+  })
+
+  // Backup
+  ipcMain.handle('settings:detectBackups', async () => {
+    return BackupService.detectProviders()
+  })
+
+  ipcMain.handle('settings:createBackup', async (_event, customPath) => {
+    return BackupService.performBackup(customPath)
+  })
+
+  ipcMain.handle('settings:selectBackupFolder', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory', 'createDirectory']
+    })
+    return result.canceled ? null : result.filePaths[0]
   })
 }

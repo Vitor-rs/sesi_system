@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import { Student, Class } from '../../shared/types'
+import { Student, Class, BackupProvider } from '../../shared/types'
 
 interface Api {
   // Students
@@ -21,6 +21,11 @@ interface Api {
   uploadIcon: (buffer: ArrayBuffer, fileName: string) => Promise<{ success: boolean; path: string }>
   getIcons: () => Promise<Array<{ name: string; path: string; preview: string }>>
   applyIcon: (path: string) => Promise<{ success: boolean }>
+
+  // Backup
+  detectBackups: () => Promise<BackupProvider[]>
+  createBackup: (customPath?: string) => Promise<{ success: boolean; paths: string[] }>
+  selectBackupFolder: () => Promise<string | null>
 }
 
 declare global {

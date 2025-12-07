@@ -37,3 +37,9 @@ export interface Class {
   letter: string // e.g., "A"
   period: 'Matutino' | 'Vespertino' | 'Noturno'
 }
+
+export interface BackupProvider {
+  provider: 'onedrive' | 'googledrive' | 'local'
+  path: string
+  isAvailable: boolean
+}
