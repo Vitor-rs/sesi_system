@@ -3,20 +3,34 @@ import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { registerHandlers } from './ipc/handlers'
 import { initDb } from './db/client'
+import { appConfig } from './config'
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: appConfig.window.width,
+    height: appConfig.window.height,
+    minWidth: appConfig.window.minWidth,
+    minHeight: appConfig.window.minHeight,
+    title: appConfig.window.title,
     show: false,
-    autoHideMenuBar: true,
+    autoHideMenuBar: appConfig.window.autoHideMenuBar,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
+
+  // Maximize if configured
+  if (appConfig.window.startMaximized) {
+    mainWindow.maximize()
+  }
+
+  // Open DevTools if configured
+  if (appConfig.development.openDevTools) {
+    mainWindow.webContents.openDevTools()
+  }
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -41,17 +55,12 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
-  // electronApp.setAppUserModelId('com.electron')
   if (process.platform === 'win32') {
     app.setAppUserModelId('com.sistema_sesi.app')
   }
 
   initDb()
   registerHandlers()
-
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
