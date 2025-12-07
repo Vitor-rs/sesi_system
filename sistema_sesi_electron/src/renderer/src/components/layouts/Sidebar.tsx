@@ -6,7 +6,9 @@ import {
   GraduationCap,
   ChevronDown,
   ChevronRight,
-  Database
+  Database,
+  BarChart3, // Added BarChart3
+  FileText // Added FileText
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -59,6 +61,12 @@ export function Sidebar(): React.ReactElement {
         { icon: BookOpen, label: 'Disciplinas', href: '/disciplinas' },
         { icon: GraduationCap, label: 'Formativas', href: '/formativas' }
       ]
+    },
+    {
+      id: 'reports', // New section for reports
+      title: 'Relatórios',
+      icon: BarChart3,
+      items: [{ icon: FileText, label: 'Relatórios Gerais', href: '/relatorios' }]
     },
     { icon: Settings, label: 'Configurações', href: '/configuracoes' }
   ]

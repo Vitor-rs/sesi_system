@@ -41,12 +41,17 @@ export function ConfirmModal({
   const styles = colors[variant]
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-[60] animate-in fade-in duration-200">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-sm border border-gray-100 scale-100 animate-in zoom-in-95 duration-200">
-        <div className="p-6">
-          <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-full flex-shrink-0 ${styles.icon}`}>
-              <AlertTriangle size={24} />
+    <div className="fixed inset-0 z-60 flex items-center justify-center p-4 sm:p-0">
+      <div
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+        onClick={onCancel}
+      />
+
+      <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
+        <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div className="sm:flex sm:items-start">
+            <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-50 sm:mx-0 sm:h-10 sm:w-10">
+              <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>

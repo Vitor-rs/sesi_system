@@ -14,7 +14,14 @@ const api = {
   getClasses: () => ipcRenderer.invoke('classes:getAll'),
   createClass: (data: unknown) => ipcRenderer.invoke('classes:create', data),
   updateClass: (id: string, data: unknown) => ipcRenderer.invoke('classes:update', { id, data }),
-  deleteClass: (id: string) => ipcRenderer.invoke('classes:delete', id)
+  deleteClass: (id: string) => ipcRenderer.invoke('classes:delete', id),
+
+  // Settings
+  getSettings: (key: string) => ipcRenderer.invoke('settings:get', key),
+  uploadIcon: (buffer: ArrayBuffer, fileName: string) =>
+    ipcRenderer.invoke('settings:uploadIcon', { buffer, fileName }),
+  getIcons: () => ipcRenderer.invoke('settings:getIcons'),
+  applyIcon: (path: string) => ipcRenderer.invoke('settings:applyIcon', path)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

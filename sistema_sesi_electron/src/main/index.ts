@@ -1,12 +1,13 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { unlinkSync, existsSync } from 'fs'
 import icon from '../../resources/icon.png?asset'
 import { registerHandlers } from './ipc/handlers'
 import { initDb } from './db/client'
 import { runMigrations } from './db/migrator'
 import { seedDatabase } from './db/seed'
+import { SettingsService } from './services/SettingsService'
 import { appConfig } from './config'
+import { existsSync, unlinkSync } from 'fs'
 
 function createWindow(): void {
   // Create the browser window.
@@ -80,6 +81,16 @@ app.whenReady().then(() => {
   runMigrations()
   seedDatabase().catch((err) => console.error(err))
   registerHandlers()
+
+  // Load Custom Icon if exists
+  SettingsService.get('app_icon_path').then((iconPath) => {
+    if (iconPath && existsSync(iconPath)) {
+      const win = BrowserWindow.getAllWindows()[0]
+      if (win) {
+        win.setIcon(iconPath)
+      }
+    }
+  })
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))

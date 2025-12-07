@@ -14,6 +14,8 @@ export function Header(): React.ReactElement {
         return 'Disciplinas'
       case '/formativas':
         return 'Formativas'
+      case '/relatorios':
+        return 'Relatórios / Relatórios Gerais'
       case '/configuracoes':
         return 'Configurações'
       default:

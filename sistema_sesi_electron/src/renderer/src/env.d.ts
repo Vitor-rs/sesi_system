@@ -15,6 +15,12 @@ interface Api {
   createClass: (data: unknown) => Promise<Class>
   updateClass: (id: string, data: unknown) => Promise<void>
   deleteClass: (id: string) => Promise<void>
+
+  // Settings
+  getSettings: (key: string) => Promise<string | null>
+  uploadIcon: (buffer: ArrayBuffer, fileName: string) => Promise<{ success: boolean; path: string }>
+  getIcons: () => Promise<Array<{ name: string; path: string; preview: string }>>
+  applyIcon: (path: string) => Promise<{ success: boolean }>
 }
 
 declare global {

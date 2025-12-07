@@ -35,6 +35,15 @@ export const classes = sqliteTable('classes', {
     .default(sql`CURRENT_TIMESTAMP`)
 })
 
+// Settings Table (Key-Value Store)
+export const settings = sqliteTable('settings', {
+  key: text('key').primaryKey(), // e.g., 'app_icon_path', 'theme_color'
+  value: text('value').notNull(),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+})
+
 // History Table (for Student history events)
 export const studentHistory = sqliteTable('student_history', {
   id: text('id').primaryKey(),
