@@ -1,10 +1,12 @@
 import Database from 'better-sqlite3'
-import { drizzle } from 'drizzle-orm/better-sqlite3'
+import { drizzle, BetterSQLite3Database } from 'drizzle-orm/better-sqlite3'
 import { app } from 'electron'
 import { join } from 'path'
 import * as schema from './schema'
 
-let dbInstance: ReturnType<typeof drizzle> | null = null
+export type DbType = BetterSQLite3Database<typeof schema>
+
+let dbInstance: DbType | null = null
 
 export function initDb(): DbType | null {
   if (dbInstance) return dbInstance
@@ -23,5 +25,3 @@ export function getDb(): DbType {
   }
   return dbInstance
 }
-
-export type DbType = ReturnType<typeof drizzle>

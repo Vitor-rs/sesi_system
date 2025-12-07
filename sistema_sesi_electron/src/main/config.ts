@@ -3,8 +3,8 @@ export const appConfig = {
   window: {
     width: 1200, // Default width if not maximized
     height: 800, // Default height if not maximized
-    minWidth: 800,
-    minHeight: 600,
+    minWidth: 1024,
+    minHeight: 700,
     title: 'Sesi System',
     startMaximized: true, // User preference: Start maximized
     autoHideMenuBar: true // Hide the default menu bar

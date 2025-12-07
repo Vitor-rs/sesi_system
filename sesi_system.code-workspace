@@ -5,6 +5,10 @@
             "path": "sistema_sesi"
         },
         {
+            "name": "Sistema SESI (Electron)",
+            "path": "sistema_sesi_electron"
+        },
+        {
             "name": "Documentação",
             "path": "docs"
         },

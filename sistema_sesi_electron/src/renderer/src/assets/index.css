@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-sesi-dark: #003366;
+  --color-sesi-blue: #0066cc;
+  --color-sesi-light: #4d94ff;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}

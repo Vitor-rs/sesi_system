@@ -5,7 +5,7 @@ import { sql } from 'drizzle-orm'
 export const students = sqliteTable('students', {
   id: text('id').primaryKey(), // UUID
   name: text('name').notNull(),
-  classId: text('class_id'),
+  classId: text('class_id').references(() => classes.id),
   status: text('status', { enum: ['active', 'inactive', 'transferred'] })
     .notNull()
     .default('active'),
@@ -45,3 +45,17 @@ export const studentHistory = sqliteTable('student_history', {
   date: text('date').notNull(),
   description: text('description').notNull()
 })
+
+// Relations
+import { relations } from 'drizzle-orm'
+
+export const studentsRelations = relations(students, ({ many }) => ({
+  history: many(studentHistory)
+}))
+
+export const studentHistoryRelations = relations(studentHistory, ({ one }) => ({
+  student: one(students, {
+    fields: [studentHistory.studentId],
+    references: [students.id]
+  })
+}))

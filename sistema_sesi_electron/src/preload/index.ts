@@ -4,7 +4,17 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   getStudents: () => ipcRenderer.invoke('students:getAll'),
-  createStudent: (data: unknown) => ipcRenderer.invoke('students:create', data)
+  getStudentById: (id: string) => ipcRenderer.invoke('students:getById', id),
+  createStudent: (data: unknown) => ipcRenderer.invoke('students:create', data),
+  updateStudent: (id: string, data: unknown) => ipcRenderer.invoke('students:update', { id, data }),
+  deleteStudent: (id: string) => ipcRenderer.invoke('students:delete', id),
+  addStudentHistory: (data: unknown) => ipcRenderer.invoke('students:addHistory', data),
+
+  // Classes
+  getClasses: () => ipcRenderer.invoke('classes:getAll'),
+  createClass: (data: unknown) => ipcRenderer.invoke('classes:create', data),
+  updateClass: (id: string, data: unknown) => ipcRenderer.invoke('classes:update', { id, data }),
+  deleteClass: (id: string) => ipcRenderer.invoke('classes:delete', id)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -7,5 +7,9 @@
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "vitor-rs",
+    "projectKey": "Vitor-rs_sesi_system"
   }
 }

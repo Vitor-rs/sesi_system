@@ -72,10 +72,10 @@ Example `config.ts`:
 export const appConfig = {
   window: {
     startMaximized: true, // App will launch full screen
-    autoHideMenuBar: true,
+    autoHideMenuBar: true
   },
   development: {
-    openDevTools: false,
+    openDevTools: false
   }
 }
 ```
