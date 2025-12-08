@@ -1,32 +1,60 @@
-import { Bell, Search } from 'lucide-react'
+import { Bell, Search, ChevronRight } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
+import { menuStructure, isSection, MenuSection, MenuItem } from '../../config/menu'
 
 export function Header(): React.ReactElement {
   const location = useLocation()
 
-  const getPageTitle = (path: string): string => {
-    switch (path) {
-      case '/':
-        return 'Dashboard'
-      case '/alunos':
-        return 'Estudantes'
-      case '/disciplinas':
-        return 'Disciplinas'
-      case '/formativas':
-        return 'Formativas'
-      case '/relatorios':
-        return 'Relatórios / Relatórios Gerais'
-      case '/configuracoes':
-        return 'Configurações'
-      default:
-        return 'Dashboard'
+  const getBreadcrumbs = (
+    path: string
+  ): {
+    parent?: MenuSection
+    item?: MenuItem
+  } => {
+    for (const entry of menuStructure) {
+      if (isSection(entry)) {
+        // Check sub-items
+        const subItem = entry.items.find((item) => item.href === path)
+        if (subItem) {
+          return { parent: entry, item: subItem }
+        }
+      } else {
+        // Check exact match. TS knows this is MenuItem here because of isSection check.
+        if (entry.href === path) {
+          return { item: entry }
+        }
+      }
     }
+    // Default fallback
+    const defaultEntry = menuStructure.find(
+      (e) => !isSection(e) && (e as MenuItem).href === '/'
+    ) as MenuItem | undefined
+    return { item: defaultEntry }
   }
+
+  const { parent, item } = getBreadcrumbs(location.pathname)
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-      <div className="flex items-center gap-4">
-        <h1 className="text-xl font-semibold text-sesi-dark">{getPageTitle(location.pathname)}</h1>
+      <div className="flex items-center gap-2 text-sesi-dark">
+        {parent && (
+          <>
+            <div className="flex items-center gap-2 text-gray-800">
+              {parent.icon && <parent.icon size={20} />}
+              <span className="font-bold text-lg">{parent.title}</span>
+            </div>
+            <ChevronRight size={16} className="text-gray-400" />
+          </>
+        )}
+
+        {item && (
+          <div className={`flex items-center gap-2 ${parent ? 'text-gray-600' : 'text-gray-800'}`}>
+            {item.icon && <item.icon size={20} />}
+            <span className={`${parent ? 'font-medium' : 'font-bold text-lg'}`}>
+              {item.label}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-4">

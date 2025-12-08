@@ -1,32 +1,7 @@
-import {
-  Home,
-  Users,
-  BookOpen,
-  Settings,
-  GraduationCap,
-  ChevronDown,
-  ChevronRight,
-  Database,
-  BarChart3, // Added BarChart3
-  FileText // Added FileText
-} from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-
-type MenuItem = {
-  icon: React.ElementType
-  label: string
-  href: string
-}
-
-type MenuSection = {
-  id: string // Unique ID for state management
-  title: string
-  icon?: React.ElementType // Icon for the accordion trigger
-  items: MenuItem[]
-}
-
-type MenuEntry = MenuItem | MenuSection
+import { menuStructure, isSection } from '../../config/menu'
 
 export function Sidebar(): React.ReactElement {
   const [isOpen, setIsOpen] = useState(true)
@@ -50,36 +25,11 @@ export function Sidebar(): React.ReactElement {
     return (): void => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const menuStructure: MenuEntry[] = [
-    { icon: Home, label: 'Dashboard', href: '/' },
-    {
-      id: 'management',
-      title: 'Gerenciamento',
-      icon: Database, // Icon representing the section
-      items: [
-        { icon: Users, label: 'Estudantes', href: '/alunos' },
-        { icon: BookOpen, label: 'Disciplinas', href: '/disciplinas' },
-        { icon: GraduationCap, label: 'Formativas', href: '/formativas' }
-      ]
-    },
-    {
-      id: 'reports', // New section for reports
-      title: 'Relatórios',
-      icon: BarChart3,
-      items: [{ icon: FileText, label: 'Relatórios Gerais', href: '/relatorios' }]
-    },
-    { icon: Settings, label: 'Configurações', href: '/configuracoes' }
-  ]
-
   const toggleSection = (sectionId: string): void => {
     if (!isOpen) setIsOpen(true) // Auto-open sidebar if clicking a section
     setExpandedSections((prev) =>
       prev.includes(sectionId) ? prev.filter((id) => id !== sectionId) : [...prev, sectionId]
     )
-  }
-
-  const isSection = (entry: MenuEntry): entry is MenuSection => {
-    return 'items' in entry
   }
 
   return (
