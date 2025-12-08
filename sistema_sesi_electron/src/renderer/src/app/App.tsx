@@ -49,7 +49,12 @@ function App(): React.ReactElement {
 
         // Handle Welcome Image
         if (settingsImage) {
-          setWelcomeImage(settingsImage)
+          // Normalize Windows path to file:// URL for Electron Renderer
+          const normalizedPath = settingsImage.replace(/\\/g, '/')
+          const imageUrl = normalizedPath.startsWith('file:')
+            ? normalizedPath
+            : `file:///${normalizedPath}`
+          setWelcomeImage(imageUrl)
         }
       } catch (error) {
         console.error('Failed to initialize app:', error)

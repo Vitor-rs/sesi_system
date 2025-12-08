@@ -58,6 +58,38 @@
       height: 0;
     }
   }
+
+  /* Momentum Animation */
+  --animate-subtle-bounce: subtle-bounce 1s infinite;
+
+  @keyframes subtle-bounce {
+
+    0%,
+    100% {
+      transform: translateY(-3%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  /* Text Gradient Float */
+  --animate-floating-gradient: floating-gradient 8s ease infinite;
+
+  @keyframes floating-gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 }
 
 /*

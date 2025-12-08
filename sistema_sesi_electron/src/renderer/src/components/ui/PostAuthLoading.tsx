@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle2, LayoutDashboard, RefreshCw, UserCheck } from 'lucide-react'
+import { BookOpen, GraduationCap, School, Users } from 'lucide-react'
 
 interface PostAuthLoadingProps {
   onFinish: () => void
 }
 
 const STEPS = [
-  { icon: UserCheck, text: 'Autenticado com sucesso', color: 'text-green-600' },
-  { icon: RefreshCw, text: 'Carregando módulos...', color: 'text-blue-600' },
-  { icon: LayoutDashboard, text: 'Preparando interface...', color: 'text-purple-600' },
-  { icon: CheckCircle2, text: 'Pronto!', color: 'text-green-600' }
+  { icon: School, text: 'Conectando ao Sesi...', color: 'text-blue-600' },
+  { icon: BookOpen, text: 'Carregando materiais...', color: 'text-indigo-600' },
+  { icon: Users, text: 'Sincronizando turmas...', color: 'text-purple-600' },
+  { icon: GraduationCap, text: 'Tudo pronto!', color: 'text-green-600' }
 ]
 
 export function PostAuthLoading({ onFinish }: Readonly<PostAuthLoadingProps>): React.ReactElement {
@@ -61,16 +61,15 @@ export function PostAuthLoading({ onFinish }: Readonly<PostAuthLoadingProps>): R
 
   return (
     <div
-      className={`fixed inset-0 z-30 flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${
-        isVisible ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={`fixed inset-0 z-30 flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
     >
       <div className="w-full max-w-md p-8 animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
         {/* Animated Icon Container */}
         <div className="flex justify-center mb-8">
           <div className="relative">
             <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
-            <div className="relative w-24 h-24 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center">
+            <div className="relative w-24 h-24 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center animate-subtle-bounce">
               <CurrentIcon
                 size={48}
                 className={`transition-all duration-500 ${STEPS[step].color} ${step === 1 ? 'animate-spin' : 'animate-bounce'}`}
