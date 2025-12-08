@@ -1,14 +1,15 @@
 import { AlertTriangle, X } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 
 interface ConfirmModalProps {
-  isOpen: boolean
-  title: string
-  description: string
-  confirmLabel?: string
-  cancelLabel?: string
-  variant?: 'danger' | 'warning' | 'info'
-  onConfirm: () => void
-  onCancel: () => void
+  readonly isOpen: boolean
+  readonly title: string
+  readonly description: string
+  readonly confirmLabel?: string
+  readonly cancelLabel?: string
+  readonly variant?: 'danger' | 'warning' | 'info'
+  readonly onConfirm: () => void
+  readonly onCancel: () => void
 }
 
 export function ConfirmModal({
@@ -21,6 +22,16 @@ export function ConfirmModal({
   onConfirm,
   onCancel
 }: ConfirmModalProps): React.ReactElement | null {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      dialogRef.current?.showModal()
+    } else {
+      dialogRef.current?.close()
+    }
+  }, [isOpen])
+
   if (!isOpen) return null
 
   const colors = {
@@ -41,20 +52,29 @@ export function ConfirmModal({
   const styles = colors[variant]
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center p-4 sm:p-0">
-      <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+    <dialog
+      ref={dialogRef}
+      className="fixed inset-0 z-60 flex items-center justify-center p-4 sm:p-0 bg-transparent border-none m-0 w-full h-full max-w-none max-h-none backdrop:bg-transparent"
+      onClose={onCancel}
+      aria-labelledby="modal-title"
+    >
+      <button
+        type="button"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity w-full h-full border-none cursor-default"
         onClick={onCancel}
+        aria-label="Close modal"
       />
 
-      <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
+      <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100 mx-auto">
         <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
           <div className="sm:flex sm:items-start">
             <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-50 sm:mx-0 sm:h-10 sm:w-10">
               <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+              <h3 id="modal-title" className="text-lg font-semibold text-gray-900 mb-2">
+                {title}
+              </h3>
               <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
             </div>
             <button
@@ -81,6 +101,6 @@ export function ConfirmModal({
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }

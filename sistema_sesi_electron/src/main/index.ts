@@ -85,6 +85,7 @@ app.disableHardwareAcceleration()
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.whenReady().then(async () => {
+  // NOSONAR
   // Set app user model id for windows
   if (process.platform === 'win32') {
     app.setAppUserModelId('com.sistema_sesi.app')
