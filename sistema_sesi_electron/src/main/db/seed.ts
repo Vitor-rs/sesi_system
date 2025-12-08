@@ -1,7 +1,8 @@
 import { getDb } from './client'
 import { classes, students, studentHistory } from './schema'
-import { randomUUID } from 'node:crypto'
+import { randomUUID, randomInt } from 'node:crypto'
 import { sql } from 'drizzle-orm'
+import { logger } from '../services/LoggerService'
 
 const MOCK_CLASSES = [
   { name: '1º Ano A', grade: '1º Ano', letter: 'A', period: 'Matutino', capacity: 30 },
@@ -40,11 +41,11 @@ export async function seedDatabase(): Promise<void> {
   // 1. Check if ANY data exists
   const existingClasses = await db.select({ count: sql<number>`count(*)` }).from(classes)
   if (existingClasses[0].count > 0) {
-    console.log('[Seed] Database already has data. Skipping seed.')
+    logger.info('[Seed] Database already has data. Skipping seed.')
     return
   }
 
-  console.log('[Seed] Database is empty. Starting seed...')
+  logger.info('[Seed] Database is empty. Starting seed...')
 
   try {
     // 2. Insert Classes
@@ -63,12 +64,12 @@ export async function seedDatabase(): Promise<void> {
       })
     }
 
-    console.log(`[Seed] Inserted ${classIds.length} classes.`)
+    logger.info(`[Seed] Inserted ${classIds.length} classes.`)
 
     // 3. Insert Students
     for (let i = 0; i < 20; i++) {
       const studentId = randomUUID()
-      const randomClassId = classIds[Math.floor(Math.random() * classIds.length)]
+      const randomClassId = classIds[randomInt(0, classIds.length)]
       const randomName = NAMES[i] // Use unique name from list (assuming list >= 20 or loop wraps)
 
       await db.insert(students).values({
@@ -90,9 +91,9 @@ export async function seedDatabase(): Promise<void> {
       })
     }
 
-    console.log('[Seed] Inserted 20 students with history.')
-    console.log('[Seed] Database seeding completed successfully.')
+    logger.info('[Seed] Inserted 20 students with history.')
+    logger.info('[Seed] Database seeding completed successfully.')
   } catch (error) {
-    console.error('[Seed] Failed to seed database:', error)
+    logger.error('[Seed] Failed to seed database:', error)
   }
 }
