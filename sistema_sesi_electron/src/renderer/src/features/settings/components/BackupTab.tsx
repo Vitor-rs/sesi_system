@@ -24,7 +24,7 @@ export function BackupTab(): React.ReactElement {
     setIsScanning(true)
     try {
       await new Promise((resolve) => setTimeout(resolve, 500))
-      const locations = await window.api.detectBackups()
+      const locations = await globalThis.window.api.detectBackups()
       setBackupLocations(locations)
     } catch (error) {
       console.error('Failed to detect backups', error)
@@ -46,7 +46,7 @@ export function BackupTab(): React.ReactElement {
 
       // Cast to bypass potential d.ts mismatch in build environment
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result = await window.api.createBackup(targets as any)
+      const result = await globalThis.window.api.createBackup(targets as any)
       // The backend result.paths contains all successful save locations
       if (result.success) {
         // cast result to any because the type might not be fully updated in frontend inference yet if we don't restart TS server
@@ -63,7 +63,7 @@ export function BackupTab(): React.ReactElement {
   }
 
   const handleSelectFolder = async (): Promise<void> => {
-    const path = await window.api.selectBackupFolder()
+    const path = await globalThis.window.api.selectBackupFolder()
     if (path) {
       setCustomBackupPath(path)
       // Note: User can now have BOTH cloud and manual selected if they want mirrors.
@@ -116,9 +116,9 @@ export function BackupTab(): React.ReactElement {
       <div className="mt-2 space-y-2">
         {backupLocations
           .filter((l) => l.provider === 'googledrive')
-          .map((drive, idx) => (
+          .map((drive) => (
             <div
-              key={idx}
+              key={drive.path}
               className="flex items-center gap-2 bg-white/80 p-2 rounded-lg border border-green-100 shadow-sm"
             >
               <input
@@ -135,7 +135,7 @@ export function BackupTab(): React.ReactElement {
               </div>
               <button
                 onClick={async () => {
-                  await window.api.openPath(drive.path)
+                  await globalThis.window.api.openPath(drive.path)
                 }}
                 className="p-1.5 text-gray-500 hover:text-green-700 hover:bg-green-100 rounded transition-colors"
                 title="Abrir Raiz"
@@ -174,7 +174,7 @@ export function BackupTab(): React.ReactElement {
           <button
             onClick={async () => {
               const path = backupLocations.find((l) => l.provider === 'onedrive')?.path
-              if (path) await window.api.openPath(path)
+              if (path) await globalThis.window.api.openPath(path)
             }}
             className="text-blue-700 hover:underline flex items-center gap-1"
           >

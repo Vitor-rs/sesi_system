@@ -87,7 +87,7 @@ export function Sidebar(): React.ReactElement {
                                   ? 'bg-sesi-blue text-white'
                                   : 'text-gray-400 hover:text-white hover:bg-white/5'
                               }`}
-                              title={!isOpen ? subItem.label : undefined}
+                              title={isOpen ? undefined : subItem.label}
                             >
                               <subItem.icon size={18} />
                               <span className={`${!isOpen && 'hidden'}`}>{subItem.label}</span>
@@ -109,7 +109,7 @@ export function Sidebar(): React.ReactElement {
                     className={`flex items-center px-4 py-3 transition-colors gap-3 ${
                       isActive ? 'bg-sesi-blue text-white' : 'hover:bg-white/10 text-gray-300'
                     }`}
-                    title={!isOpen ? entry.label : undefined}
+                    title={isOpen ? undefined : entry.label}
                   >
                     <entry.icon size={20} />
                     <span className={`${!isOpen && 'hidden'} whitespace-nowrap`}>

@@ -1,7 +1,7 @@
 import { app, dialog } from 'electron'
-import { copyFileSync, existsSync, mkdirSync, readdirSync } from 'fs'
-import { join } from 'path'
-import { homedir } from 'os'
+import { copyFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
+import { homedir } from 'node:os'
 
 export type BackupProvider = 'onedrive' | 'googledrive' | 'local'
 
@@ -91,7 +91,7 @@ export class BackupService {
         throw new Error('Database file not found')
       }
 
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      const timestamp = new Date().toISOString().replaceAll(/[:.]/g, '-')
       const fileName = `backup-${timestamp}.db`
       const savedPaths: string[] = []
 
@@ -154,7 +154,7 @@ export class BackupService {
             f
               .replace('backup-', '')
               .replace('.db', '')
-              .replace(/-/g, ':')
+              .replaceAll('-', ':')
               .replace(/:(\d+)-(\d+)-(\d+)-LZ$/, '')
           ) // Rough parse, file stats is better
         }))

@@ -24,7 +24,7 @@ export function SecurityTab(): React.ReactElement {
 
   const loadSecurityStatus = useCallback(async (): Promise<void> => {
     try {
-      const status = await window.api.getSecurityStatus()
+      const status = await globalThis.window.api.getSecurityStatus()
       setSecurityStatus(status)
       if (!status.isEnabled) {
         setIsSudoUnlocked(true)
@@ -49,7 +49,7 @@ export function SecurityTab(): React.ReactElement {
     }
 
     try {
-      await window.api.setPassword(password)
+      await globalThis.window.api.setPassword(password)
       setSecurityMessage({ type: 'success', text: 'Senha mestra definida com sucesso!' })
       setPassword('')
       setConfirmPassword('')
@@ -64,16 +64,17 @@ export function SecurityTab(): React.ReactElement {
 
   const handleGenerateRecoveryKit = async (): Promise<void> => {
     try {
-      const code = await window.api.generateRecoveryKit()
+      const code = await globalThis.window.api.generateRecoveryKit()
       const content = `KIT DE RECUPERAÇÃO - SISTEMA SESI\n\nCÓDIGO DE RECUPERAÇÃO: ${code}\n\nIMPORTANTE:\nGuarde este arquivo em um local seguro (Pendrive ou HD Externo).\nSem este código, NÃO é possível recuperar seus dados caso perca a senha.\n\nGerado em: ${new Date().toLocaleString()}`
       const blob = new Blob([content], { type: 'text/plain' })
       const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `SesiSystem-Recovery-${new Date().getTime()}.txt`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
+      const link = document.createElement('a')
+      link.href = url
+      const fileName = `sesi-recovery-kit-${Date.now()}.txt`
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
       URL.revokeObjectURL(url)
 
       setSecurityMessage({ type: 'success', text: 'Kit de recuperação gerado! Salve o arquivo.' })
@@ -87,7 +88,7 @@ export function SecurityTab(): React.ReactElement {
 
   const handleAutoLockChange = async (minutes: number): Promise<void> => {
     try {
-      await window.api.setAutoLock(minutes)
+      await globalThis.window.api.setAutoLock(minutes)
       setLastSudoInteraction(Date.now())
       loadSecurityStatus()
     } catch (error) {

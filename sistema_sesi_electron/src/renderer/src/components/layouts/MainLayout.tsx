@@ -41,7 +41,7 @@ export function MainLayout({ children }: MainLayoutProps): React.ReactElement {
       } finally {
         // CRITICAL: Signal to Main process that we are painted and ready to be shown.
         // This removes the "White Flash" because Main waits for this.
-        window.api.appReady()
+        globalThis.window.api.appReady()
       }
       // NOTE: We do NOT set isLoading(false) here immediately anymore.
       // We wait for the SplashScreen onComplete to do it, to ensure the cinematic 4s duration.

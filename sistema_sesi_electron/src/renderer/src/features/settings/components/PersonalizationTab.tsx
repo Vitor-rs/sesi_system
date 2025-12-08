@@ -18,7 +18,7 @@ export function PersonalizationTab(): React.ReactElement {
 
   const loadIcons = useCallback(async (): Promise<void> => {
     try {
-      const fetchedIcons = await window.api.getIcons()
+      const fetchedIcons = await globalThis.window.api.getIcons()
       setIcons(fetchedIcons)
     } catch (error) {
       console.error('Failed to load icons', error)
@@ -27,7 +27,7 @@ export function PersonalizationTab(): React.ReactElement {
 
   const loadCurrentSettings = useCallback(async (): Promise<void> => {
     try {
-      const path = await window.api.getSettings('app_icon_path')
+      const path = await globalThis.window.api.getSettings('app_icon_path')
       if (path) {
         setCurrentIconPath(path)
         setSelectedIconPath(path)
@@ -51,7 +51,7 @@ export function PersonalizationTab(): React.ReactElement {
 
     try {
       const arrayBuffer = await file.arrayBuffer()
-      await window.api.uploadIcon(arrayBuffer, file.name)
+      await globalThis.window.api.uploadIcon(arrayBuffer, file.name)
       await loadIcons()
       setUploadMessage({ type: 'success', text: 'Imagem enviada para galeria!' })
     } catch (error) {
@@ -66,7 +66,7 @@ export function PersonalizationTab(): React.ReactElement {
     if (!selectedIconPath) return
 
     try {
-      await window.api.applyIcon(selectedIconPath)
+      await globalThis.window.api.applyIcon(selectedIconPath)
       setCurrentIconPath(selectedIconPath)
       setUploadMessage({ type: 'success', text: 'Ícone aplicado com sucesso!' })
     } catch (error) {

@@ -1,5 +1,5 @@
 import { hashSync, compareSync, genSaltSync } from 'bcryptjs'
-import { randomBytes } from 'crypto'
+import { randomBytes } from 'node:crypto'
 import { SettingsService } from './SettingsService'
 
 export interface SecurityStatus {
@@ -9,7 +9,7 @@ export interface SecurityStatus {
 }
 
 export class SecurityService {
-  private static SALT_ROUNDS = 10
+  private static readonly SALT_ROUNDS = 10
 
   /**
    * Sets a new master password for the vault.
@@ -94,7 +94,7 @@ export class SecurityService {
     return {
       isEnabled: enabled === 'true',
       hasRecoveryKit: !!recoveryHash,
-      autoLockTimeout: timeout ? parseInt(timeout, 10) : 0
+      autoLockTimeout: timeout ? Number.parseInt(timeout, 10) : 0
     }
   }
 }

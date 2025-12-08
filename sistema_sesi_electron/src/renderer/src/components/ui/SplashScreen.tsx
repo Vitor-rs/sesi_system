@@ -6,7 +6,10 @@ interface SplashScreenProps {
   isExiting?: boolean
 }
 
-export function SplashScreen({ onComplete, isExiting }: SplashScreenProps): React.ReactElement {
+export function SplashScreen({
+  onComplete,
+  isExiting
+}: Readonly<SplashScreenProps>): React.ReactElement {
   const [progress, setProgress] = useState(0)
   const [message, setMessage] = useState('Inicializando sistema...')
 
@@ -38,6 +41,7 @@ export function SplashScreen({ onComplete, isExiting }: SplashScreenProps): Reac
     }, interval)
 
     return () => clearInterval(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // Remove dependency on onComplete to avoid re-running if prop changes
 
   return (

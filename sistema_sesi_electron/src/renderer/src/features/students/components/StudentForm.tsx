@@ -18,9 +18,9 @@ export interface StudentFormData {
 }
 
 interface StudentFormProps {
-  initialData?: Student | null
-  onSubmit: (data: StudentFormData) => void
-  onCancel: () => void
+  readonly initialData?: Student | null
+  readonly onSubmit: (data: StudentFormData) => void
+  readonly onCancel: () => void
 }
 
 export function StudentForm({
@@ -92,7 +92,7 @@ export function StudentForm({
     const val = e.target.value
       .toUpperCase()
       .slice(0, 2)
-      .replace(/[^A-Z]/g, '')
+      .replaceAll(/[^A-Z]/g, '')
     setTransferState(val)
   }
 
@@ -116,10 +116,14 @@ export function StudentForm({
             {/* 1. Basic Info */}
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="student-name"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Nome Completo
                 </label>
                 <input
+                  id="student-name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -132,10 +136,14 @@ export function StudentForm({
                 <p className="text-xs text-gray-500 mt-1">O nome será formatado automaticamente.</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="student-class"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Turma <span className="text-red-500">*</span>
                 </label>
                 <select
+                  id="student-class"
                   value={classId}
                   onChange={(e) => setClassId(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white invalid:border-red-300 invalid:text-red-600 text-gray-900"
@@ -164,10 +172,10 @@ export function StudentForm({
             {/* 2. Enrollment Details (Only for New Students or Editing Admission Info) */}
             {!initialData && (
               <div className="bg-gray-50/50 p-4 rounded-lg border border-gray-100 space-y-3">
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-800">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-800">
                   <Calendar size={16} className="text-blue-600" />
                   Tipo de Ingresso
-                </label>
+                </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <label
@@ -215,10 +223,14 @@ export function StudentForm({
                 {enrollmentType === 'transfer' && (
                   <div className="animate-in fade-in slide-in-from-top-2 pt-2 space-y-3 border-t border-gray-100 mt-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                      <label
+                        htmlFor="transfer-date"
+                        className="block text-xs font-medium text-gray-600 mb-1"
+                      >
                         Data de Admissão <span className="text-red-500">*</span>
                       </label>
                       <input
+                        id="transfer-date"
                         type="date"
                         value={transferDate}
                         onChange={(e) => setTransferDate(e.target.value)}
@@ -227,10 +239,14 @@ export function StudentForm({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                      <label
+                        htmlFor="transfer-origin"
+                        className="block text-xs font-medium text-gray-600 mb-1"
+                      >
                         Origem / Observação <span className="text-red-500">*</span>
                       </label>
                       <select
+                        id="transfer-origin"
                         value={transferOrigin}
                         onChange={(e) => setTransferOrigin(e.target.value)}
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-white"
@@ -260,10 +276,14 @@ export function StudentForm({
                     {transferOrigin && transferOrigin !== 'Outros' && (
                       <div className="flex gap-3 animate-in fade-in slide-in-from-top-1">
                         <div className="flex-1">
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                          <label
+                            htmlFor="transfer-city"
+                            className="block text-xs font-medium text-gray-600 mb-1"
+                          >
                             Cidade (Opcional)
                           </label>
                           <input
+                            id="transfer-city"
                             type="text"
                             value={transferCity}
                             onChange={(e) => setTransferCity(e.target.value)}
@@ -272,10 +292,14 @@ export function StudentForm({
                           />
                         </div>
                         <div className="w-24">
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                          <label
+                            htmlFor="transfer-state"
+                            className="block text-xs font-medium text-gray-600 mb-1"
+                          >
                             Estado (UF)
                           </label>
                           <input
+                            id="transfer-state"
                             type="text"
                             value={transferState}
                             onChange={handleStateChange}
@@ -290,10 +314,14 @@ export function StudentForm({
                     {/* Optional Field: Observation (If Outros) */}
                     {transferOrigin === 'Outros' && (
                       <div className="animate-in fade-in slide-in-from-top-1">
-                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                        <label
+                          htmlFor="transfer-obs"
+                          className="block text-xs font-medium text-gray-600 mb-1"
+                        >
                           Descrição / Observação (Opcional)
                         </label>
                         <textarea
+                          id="transfer-obs"
                           value={transferObservation}
                           onChange={(e) => setTransferObservation(e.target.value)}
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 placeholder-gray-300 resize-none"
@@ -310,8 +338,17 @@ export function StudentForm({
             {/* 3. Status (Only for Editing) */}
             {initialData && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Status Atual</label>
-                <div className="flex flex-col gap-2">
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                  id="status-group-label"
+                >
+                  Status Atual
+                </label>
+                <div
+                  role="radiogroup"
+                  aria-labelledby="status-group-label"
+                  className="flex flex-col gap-2"
+                >
                   <label
                     className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'active' ? 'bg-green-50 border-green-200 ring-1 ring-green-500' : 'border-gray-200 hover:bg-gray-50'}`}
                   >

@@ -55,7 +55,7 @@ if (process.contextIsolated) {
   }
 } else {
   // @ts-ignore (define in dts)
-  window.electron = electronAPI
+  globalThis.window.electron = electronAPI
   // @ts-ignore (define in dts)
-  window.api = api
+  globalThis.window.api = api
 }

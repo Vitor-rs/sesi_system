@@ -49,7 +49,7 @@ export function ClassManager(): React.ReactElement {
   const handleGradeBlur = (): void => {
     // Auto-format "4" -> "4º Ano"
     // Regex to check if it's just a number
-    const numberMatch = formData.grade.match(/^(\d+)$/)
+    const numberMatch = /^(\d+)$/.exec(formData.grade)
     if (numberMatch) {
       setFormData((prev) => ({ ...prev, grade: `${numberMatch[1]}º Ano` }))
     }
@@ -142,7 +142,7 @@ export function ClassManager(): React.ReactElement {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {classes.map((cls) => {
             // Deterministic mock data based on ID for lint compliance (no impure Math.random)
-            const seed = cls.id.charCodeAt(0) + (cls.id.charCodeAt(cls.id.length - 1) || 0)
+            const seed = (cls.id.codePointAt(0) ?? 0) + (cls.id.codePointAt(cls.id.length - 1) ?? 0)
             const mockHistoryStudents = (seed % 10) + 20
 
             return (
@@ -221,8 +221,14 @@ export function ClassManager(): React.ReactElement {
             </div>
             <form onSubmit={handleSubmit} className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Série / Ano</label>
+                <label
+                  htmlFor="grade-input"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Série / Ano
+                </label>
                 <input
+                  id="grade-input"
                   type="text"
                   required
                   placeholder="Ex: 4"
@@ -237,8 +243,14 @@ export function ClassManager(): React.ReactElement {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Letra</label>
+                  <label
+                    htmlFor="letter-input"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Letra
+                  </label>
                   <input
+                    id="letter-input"
                     type="text"
                     required
                     placeholder="Ex: A"
@@ -251,8 +263,14 @@ export function ClassManager(): React.ReactElement {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Período</label>
+                  <label
+                    htmlFor="period-select"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Período
+                  </label>
                   <select
+                    id="period-select"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none bg-white"
                     value={formData.period}
                     onChange={(e) =>

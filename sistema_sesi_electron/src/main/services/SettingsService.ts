@@ -4,12 +4,12 @@ import { settings } from '../db/schema'
 
 export class SettingsService {
   static async get(key: string): Promise<string | null> {
-    const result = await getDb().select().from(settings).where(eq(settings.key, key)).get()
+    const result = getDb().select().from(settings).where(eq(settings.key, key)).get()
     return result ? result.value : null
   }
 
   static async set(key: string, value: string): Promise<void> {
-    await getDb()
+    getDb()
       .insert(settings)
       .values({ key, value, updatedAt: new Date().toISOString() })
       .onConflictDoUpdate({
@@ -19,7 +19,7 @@ export class SettingsService {
   }
 
   static async getAll(): Promise<Record<string, string>> {
-    const entries = await getDb().select().from(settings).all()
+    const entries = getDb().select().from(settings).all()
     return entries.reduce(
       (acc, curr) => {
         acc[curr.key] = curr.value

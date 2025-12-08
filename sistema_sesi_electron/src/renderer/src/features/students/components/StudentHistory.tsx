@@ -10,7 +10,7 @@ import {
 import type { StudentHistoryEvent } from '../../../stores/useStudentStore'
 
 interface StudentHistoryProps {
-  events: StudentHistoryEvent[]
+  readonly events: StudentHistoryEvent[]
 }
 
 export function StudentHistory({ events }: StudentHistoryProps): React.ReactElement {
@@ -102,11 +102,11 @@ export function StudentHistory({ events }: StudentHistoryProps): React.ReactElem
 
   return (
     <div className="flow-root">
-      <ul role="list" className="-mb-8">
+      <ul className="-mb-8">
         {sortedEvents.map((event, eventIdx) => (
           <li key={event.id}>
             <div className="relative pb-8">
-              {eventIdx !== sortedEvents.length - 1 ? (
+              {eventIdx < sortedEvents.length - 1 ? (
                 <span
                   className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
                   aria-hidden="true"

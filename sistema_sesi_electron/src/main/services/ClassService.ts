@@ -9,8 +9,8 @@ export class ClassService {
 
     return result.map((c) => {
       const lastSpace = c.name.lastIndexOf(' ')
-      const grade = lastSpace !== -1 ? c.name.substring(0, lastSpace) : c.name
-      const letter = lastSpace !== -1 ? c.name.substring(lastSpace + 1) : ''
+      const grade = lastSpace === -1 ? c.name : c.name.substring(0, lastSpace)
+      const letter = lastSpace === -1 ? '' : c.name.substring(lastSpace + 1)
 
       return {
         ...c,

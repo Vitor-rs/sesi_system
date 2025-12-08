@@ -10,7 +10,7 @@ export function SudoLockScreen(): React.ReactElement {
     e.preventDefault()
     setSudoError(null)
     try {
-      const isValid = await window.api.verifyPassword(password)
+      const isValid = await globalThis.window.api.verifyPassword(password)
       if (isValid) {
         setIsSudoUnlocked(true)
         setLastSudoInteraction(Date.now())
