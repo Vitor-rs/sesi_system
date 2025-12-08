@@ -13,8 +13,10 @@ import { existsSync, unlinkSync } from 'fs'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1280,
+    height: 800,
+    minWidth: 1024,
+    minHeight: 768,
     show: false, // Wait for ready-to-show
     autoHideMenuBar: true,
     backgroundColor: '#111827', // Match bg-gray-900 to prevent white flash
