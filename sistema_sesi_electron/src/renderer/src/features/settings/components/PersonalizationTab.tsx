@@ -90,7 +90,7 @@ export function PersonalizationTab(): React.ReactElement {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-6">
           <div className="lg:col-span-1">
             <label className="block w-full h-48">
               <div className="h-full w-full border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-purple-400 transition-all group">
@@ -110,26 +110,26 @@ export function PersonalizationTab(): React.ReactElement {
             </label>
           </div>
 
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 h-48 flex flex-col justify-center">
             <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
               <LucideImage size={16} /> Galeria de Ícones
             </h3>
 
             {icons.length === 0 ? (
-              <div className="h-48 flex items-center justify-center bg-gray-50 rounded-xl text-gray-400 text-sm">
+              <div className="h-32 flex items-center justify-center bg-gray-50 rounded-xl text-gray-400 text-sm">
                 Nenhum ícone salvo.
               </div>
             ) : (
-              <div className="grid grid-cols-4 sm:grid-cols-5 gap-4 max-h-64 overflow-y-auto p-1">
+              <div className="flex overflow-x-auto gap-4 p-2 pb-4 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
                 {icons.map((icon) => (
                   <button
                     key={icon.path}
                     onClick={() => setSelectedIconPath(icon.path)}
-                    className={`relative aspect-square rounded-lg border-2 overflow-hidden transition-all ${
-                      selectedIconPath === icon.path
+                    className={`relative w-20 h-20 shrink-0 rounded-lg border-2 overflow-hidden transition-all ${selectedIconPath === icon.path
                         ? 'border-purple-500 ring-2 ring-purple-100'
                         : 'border-gray-200 hover:border-purple-200'
-                    }`}
+                      }`}
+                    title={icon.name}
                   >
                     <img
                       src={icon.preview}
@@ -147,28 +147,28 @@ export function PersonalizationTab(): React.ReactElement {
                 ))}
               </div>
             )}
+          </div>
+        </div>
 
-            <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
-              <div className="text-sm">
-                {uploadMessage && (
-                  <span
-                    className={`flex items-center gap-2 ${
-                      uploadMessage.type === 'success' ? 'text-green-600' : 'text-red-600'
-                    }`}
-                  >
-                    {uploadMessage.type === 'success' ? <CheckCircle size={16} /> : null}
-                    {uploadMessage.text}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={handleApplyIcon}
-                disabled={!selectedIconPath || selectedIconPath === currentIconPath}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium flex items-center gap-2"
+        <div className="border-t border-gray-100 pt-6 flex flex-col items-center justify-center gap-4">
+          <button
+            onClick={handleApplyIcon}
+            disabled={!selectedIconPath || selectedIconPath === currentIconPath}
+            className="w-full sm:w-auto px-8 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium flex items-center justify-center gap-2 shadow-sm"
+          >
+            <Save size={16} /> Aplicar Ícone
+          </button>
+
+          <div className="text-sm h-6">
+            {uploadMessage && (
+              <span
+                className={`flex items-center gap-2 ${uploadMessage.type === 'success' ? 'text-green-600' : 'text-red-600'
+                  }`}
               >
-                <Save size={16} /> Aplicar Ícone
-              </button>
-            </div>
+                {uploadMessage.type === 'success' ? <CheckCircle size={16} /> : null}
+                {uploadMessage.text}
+              </span>
+            )}
           </div>
         </div>
       </section>
