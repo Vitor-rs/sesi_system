@@ -41,7 +41,8 @@ const api = {
   disableSecurity: () => ipcRenderer.invoke('security:disable'),
 
   // Lifecycle
-  appReady: () => ipcRenderer.send('app-ready')
+  appReady: () => ipcRenderer.send('app-ready'),
+  maximizeWindow: () => ipcRenderer.invoke('window:maximize')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

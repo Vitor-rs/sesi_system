@@ -11,16 +11,21 @@ import { appConfig } from './config'
 import { existsSync, unlinkSync } from 'node:fs'
 import { logger } from './services/LoggerService'
 
+import { WindowStateManager } from './services/WindowStateManager'
+
 function createWindow(): void {
+  // Restore window state
+  const windowState = new WindowStateManager()
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1280,
+    width: 1200, // Default fallback
     height: 800,
     minWidth: 1024,
     minHeight: 768,
     show: false, // Wait for ready-to-show
     autoHideMenuBar: true,
-    backgroundColor: '#111827', // Match bg-gray-900 to prevent white flash
+    backgroundColor: '#F9FAFB', // Match bg-gray-50 to prevent dark flash on resize
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -30,9 +35,8 @@ function createWindow(): void {
     }
   })
 
-  // Maximize if configured (but don't show yet)
-  // CRITICAL FIX: Do NOT call maximize() here. It forces the window to show immediately on some platforms/configs.
-  // We move this logic to the 'app-ready' event.
+  // Manage window state (restore size/position and save on change)
+  windowState.manage(mainWindow)
 
   // Open DevTools if configured
   if (appConfig.development.openDevTools) {
@@ -51,10 +55,6 @@ function createWindow(): void {
   ipcMain.on('app-ready', () => {
     clearTimeout(fallbackTimeout) // Success! Cancel the fallback
     if (!mainWindow.isVisible()) {
-      // Apply maximization JUST before showing
-      if (appConfig.window.startMaximized) {
-        mainWindow.maximize()
-      }
       mainWindow.show()
     }
   })

@@ -243,4 +243,13 @@ export function registerHandlers(): void {
     await SecurityService.disableSecurity()
     return true
   })
+
+  // --- Window Control ---
+  ipcMain.handle('window:maximize', () => {
+    const win = BrowserWindow.getFocusedWindow()
+    if (win && !win.isMaximized()) {
+      win.maximize()
+    }
+    return true
+  })
 }

@@ -161,29 +161,29 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
 
   if (showSuccess) {
     return (
-      <div className="fixed inset-0 z-50 bg-gray-900 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center animate-in zoom-in slide-in-from-bottom-4 duration-500">
-          <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-green-900/50">
+          <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-900/10">
             {isUnlocking ? (
-              <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
             ) : (
-              <CheckCircle2 className="w-12 h-12 text-white" />
+              <CheckCircle2 className="w-12 h-12 text-green-600" />
             )}
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {isUnlocking ? 'Preparando Sistema...' : 'Acesso Liberado'}
           </h1>
           {!isUnlocking && (
             <>
-              <p className="text-gray-400 mb-8">Segurança desativada com sucesso.</p>
+              <p className="text-gray-500 mb-8">Segurança desativada com sucesso.</p>
               <button
                 onClick={handleEnterApp}
-                className="group relative px-8 py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition-all flex items-center gap-2 mx-auto active:scale-95 shadow-lg shadow-white/10"
+                className="group relative px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 mx-auto active:scale-95 shadow-lg shadow-blue-900/20"
                 autoFocus
               >
                 <LogIn
                   size={20}
-                  className="text-gray-900 group-hover:translate-x-1 transition-transform"
+                  className="text-white group-hover:translate-x-1 transition-transform"
                 />
                 Entrar no Sistema
               </button>
@@ -196,28 +196,27 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
 
   return (
     <div
-      className={`fixed inset-0 z-100 bg-gray-900 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${
-        isExiting ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'
-      }`}
+      className={`fixed inset-0 z-100 bg-gray-50 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${isExiting ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'
+        }`}
     >
       <div className="w-full max-w-sm animate-in fade-in zoom-in duration-300">
         {/* Header Icon */}
         <div className="flex justify-center mb-8">
-          <div className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center shadow-2xl shadow-black/50 border border-gray-700 transition-all">
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-900/10 border border-gray-100 transition-all">
             {mode === 'login' ? (
-              <Lock className="text-white w-8 h-8" />
+              <Lock className="text-blue-600 w-8 h-8" />
             ) : (
-              <ShieldCheck className="text-green-500 w-8 h-8" />
+              <ShieldCheck className="text-green-600 w-8 h-8" />
             )}
           </div>
         </div>
 
         {/* Title */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
             {mode === 'login' ? 'Bem-vindo de volta' : 'Recuperação de Acesso'}
           </h1>
-          <p className="text-gray-400 text-sm mt-2">
+          <p className="text-gray-500 text-sm mt-2">
             {mode === 'login'
               ? 'Digite sua senha para continuar'
               : 'Digite o código ou arraste o arquivo do Kit aqui'}
@@ -243,20 +242,19 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
                   mode === 'login' ? setPassword(e.target.value) : setRecoveryCode(e.target.value)
                 }
                 placeholder={mode === 'login' ? 'Senha' : 'XXXX-XXXX-XXXX'}
-                className={`w-full bg-gray-800/40 border text-white px-5 py-4 rounded-xl outline-none transition-all duration-300 placeholder:text-gray-600 font-medium backdrop-blur-sm ${
-                  error
-                    ? 'border-red-500/50 focus:border-red-500 shadow-lg shadow-red-900/10'
-                    : dragActive && mode === 'recovery'
-                      ? 'border-green-500 bg-gray-700/50'
-                      : 'border-gray-700 focus:border-gray-500 focus:bg-gray-800/80 focus:shadow-lg focus:shadow-black/20'
-                } ${shake ? 'animate-shake' : ''}`}
+                className={`w-full bg-white border text-gray-900 px-5 py-4 rounded-xl outline-none transition-all duration-300 placeholder:text-gray-400 font-medium shadow-sm ${error
+                  ? 'border-red-500/50 focus:border-red-500 shadow-lg shadow-red-900/5'
+                  : dragActive && mode === 'recovery'
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                  } ${shake ? 'animate-shake' : ''}`}
                 autoFocus
                 onDragEnter={mode === 'recovery' ? handleDrag : undefined}
                 onDragLeave={mode === 'recovery' ? handleDrag : undefined}
                 onDragOver={mode === 'recovery' ? handleDrag : undefined}
                 onDrop={mode === 'recovery' ? handleDrop : undefined}
               />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none transition-colors group-focus-within:text-gray-300">
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none transition-colors group-focus-within:text-blue-600">
                 {mode === 'login' ? <ArrowRight size={20} /> : <KeyRound size={20} />}
               </div>
             </div>
@@ -264,7 +262,7 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
             {/* Helper text for drag drop */}
             {mode === 'recovery' && (
               <div
-                className={`mt-2 text-center text-xs transition-all cursor-pointer hover:text-green-400 ${dragActive ? 'text-green-500 font-bold scale-105' : 'text-gray-600'}`}
+                className={`mt-2 text-center text-xs transition-all cursor-pointer hover:text-green-600 ${dragActive ? 'text-green-600 font-bold scale-105' : 'text-gray-500'}`}
                 onClick={() => fileInputRef.current?.click()}
               >
                 {dragActive ? 'Solte o arquivo aqui!' : 'Clique para buscar arquivo no computador'}
@@ -279,7 +277,7 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
             />
 
             {error && (
-              <div className="absolute -bottom-6 left-0 flex items-center gap-1.5 text-red-400 text-xs font-medium animate-in slide-in-from-left-1">
+              <div className="absolute -bottom-6 left-0 flex items-center gap-1.5 text-red-500 text-xs font-medium animate-in slide-in-from-left-1">
                 <AlertCircle size={12} />
                 {error}
               </div>
@@ -289,19 +287,18 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
           <button
             type="submit"
             disabled={isVerifying || isUnlocking}
-            className={`w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all transform active:scale-[0.98] ${
-              mode === 'login'
-                ? 'bg-white text-gray-900 hover:bg-gray-100 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)]'
-                : 'bg-green-500 text-white hover:bg-green-600 shadow-[0_0_20px_-5px_rgba(34,197,94,0.3)]'
-            }`}
+            className={`w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all transform active:scale-[0.98] shadow-lg ${mode === 'login'
+              ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-900/20'
+              : 'bg-green-600 text-white hover:bg-green-700 shadow-green-900/20'
+              }`}
           >
             {isUnlocking ? (
               <div className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
-                <span>Carregando sistema...</span>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Carregando...</span>
               </div>
             ) : isVerifying ? (
-              <span className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin mx-auto block" />
+              <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto block" />
             ) : mode === 'login' ? (
               'Desbloquear'
             ) : (
@@ -319,7 +316,7 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
               setPassword('')
               setRecoveryCode('')
             }}
-            className="text-xs text-gray-500 hover:text-white transition-colors duration-200 font-medium"
+            className="text-xs text-gray-500 hover:text-blue-600 transition-colors duration-200 font-medium"
           >
             {mode === 'login' ? 'Esqueci a senha' : 'Voltar para Login'}
           </button>

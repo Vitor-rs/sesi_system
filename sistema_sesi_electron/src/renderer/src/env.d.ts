@@ -42,6 +42,7 @@ interface Api {
   setAutoLock: (minutes: number) => Promise<{ success: boolean }>
   disableSecurity: () => Promise<boolean>
   appReady: () => void
+  maximizeWindow: () => Promise<boolean>
 }
 
 declare global {

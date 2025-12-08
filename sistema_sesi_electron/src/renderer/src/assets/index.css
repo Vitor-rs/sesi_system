@@ -66,6 +66,7 @@
   If we unquote it, it breaks.
 */
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -78,7 +79,8 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%; /* Explicitly dark blue/slate */
+    --foreground: 222.2 84% 4.9%;
+    /* Explicitly dark blue/slate */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -128,6 +130,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gray-50 text-foreground overflow-hidden;
   }
 }
