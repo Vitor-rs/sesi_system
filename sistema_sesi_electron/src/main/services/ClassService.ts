@@ -26,7 +26,7 @@ export class ClassService {
   }
 
   static async update(id: string, data: Partial<typeof classes.$inferInsert>): Promise<void> {
-    await getDb().update(classes).set(data).where(eq(classes.id, id))
+    getDb().update(classes).set(data).where(eq(classes.id, id)).run()
   }
 
   static async delete(id: string): Promise<void> {
@@ -34,6 +34,6 @@ export class ClassService {
     if (linkedStudents.length > 0) {
       throw new Error('Cannot delete class with linked students.')
     }
-    await getDb().delete(classes).where(eq(classes.id, id))
+    getDb().delete(classes).where(eq(classes.id, id)).run()
   }
 }

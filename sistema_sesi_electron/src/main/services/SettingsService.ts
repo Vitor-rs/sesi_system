@@ -16,6 +16,7 @@ export class SettingsService {
         target: settings.key,
         set: { value, updatedAt: new Date().toISOString() }
       })
+      .run()
   }
 
   static async getAll(): Promise<Record<string, string>> {
