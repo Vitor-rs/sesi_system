@@ -125,10 +125,11 @@ export function PersonalizationTab(): React.ReactElement {
                   <button
                     key={icon.path}
                     onClick={() => setSelectedIconPath(icon.path)}
-                    className={`relative w-20 h-20 shrink-0 rounded-lg border-2 overflow-hidden transition-all ${selectedIconPath === icon.path
+                    className={`relative w-20 h-20 shrink-0 rounded-lg border-2 overflow-hidden transition-all ${
+                      selectedIconPath === icon.path
                         ? 'border-purple-500 ring-2 ring-purple-100'
                         : 'border-gray-200 hover:border-purple-200'
-                      }`}
+                    }`}
                     title={icon.name}
                   >
                     <img
@@ -162,8 +163,9 @@ export function PersonalizationTab(): React.ReactElement {
           <div className="text-sm h-6">
             {uploadMessage && (
               <span
-                className={`flex items-center gap-2 ${uploadMessage.type === 'success' ? 'text-green-600' : 'text-red-600'
-                  }`}
+                className={`flex items-center gap-2 ${
+                  uploadMessage.type === 'success' ? 'text-green-600' : 'text-red-600'
+                }`}
               >
                 {uploadMessage.type === 'success' ? <CheckCircle size={16} /> : null}
                 {uploadMessage.text}

@@ -1,6 +1,6 @@
 import { getDb } from './client'
 import { classes, students, studentHistory } from './schema'
-import { randomUUID } from 'crypto'
+import { randomUUID } from 'node:crypto'
 import { sql } from 'drizzle-orm'
 
 const MOCK_CLASSES = [
@@ -57,7 +57,7 @@ export async function seedDatabase(): Promise<void> {
         id,
         name: cls.name,
         period: cls.period,
-        year: parseInt(cls.grade[0]), // Extract year number
+        year: Number.parseInt(cls.grade[0]), // Extract year number
         capacity: cls.capacity,
         createdAt: new Date().toISOString()
       })

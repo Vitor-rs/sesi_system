@@ -42,8 +42,9 @@ export function SplashScreen({ onComplete, isExiting }: SplashScreenProps): Reac
 
   return (
     <div
-      className={`fixed inset-0 bg-gray-900 flex flex-col items-center justify-center z-200 font-sans text-gray-100 transition-all duration-700 ease-in-out ${isExiting ? 'opacity-0 scale-110 pointer-events-none' : 'opacity-100 scale-100'
-        }`}
+      className={`fixed inset-0 bg-gray-900 flex flex-col items-center justify-center z-200 font-sans text-gray-100 transition-all duration-700 ease-in-out ${
+        isExiting ? 'opacity-0 scale-110 pointer-events-none' : 'opacity-100 scale-100'
+      }`}
     >
       <div className="relative mb-12">
         <div className="w-24 h-24 bg-gray-800 rounded-3xl flex items-center justify-center shadow-2xl border border-gray-700 animate-in zoom-in duration-700">

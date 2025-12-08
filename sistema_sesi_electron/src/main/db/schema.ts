@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
-import { sql } from 'drizzle-orm'
+import { sql, relations } from 'drizzle-orm'
 
 // Students Table
 export const students = sqliteTable('students', {
@@ -56,7 +56,6 @@ export const studentHistory = sqliteTable('student_history', {
 })
 
 // Relations
-import { relations } from 'drizzle-orm'
 
 export const studentsRelations = relations(students, ({ many }) => ({
   history: many(studentHistory)

@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import { join } from 'node:path'
 import icon from '../../resources/icon.png?asset'
 import { registerHandlers } from './ipc/handlers'
 import { initDb } from './db/client'
@@ -8,7 +8,8 @@ import { seedDatabase } from './db/seed'
 
 import { SettingsService } from './services/SettingsService'
 import { appConfig } from './config'
-import { existsSync, unlinkSync } from 'fs'
+import { existsSync, unlinkSync } from 'node:fs'
+import { logger } from './services/LoggerService'
 
 function createWindow(): void {
   // Create the browser window.
@@ -41,7 +42,7 @@ function createWindow(): void {
   // Fallback: If renderer fails to signal in 5s, show anyway to avoid zombie process
   const fallbackTimeout = setTimeout(() => {
     if (!mainWindow.isDestroyed() && !mainWindow.isVisible()) {
-      console.warn('Renderer took too long to signal readiness. Showing window via fallback.')
+      logger.warn('Renderer took too long to signal readiness. Showing window via fallback.')
       mainWindow.show()
     }
   }, 5000)
@@ -94,18 +95,18 @@ app.whenReady().then(() => {
     const dbPath = join(app.getPath('userData'), 'sistema_sesi.db')
     if (existsSync(dbPath)) {
       try {
-        console.log('[Main] Resetting database...')
+        logger.info('[Main] Resetting database...')
         unlinkSync(dbPath)
-        console.log('[Main] Database deleted.')
+        logger.info('[Main] Database deleted.')
       } catch (error) {
-        console.error('[Main] Failed to delete database:', error)
+        logger.error('[Main] Failed to delete database:', error)
       }
     }
   }
 
   initDb()
   runMigrations()
-  seedDatabase().catch((err) => console.error(err))
+  seedDatabase().catch((err) => logger.error('Seed failed:', err))
   registerHandlers()
 
   // Load Custom Icon if exists
@@ -119,7 +120,7 @@ app.whenReady().then(() => {
   })
 
   // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.on('ping', () => logger.debug('pong'))
 
   createWindow()
 

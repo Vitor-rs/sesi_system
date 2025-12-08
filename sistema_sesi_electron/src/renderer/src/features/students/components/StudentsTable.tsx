@@ -79,8 +79,9 @@ export const StudentsTable = ({
               return (
                 <tr
                   key={student.id}
-                  className={`group transition-colors duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-blue-50'
-                    } hover:bg-yellow-100`}
+                  className={`group transition-colors duration-200 ${
+                    index % 2 === 0 ? 'bg-white' : 'bg-blue-50'
+                  } hover:bg-yellow-100`}
                 >
                   <td className="px-3 py-2 text-xs w-14 text-center border-b border-gray-100 group-hover:first:rounded-l-lg group-hover:border-transparent">
                     {displayIndex}
@@ -155,10 +156,11 @@ export const StudentsTable = ({
                           <button
                             onClick={() => onDeleteRequest(student)}
                             disabled={hasDependencies}
-                            className={`p-1.5 rounded transition-colors ${hasDependencies
+                            className={`p-1.5 rounded transition-colors ${
+                              hasDependencies
                                 ? 'text-yellow-400 cursor-not-allowed opacity-100'
                                 : 'text-red-400 hover:text-red-600 hover:bg-red-50 opacity-100'
-                              }`}
+                            }`}
                             title={
                               hasDependencies
                                 ? 'Não pode ser excluído (Possui histórico)'

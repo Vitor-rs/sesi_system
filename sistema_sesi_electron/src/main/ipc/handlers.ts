@@ -1,13 +1,41 @@
-import { ipcMain } from 'electron'
+import { ipcMain, app, BrowserWindow, shell } from 'electron'
 import { StudentService } from '../services/StudentService'
 import { ClassService } from '../services/ClassService'
 import { SettingsService } from '../services/SettingsService'
 import { BackupService } from '../services/BackupService'
 import { SecurityService } from '../services/SecurityService'
-import { app, BrowserWindow, shell } from 'electron'
-import { join } from 'path'
-import { writeFileSync, mkdirSync, existsSync, readdirSync, readFileSync } from 'fs'
+import { join } from 'node:path'
+import { writeFileSync, mkdirSync, existsSync, readdirSync, readFileSync } from 'node:fs'
+import { randomUUID } from 'node:crypto'
+import { logger } from '../services/LoggerService'
+import { z } from 'zod'
+
+// Schemas
+const StudentSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  classId: z.string().optional(),
+  status: z.enum(['active', 'inactive', 'transferred']).optional(),
+  enrollmentType: z.enum(['regular', 'transfer']).optional(),
+  number: z.number().optional(),
+  // Transfer Details
+  transferDate: z.string().optional(),
+  transferOrigin: z.string().optional(),
+  transferCity: z.string().optional(),
+  transferState: z.string().optional(),
+  transferObservation: z.string().optional()
+})
+
+const StudentUpdateSchema = StudentSchema.partial()
+
+const ClassSchema = z.object({
+  name: z.string().min(1),
+  period: z.string(),
+  year: z.number(),
+  capacity: z.number()
+})
+
 export function registerHandlers(): void {
+  // --- Students ---
   ipcMain.handle('students:getAll', async () => {
     return StudentService.getAll()
   })
@@ -17,11 +45,23 @@ export function registerHandlers(): void {
   })
 
   ipcMain.handle('students:create', async (_event, data) => {
-    return StudentService.create(data)
+    try {
+      const validated = StudentSchema.parse(data)
+      return await StudentService.create({ ...validated, id: randomUUID() })
+    } catch (error) {
+      logger.error('Invalid student data', error)
+      throw error
+    }
   })
 
   ipcMain.handle('students:update', async (_event, { id, data }) => {
-    return StudentService.update(id, data)
+    try {
+      const validated = StudentUpdateSchema.parse(data)
+      return await StudentService.update(id, validated)
+    } catch (error) {
+      logger.error(`Invalid student update data for ID ${id}`, error)
+      throw error
+    }
   })
 
   ipcMain.handle('students:delete', async (_event, id) => {
@@ -29,27 +69,51 @@ export function registerHandlers(): void {
   })
 
   ipcMain.handle('students:addHistory', async (_event, data) => {
-    return StudentService.addHistory(data)
+    try {
+      const HistorySchema = z.object({
+        studentId: z.string(),
+        type: z.string(),
+        date: z.string(),
+        description: z.string()
+      })
+      const validated = HistorySchema.parse(data)
+      return await StudentService.addHistory({ ...validated, id: randomUUID() })
+    } catch (error) {
+      logger.error('Invalid history data', error)
+      throw error
+    }
   })
 
-  // Classes
+  // --- Classes ---
   ipcMain.handle('classes:getAll', async () => {
     return ClassService.getAll()
   })
 
   ipcMain.handle('classes:create', async (_event, data) => {
-    return ClassService.create(data)
+    try {
+      const validated = ClassSchema.parse(data)
+      return await ClassService.create({ ...validated, id: randomUUID() })
+    } catch (error) {
+      logger.error('Invalid class data', error)
+      throw error
+    }
   })
 
   ipcMain.handle('classes:update', async (_event, { id, data }) => {
-    return ClassService.update(id, data)
+    try {
+      const validated = ClassSchema.partial().parse(data)
+      return await ClassService.update(id, validated)
+    } catch (error) {
+      logger.error(`Invalid class update data for ID ${id}`, error)
+      throw error
+    }
   })
 
   ipcMain.handle('classes:delete', async (_event, id) => {
     return ClassService.delete(id)
   })
 
-  // Settings
+  // --- Settings ---
   ipcMain.handle('settings:get', async (_event, key) => {
     return SettingsService.get(key)
   })
@@ -71,7 +135,7 @@ export function registerHandlers(): void {
 
       return { success: true, path: iconPath }
     } catch (error) {
-      console.error('Failed to upload icon:', error)
+      logger.error('Failed to upload icon:', error)
       throw error
     }
   })
@@ -90,12 +154,12 @@ export function registerHandlers(): void {
           return {
             name: file,
             path: fullPath,
-            preview: `data:image/png;base64,${base64}` // Simplification: assuming png/jpg compatible
+            preview: `data:image/png;base64,${base64}`
           }
         })
-        .sort((a, b) => b.name.localeCompare(a.name)) // Newest first
+        .sort((a, b) => b.name.localeCompare(a.name))
     } catch (error) {
-      console.error('Failed to get icons:', error)
+      logger.error('Failed to get icons:', error)
       return []
     }
   })
@@ -112,12 +176,12 @@ export function registerHandlers(): void {
       }
       return { success: true }
     } catch (error) {
-      console.error('Failed to apply icon:', error)
+      logger.error('Failed to apply icon:', error)
       throw error
     }
   })
 
-  // Backup
+  // --- Backup ---
   ipcMain.handle('settings:detectBackups', async () => {
     return BackupService.detectProviders()
   })

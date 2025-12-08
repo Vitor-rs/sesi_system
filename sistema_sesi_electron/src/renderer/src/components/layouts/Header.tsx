@@ -50,9 +50,7 @@ export function Header(): React.ReactElement {
         {item && (
           <div className={`flex items-center gap-2 ${parent ? 'text-gray-600' : 'text-gray-800'}`}>
             {item.icon && <item.icon size={20} />}
-            <span className={`${parent ? 'font-medium' : 'font-bold text-lg'}`}>
-              {item.label}
-            </span>
+            <span className={`${parent ? 'font-medium' : 'font-bold text-lg'}`}>{item.label}</span>
           </div>
         )}
       </div>

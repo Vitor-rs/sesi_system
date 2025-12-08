@@ -82,7 +82,7 @@ export const appConfig = {
 
 ## Project Structure
 
-```
+```txt
 ├── drizzle/                # SQL Migration files
 ├── resources/              # Icons and static assets (Electron)
 ├── src/
