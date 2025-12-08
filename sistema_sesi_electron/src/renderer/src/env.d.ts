@@ -22,6 +22,7 @@ interface Api {
   uploadIcon: (buffer: ArrayBuffer, fileName: string) => Promise<{ success: boolean; path: string }>
   getIcons: () => Promise<Array<{ name: string; path: string; preview: string }>>
   applyIcon: (path: string) => Promise<{ success: boolean }>
+  saveWelcomeImage: (path: string) => Promise<{ success: boolean }>
 
   // Backup
   detectBackups: () => Promise<BackupProvider[]>

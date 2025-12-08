@@ -181,6 +181,16 @@ export function registerHandlers(): void {
     }
   })
 
+  ipcMain.handle('settings:saveWelcomeImage', async (_event, imagePath) => {
+    try {
+      await SettingsService.set('welcome_image', imagePath)
+      return { success: true }
+    } catch (error) {
+      logger.error('Failed to save welcome image:', error)
+      throw error
+    }
+  })
+
   // --- Backup ---
   ipcMain.handle('settings:detectBackups', async () => {
     return BackupService.detectProviders()

@@ -36,6 +36,10 @@ interface SettingsState {
   setIsUploading: (isUploading: boolean) => void
   setUploadMessage: (message: { type: 'success' | 'error'; text: string } | null) => void
 
+  // Splash Screen State
+  welcomeImage: string | null
+  setWelcomeImage: (path: string | null) => void
+
   // Backup State
   backupLocations: BackupLocation[]
   selectedDrivePath: string | null // For Google Drive selection
@@ -95,6 +99,10 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   setSelectedIconPath: (path) => set({ selectedIconPath: path }),
   setIsUploading: (isUploading) => set({ isUploading }),
   setUploadMessage: (message) => set({ uploadMessage: message }),
+
+  // Splash Screen State
+  welcomeImage: null,
+  setWelcomeImage: (path) => set({ welcomeImage: path }),
 
   // Backup State
   backupLocations: [],

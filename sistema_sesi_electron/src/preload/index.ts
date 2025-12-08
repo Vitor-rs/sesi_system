@@ -22,6 +22,7 @@ const api = {
     ipcRenderer.invoke('settings:uploadIcon', { buffer, fileName }),
   getIcons: () => ipcRenderer.invoke('settings:getIcons'),
   applyIcon: (path: string) => ipcRenderer.invoke('settings:applyIcon', path),
+  saveWelcomeImage: (path: string) => ipcRenderer.invoke('settings:saveWelcomeImage', path),
 
   // Backup
   detectBackups: () => ipcRenderer.invoke('settings:detectBackups'),

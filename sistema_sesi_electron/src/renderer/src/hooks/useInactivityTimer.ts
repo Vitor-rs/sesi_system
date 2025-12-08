@@ -16,6 +16,9 @@ export function useInactivityTimer(): void {
     // Convert minutes to ms
     const timeoutMs = autoLockTimeout * 60 * 1000
 
+    // Prevent immediate locking or invalid configuration
+    if (timeoutMs < 60000) return
+
     timerRef.current = setTimeout(() => {
       // Double check state before locking
       if (!isLocked && securityEnabled) {

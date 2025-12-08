@@ -1,5 +1,12 @@
-import { useEffect, useCallback } from 'react'
-import { CheckCircle, ImageIcon, Image as LucideImage, Save, Upload } from 'lucide-react'
+import { useEffect, useCallback, useState } from 'react'
+import {
+  CheckCircle,
+  ImageIcon,
+  Image as LucideImage,
+  Save,
+  Upload,
+  MonitorPlay
+} from 'lucide-react'
 import { useSettingsStore } from '../stores/useSettingsStore'
 
 export function PersonalizationTab(): React.ReactElement {
@@ -13,8 +20,12 @@ export function PersonalizationTab(): React.ReactElement {
     setCurrentIconPath,
     setSelectedIconPath,
     setIsUploading,
-    setUploadMessage
+    setUploadMessage,
+    welcomeImage,
+    setWelcomeImage
   } = useSettingsStore()
+
+  const [selectedWelcomePath, setSelectedWelcomePath] = useState<string | null>(null)
 
   const loadIcons = useCallback(async (): Promise<void> => {
     try {
@@ -27,15 +38,24 @@ export function PersonalizationTab(): React.ReactElement {
 
   const loadCurrentSettings = useCallback(async (): Promise<void> => {
     try {
-      const path = await globalThis.window.api.getSettings('app_icon_path')
-      if (path) {
-        setCurrentIconPath(path)
-        setSelectedIconPath(path)
+      const [iconPath, welcomePath] = await Promise.all([
+        globalThis.window.api.getSettings('app_icon_path'),
+        globalThis.window.api.getSettings('welcome_image')
+      ])
+
+      if (iconPath) {
+        setCurrentIconPath(iconPath)
+        setSelectedIconPath(iconPath)
+      }
+
+      if (welcomePath) {
+        setWelcomeImage(welcomePath)
+        setSelectedWelcomePath(welcomePath)
       }
     } catch (error) {
       console.error('Failed to load settings', error)
     }
-  }, [setCurrentIconPath, setSelectedIconPath])
+  }, [setCurrentIconPath, setSelectedIconPath, setWelcomeImage])
 
   useEffect(() => {
     loadIcons()
@@ -172,6 +192,75 @@ export function PersonalizationTab(): React.ReactElement {
               </span>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* Welcome Screen Section */}
+      <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-100">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
+            <MonitorPlay size={24} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800">Tela de Boas-vindas</h2>
+            <p className="text-sm text-gray-500">
+              Escolha uma imagem para ser exibida durante a inicialização do sistema.
+              <br />
+              <span className="text-xs text-gray-400">
+                (A imagem selecionada é carregada da mesma galeria acima)
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="flex overflow-x-auto gap-4 p-2 pb-4 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+            {icons.map((icon) => (
+              <button
+                key={`welcome-${icon.path}`}
+                onClick={() => setSelectedWelcomePath(icon.path)}
+                className={`relative w-32 h-32 shrink-0 rounded-xl border-2 overflow-hidden transition-all duration-200 ${
+                  selectedWelcomePath === icon.path
+                    ? 'border-blue-500 ring-2 ring-blue-100 scale-105 shadow-md'
+                    : 'border-gray-200 hover:border-blue-200 hover:scale-[1.02]'
+                }`}
+                title={icon.name}
+              >
+                <img
+                  src={icon.preview}
+                  alt={icon.name}
+                  className="w-full h-full object-contain p-2 bg-gray-50"
+                />
+                {welcomeImage === icon.path && (
+                  <div className="absolute top-2 right-2 shadow-sm">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white">
+                      ✓
+                    </span>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-end border-t border-gray-100 pt-6">
+          <button
+            onClick={async () => {
+              if (!selectedWelcomePath) return
+              try {
+                await globalThis.window.api.saveWelcomeImage(selectedWelcomePath)
+                setWelcomeImage(selectedWelcomePath)
+                setUploadMessage({ type: 'success', text: 'Imagem de boas-vindas atualizada!' })
+              } catch (e) {
+                console.error(e)
+                setUploadMessage({ type: 'error', text: 'Erro ao salvar configuração.' })
+              }
+            }}
+            disabled={!selectedWelcomePath || selectedWelcomePath === welcomeImage}
+            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium shadow-sm flex items-center gap-2"
+          >
+            <Save size={16} /> Salvar Tela de Boas-vindas
+          </button>
         </div>
       </section>
     </div>
