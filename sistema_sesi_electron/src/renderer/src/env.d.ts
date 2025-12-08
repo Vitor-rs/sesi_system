@@ -26,6 +26,20 @@ interface Api {
   detectBackups: () => Promise<BackupProvider[]>
   createBackup: (customPath?: string) => Promise<{ success: boolean; paths: string[] }>
   selectBackupFolder: () => Promise<string | null>
+  openPath: (path: string) => Promise<{ success: boolean; error?: string; code?: string }>
+  // Security
+  setPassword: (password: string) => Promise<{ success: boolean }>
+  verifyPassword: (password: string) => Promise<boolean>
+  getSecurityStatus: () => Promise<{
+    isEnabled: boolean
+    hasRecoveryKit: boolean
+    autoLockTimeout: number
+  }>
+  generateRecoveryKit: () => Promise<string>
+  verifyRecoveryCode: (code: string) => Promise<boolean>
+  setAutoLock: (minutes: number) => Promise<{ success: boolean }>
+  disableSecurity: () => Promise<boolean>
+  appReady: () => void
 }
 
 declare global {

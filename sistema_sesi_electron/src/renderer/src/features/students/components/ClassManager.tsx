@@ -226,7 +226,7 @@ export function ClassManager(): React.ReactElement {
                   type="text"
                   required
                   placeholder="Ex: 4"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-gray-900"
                   value={formData.grade}
                   onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
                   onBlur={handleGradeBlur}
@@ -242,7 +242,7 @@ export function ClassManager(): React.ReactElement {
                     type="text"
                     required
                     placeholder="Ex: A"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase text-gray-900"
                     maxLength={3}
                     value={formData.letter}
                     onChange={(e) =>

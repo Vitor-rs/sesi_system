@@ -5,6 +5,7 @@ import { registerHandlers } from './ipc/handlers'
 import { initDb } from './db/client'
 import { runMigrations } from './db/migrator'
 import { seedDatabase } from './db/seed'
+
 import { SettingsService } from './services/SettingsService'
 import { appConfig } from './config'
 import { existsSync, unlinkSync } from 'fs'
@@ -12,32 +13,52 @@ import { existsSync, unlinkSync } from 'fs'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: appConfig.window.width,
-    height: appConfig.window.height,
-    minWidth: appConfig.window.minWidth,
-    minHeight: appConfig.window.minHeight,
-    title: appConfig.window.title,
-    show: false,
-    autoHideMenuBar: appConfig.window.autoHideMenuBar,
+    width: 900,
+    height: 670,
+    show: false, // Wait for ready-to-show
+    autoHideMenuBar: true,
+    backgroundColor: '#111827', // Match bg-gray-900 to prevent white flash
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      contextIsolation: true,
+      nodeIntegration: false
     }
   })
 
-  // Maximize if configured
-  if (appConfig.window.startMaximized) {
-    mainWindow.maximize()
-  }
+  // Maximize if configured (but don't show yet)
+  // CRITICAL FIX: Do NOT call maximize() here. It forces the window to show immediately on some platforms/configs.
+  // We move this logic to the 'app-ready' event.
 
   // Open DevTools if configured
   if (appConfig.development.openDevTools) {
     mainWindow.webContents.openDevTools()
   }
 
+  // Fallback: If renderer fails to signal in 5s, show anyway to avoid zombie process
+  const fallbackTimeout = setTimeout(() => {
+    if (!mainWindow.isDestroyed() && !mainWindow.isVisible()) {
+      console.warn('Renderer took too long to signal readiness. Showing window via fallback.')
+      mainWindow.show()
+    }
+  }, 5000)
+
+  // Handshake Protocol: Only show window when Renderer says it's ready (and screen is dark)
+  ipcMain.on('app-ready', () => {
+    clearTimeout(fallbackTimeout) // Success! Cancel the fallback
+    if (!mainWindow.isVisible()) {
+      // Apply maximization JUST before showing
+      if (appConfig.window.startMaximized) {
+        mainWindow.maximize()
+      }
+      mainWindow.show()
+    }
+  })
+
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    // We do NOTHING here related to visibility.
+    // We wait for 'app-ready'.
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -54,9 +75,12 @@ function createWindow(): void {
   }
 }
 
+// Disable Hardware Acceleration to prevent rendering glitches/white flash
+app.commandLine.appendSwitch('disable-http-cache')
+app.disableHardwareAcceleration()
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
   if (process.platform === 'win32') {

@@ -25,8 +25,22 @@ const api = {
 
   // Backup
   detectBackups: () => ipcRenderer.invoke('settings:detectBackups'),
-  createBackup: (customPath?: string) => ipcRenderer.invoke('settings:createBackup', customPath),
-  selectBackupFolder: () => ipcRenderer.invoke('settings:selectBackupFolder')
+  createBackup: (additionalPaths: string[] = []) =>
+    ipcRenderer.invoke('settings:createBackup', additionalPaths),
+  selectBackupFolder: () => ipcRenderer.invoke('settings:selectBackupFolder'),
+  openPath: (path: string) => ipcRenderer.invoke('settings:openPath', path),
+
+  // Security
+  setPassword: (password: string) => ipcRenderer.invoke('security:setPassword', password),
+  verifyPassword: (password: string) => ipcRenderer.invoke('security:verifyPassword', password),
+  getSecurityStatus: () => ipcRenderer.invoke('security:getStatus'),
+  generateRecoveryKit: () => ipcRenderer.invoke('security:generateRecoveryKit'),
+  verifyRecoveryCode: (code: string) => ipcRenderer.invoke('security:verifyRecoveryCode', code),
+  setAutoLock: (minutes: number) => ipcRenderer.invoke('security:setAutoLock', minutes),
+  disableSecurity: () => ipcRenderer.invoke('security:disable'),
+
+  // Lifecycle
+  appReady: () => ipcRenderer.send('app-ready')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

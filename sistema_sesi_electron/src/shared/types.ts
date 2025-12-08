@@ -43,3 +43,9 @@ export interface BackupProvider {
   path: string
   isAvailable: boolean
 }
+
+export interface SecurityStatus {
+  isEnabled: boolean
+  hasRecoveryKit: boolean
+  autoLockTimeout: number
+}

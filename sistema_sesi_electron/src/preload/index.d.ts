@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { Student, Class, BackupProvider } from '../shared/types'
+import { Student, Class } from '../shared/types'
 interface SesiApi {
   // Students
   getStudents: () => Promise<Student[]>
@@ -22,9 +22,23 @@ interface SesiApi {
   applyIcon: (path: string) => Promise<{ success: boolean }>
 
   // Backup
-  detectBackups: () => Promise<BackupProvider[]>
-  createBackup: (customPath?: string) => Promise<{ success: boolean; paths: string[] }>
+  detectBackups: () => Promise<BackupLocation[]>
+  createBackup: (additionalPaths?: string[]) => Promise<{ success: boolean; message: string }>
   selectBackupFolder: () => Promise<string | null>
+  openPath: (path: string) => Promise<boolean>
+
+  // Security
+  setPassword: (password: string) => Promise<{ success: boolean }>
+  verifyPassword: (password: string) => Promise<boolean>
+  getSecurityStatus: () => Promise<{
+    isEnabled: boolean
+    hasRecoveryKit: boolean
+    autoLockTimeout: number
+  }>
+  generateRecoveryKit: () => Promise<string>
+  setAutoLock: (minutes: number) => Promise<{ success: boolean }>
+  disableSecurity: () => Promise<boolean>
+  appReady: () => void
 }
 
 declare global {

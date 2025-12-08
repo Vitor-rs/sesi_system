@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, dialog } from 'electron'
 import { copyFileSync, existsSync, mkdirSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'
@@ -82,7 +82,9 @@ export class BackupService {
     return providers
   }
 
-  static async performBackup(customPath?: string): Promise<{ success: boolean; paths: string[] }> {
+  static async performBackup(
+    additionalPaths: string[] = []
+  ): Promise<{ success: boolean; paths: string[] }> {
     try {
       const dbPath = join(app.getPath('userData'), 'sistema_sesi.db')
       if (!existsSync(dbPath)) {
@@ -95,31 +97,39 @@ export class BackupService {
 
       // Determine destinations
       // Strategy: RAID-1 Style (Redundancy)
-      // Always save to Local Documents (Safe default) AND Cloud/Custom if available
+      // 1. Primary: Hidden System Folder (Always)
+      // 2. Mirrors: Selected Cloud and/or Manual Folder
       const destinations = new Set<string>()
 
-      // 1. Always add Local Documents
+      // 1. Proper System Hidden Folder
       destinations.add(this.getLocalBackupPath())
 
-      // 2. Add Custom Path or Cloud if detected
-      if (customPath) {
-        destinations.add(customPath)
-      } else {
-        const providers = await this.detectProviders()
-        const cloud = providers.find((p) => p.provider !== 'local' && p.isAvailable)
-        if (cloud) {
-          destinations.add(cloud.path)
+      // 2. Verified Mirrors
+      // We assume the frontend passes valid, full paths
+      additionalPaths.forEach((p) => {
+        if (p && typeof p === 'string' && p.length > 0) {
+          destinations.add(p)
         }
-      }
+      })
 
       // Execute Copy
       for (const destDir of destinations) {
-        if (!existsSync(destDir)) {
-          mkdirSync(destDir, { recursive: true })
+        // For cloud drives (G:/...), we should ensure the subfolder exists
+        // If the path is root (G:\), we might want to put it in a subfolder 'SesiSystem_Backups'
+        // But if the frontend passed 'G:\My Drive\SesiSystem_Backups', use it as is.
+        // We trust the frontend path construction for now, but safety check mkdir.
+
+        try {
+          if (!existsSync(destDir)) {
+            mkdirSync(destDir, { recursive: true })
+          }
+          const destPath = join(destDir, fileName)
+          copyFileSync(dbPath, destPath)
+          savedPaths.push(destPath)
+        } catch (copyError) {
+          console.error(`Failed to copy backup to ${destDir}`, copyError)
+          // Don't fail the whole process if one mirror fails (e.g. disconnected drive)
         }
-        const destPath = join(destDir, fileName)
-        copyFileSync(dbPath, destPath)
-        savedPaths.push(destPath)
       }
 
       return { success: true, paths: savedPaths }
@@ -151,5 +161,18 @@ export class BackupService {
         // Better: use fs.statSync logic if precise date needed, but filename sort is usually enough
         .sort((a, b) => b.name.localeCompare(a.name))
     )
+  }
+  static async selectBackupFolder(): Promise<string | null> {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory', 'createDirectory'],
+      buttonLabel: 'Selecionar Pasta de Backup',
+      title: 'Selecione onde salvar os backups'
+    })
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return null
+    }
+
+    return result.filePaths[0]
   }
 }
