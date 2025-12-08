@@ -5,6 +5,7 @@ import { Student, Class, BackupProvider } from '../../shared/types'
 interface Api {
   // Students
   getStudents: () => Promise<Student[]>
+  getStudentById: (id: string) => Promise<Student | undefined>
   createStudent: (data: unknown) => Promise<Student>
   updateStudent: (id: string, data: unknown) => Promise<void>
   deleteStudent: (id: string) => Promise<void>
@@ -47,4 +48,5 @@ declare global {
     electron: import('@electron-toolkit/preload').ElectronAPI
     api: Api
   }
+  var api: Api
 }

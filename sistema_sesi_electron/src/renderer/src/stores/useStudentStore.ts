@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { Student, StudentHistoryEvent } from '../../../shared/types'
 
-export type { Student, StudentHistoryEvent }
+export type { Student, StudentHistoryEvent } from '../../../shared/types'
 
 interface StudentState {
   students: Student[]
@@ -29,7 +29,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
   fetchStudents: async () => {
     set({ isLoading: true, error: null })
     try {
-      const students = await window.api.getStudents()
+      const students = await globalThis.api.getStudents()
       set({ students, isLoading: false })
     } catch (error) {
       console.error('Failed to fetch students:', error)
@@ -39,8 +39,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
 
   fetchStudentDetails: async (id) => {
     try {
-      // @ts-ignore - api typing is loose
-      const student = await window.api.getStudentById(id)
+      const student = await globalThis.api.getStudentById(id)
       if (student) {
         set((state) => ({
           students: state.students.map((s) => (s.id === id ? student : s))
@@ -55,7 +54,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
     set({ isLoading: true, error: null })
     try {
       // We pass the raw data, the Main process handles ID and defaults
-      await window.api.createStudent(data)
+      await globalThis.api.createStudent(data)
       await get().fetchStudents() // Refresh list
     } catch (error) {
       console.error('Failed to create student:', error)
@@ -66,7 +65,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
   updateStudent: async (id, data) => {
     set({ isLoading: true, error: null })
     try {
-      await window.api.updateStudent(id, data)
+      await globalThis.api.updateStudent(id, data)
       await get().fetchStudents()
     } catch (error) {
       console.error('Failed to update student:', error)
@@ -77,7 +76,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
   removeStudent: async (id) => {
     set({ isLoading: true, error: null })
     try {
-      await window.api.deleteStudent(id)
+      await globalThis.api.deleteStudent(id)
       await get().fetchStudents()
     } catch (error) {
       console.error('Failed to delete student:', error)
@@ -87,7 +86,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
 
   addHistoryEvent: async (studentId, type, description) => {
     try {
-      await window.api.addStudentHistory({
+      await globalThis.api.addStudentHistory({
         id: crypto.randomUUID(),
         studentId,
         type,
@@ -103,7 +102,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
   toggleStatus: async (id, status, reason) => {
     try {
       // 1. Update status
-      await window.api.updateStudent(id, { status })
+      await globalThis.api.updateStudent(id, { status })
 
       // 2. Add history event
       let eventType: StudentHistoryEvent['type'] = 'info_update'
@@ -120,7 +119,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
         description = reason || 'Estudante transferido.'
       }
 
-      await window.api.addStudentHistory({
+      await globalThis.api.addStudentHistory({
         id: crypto.randomUUID(), // Generator on client or server? Client is fine for UUID
         studentId: id,
         type: eventType,
