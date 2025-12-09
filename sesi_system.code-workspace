@@ -1,10 +1,6 @@
 {
     "folders": [
         {
-            "name": "Sistema SESI (App)",
-            "path": "sistema_sesi"
-        },
-        {
             "name": "Sistema SESI (Electron)",
             "path": "sistema_sesi_electron"
         },
