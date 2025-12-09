@@ -15,6 +15,13 @@
       "when": 1765084709772,
       "tag": "0001_clear_skrulls",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1765242326861,
+      "tag": "0002_graceful_deathbird",
+      "breakpoints": true
     }
   ]
 }
