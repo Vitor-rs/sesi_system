@@ -49,7 +49,7 @@ export function SplashScreen({
               {/* Subtle backdrop glow */}
               <div className="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full" />
 
-              <h1 className="relative text-9xl font-black italic tracking-tighter bg-linear-to-r from-[#0047BB] via-[#009540] to-[#0047BB] bg-[length:200%_auto] animate-floating-gradient bg-clip-text text-transparent drop-shadow-sm select-none">
+              <h1 className="relative text-9xl font-black italic tracking-tighter bg-linear-to-r from-[#0047BB] via-[#009540] to-[#0047BB] bg-size-[200%_auto] animate-floating-gradient bg-clip-text text-transparent drop-shadow-sm select-none">
                 SESI
               </h1>
             </div>

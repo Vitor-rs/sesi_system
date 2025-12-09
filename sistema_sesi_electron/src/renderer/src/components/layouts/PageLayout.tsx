@@ -31,7 +31,7 @@ export function PageLayout({
   return (
     <div className="flex flex-col h-full w-full overflow-hidden p-4 gap-4">
       {/* Standard Header with SidebarTrigger and Breadcrumb */}
-      <header className="flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b border-sidebar-border/50 pb-2">
+      <header className="flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b border-sidebar-border/50 pb-2">
         <div className="flex items-center gap-2 px-2">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />

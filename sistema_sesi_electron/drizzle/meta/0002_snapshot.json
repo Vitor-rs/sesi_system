@@ -64,12 +64,8 @@
           "name": "activities_assessment_id_assessments_id_fk",
           "tableFrom": "activities",
           "tableTo": "assessments",
-          "columnsFrom": [
-            "assessment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["assessment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -154,12 +150,8 @@
           "name": "assessments_class_discipline_id_class_disciplines_id_fk",
           "tableFrom": "assessments",
           "tableTo": "class_disciplines",
-          "columnsFrom": [
-            "class_discipline_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["class_discipline_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -206,12 +198,8 @@
           "name": "class_disciplines_class_id_classes_id_fk",
           "tableFrom": "class_disciplines",
           "tableTo": "classes",
-          "columnsFrom": [
-            "class_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["class_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -219,12 +207,8 @@
           "name": "class_disciplines_discipline_id_disciplines_id_fk",
           "tableFrom": "class_disciplines",
           "tableTo": "disciplines",
-          "columnsFrom": [
-            "discipline_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["discipline_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -371,12 +355,8 @@
           "name": "formative_templates_discipline_id_disciplines_id_fk",
           "tableFrom": "formative_templates",
           "tableTo": "disciplines",
-          "columnsFrom": [
-            "discipline_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["discipline_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -453,12 +433,8 @@
           "name": "grades_student_id_students_id_fk",
           "tableFrom": "grades",
           "tableTo": "students",
-          "columnsFrom": [
-            "student_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["student_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -466,12 +442,8 @@
           "name": "grades_assessment_id_assessments_id_fk",
           "tableFrom": "grades",
           "tableTo": "assessments",
-          "columnsFrom": [
-            "assessment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["assessment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -479,12 +451,8 @@
           "name": "grades_activity_id_activities_id_fk",
           "tableFrom": "grades",
           "tableTo": "activities",
-          "columnsFrom": [
-            "activity_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["activity_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -570,12 +538,8 @@
           "name": "student_history_student_id_students_id_fk",
           "tableFrom": "student_history",
           "tableTo": "students",
-          "columnsFrom": [
-            "student_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["student_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -681,12 +645,8 @@
           "name": "students_class_id_classes_id_fk",
           "tableFrom": "students",
           "tableTo": "classes",
-          "columnsFrom": [
-            "class_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["class_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
