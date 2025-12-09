@@ -140,6 +140,13 @@ export const grades = sqliteTable('grades', {
 
 // --- Relations ---
 
+export const studentHistoryRelations = relations(studentHistory, ({ one }) => ({
+  student: one(students, {
+    fields: [studentHistory.studentId],
+    references: [students.id]
+  })
+}))
+
 export const studentsRelations = relations(students, ({ many, one }) => ({
   history: many(studentHistory),
   class: one(classes, {
