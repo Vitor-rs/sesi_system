@@ -50,7 +50,7 @@ function App(): React.ReactElement {
         // Handle Welcome Image
         if (settingsImage) {
           // Normalize Windows path to file:// URL for Electron Renderer
-          const normalizedPath = settingsImage.replace(/\\/g, '/')
+          const normalizedPath = settingsImage.replaceAll('\\', '/')
           const imageUrl = normalizedPath.startsWith('file:')
             ? normalizedPath
             : `file:///${normalizedPath}`
