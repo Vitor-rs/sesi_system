@@ -118,7 +118,7 @@ export const activities = sqliteTable('activities', {
   dateAssigned: text('date_assigned'),
   dateDue: text('date_due'),
   description: text('description'),
-  maxValue: real('max_value').default(1.0) // Peso relativo dentro da composta
+  maxValue: real('max_value').default(1) // Peso relativo dentro da composta
 })
 
 // Grades (As notas lançadas)
