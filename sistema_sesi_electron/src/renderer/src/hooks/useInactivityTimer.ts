@@ -34,11 +34,11 @@ export function useInactivityTimer(): void {
     const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart']
     const handleActivity = (): void => resetTimer()
 
-    events.forEach((event) => window.addEventListener(event, handleActivity))
+    events.forEach((event) => globalThis.addEventListener(event, handleActivity))
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
-      events.forEach((event) => window.removeEventListener(event, handleActivity))
+      events.forEach((event) => globalThis.removeEventListener(event, handleActivity))
     }
   }, [resetTimer])
 }

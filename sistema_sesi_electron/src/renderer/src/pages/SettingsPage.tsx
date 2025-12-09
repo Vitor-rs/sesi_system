@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { Palette, User, Database, Shield, Settings } from 'lucide-react'
+import { Palette, User, Database, Shield, Settings, Library } from 'lucide-react'
 import { useSettingsStore } from '../features/settings/stores/useSettingsStore'
 import { PersonalizationTab } from '../features/settings/components/PersonalizationTab'
 import { ProfileTab } from '../features/settings/components/ProfileTab'
 import { BackupTab } from '../features/settings/components/BackupTab'
 import { SecurityTab } from '../features/settings/components/SecurityTab'
+import { FormativeTemplatesTab } from '../features/settings/components/templates/FormativeTemplatesTab'
 import { PageLayout } from '../components/layouts/PageLayout'
 
 const SUDO_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
@@ -78,6 +79,17 @@ export function SettingsPage(): React.ReactElement {
             Perfil
           </button>
           <button
+            onClick={() => setActiveTab('templates')}
+            className={`px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-t-lg font-semibold whitespace-nowrap ${
+              activeTab === 'templates'
+                ? 'border-orange-600 text-orange-700 bg-gray-100'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            <Library size={18} className={activeTab === 'templates' ? 'text-orange-600' : ''} />
+            Modelos de Avaliação
+          </button>
+          <button
             onClick={() => setActiveTab('backup')}
             className={`px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-t-lg font-semibold whitespace-nowrap ${
               activeTab === 'backup'
@@ -106,6 +118,7 @@ export function SettingsPage(): React.ReactElement {
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             {activeTab === 'personalization' && <PersonalizationTab />}
             {activeTab === 'profile' && <ProfileTab />}
+            {activeTab === 'templates' && <FormativeTemplatesTab />}
             {activeTab === 'backup' && <BackupTab />}
             {activeTab === 'security' && <SecurityTab />}
           </div>

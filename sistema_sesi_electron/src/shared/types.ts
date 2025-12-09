@@ -33,9 +33,31 @@ export interface Student {
 export interface Class {
   id: string
   name: string // Auto-generated: "${grade} ${letter}"
-  grade: string // e.g., "4º Ano"
-  letter: string // e.g., "A"
+  grade?: string // e.g., "4º Ano"
+  letter?: string // e.g., "A"
   period: 'Matutino' | 'Vespertino' | 'Noturno'
+  year: number
+  capacity: number
+}
+
+export interface FormativeTemplate {
+  id: string
+  name: string
+  type: 'simple' | 'composite'
+  defaultMaxPoints: number
+  isGeneric: boolean
+  disciplineId?: string | null
+}
+
+export interface ClassDiscipline {
+  id: string
+  classId: string
+  disciplineId: string
+  teacherName?: string | null
+  discipline: {
+    id: string
+    name: string
+  }
 }
 
 export interface BackupProvider {
@@ -48,4 +70,9 @@ export interface SecurityStatus {
   isEnabled: boolean
   hasRecoveryKit: boolean
   autoLockTimeout: number
+}
+
+export interface Discipline {
+  id: string
+  name: string
 }

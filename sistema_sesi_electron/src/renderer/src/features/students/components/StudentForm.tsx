@@ -179,9 +179,12 @@ export function StudentForm({
 
                 <div className="grid grid-cols-2 gap-3">
                   <label
+                    htmlFor="enrollment-regular"
+                    aria-label="Matrícula Regular"
                     className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all h-full ${enrollmentType === 'regular' ? 'bg-white border-blue-200 ring-1 ring-blue-500/20 shadow-sm' : 'bg-transparent border-gray-200 hover:bg-white hover:border-gray-300'}`}
                   >
                     <input
+                      id="enrollment-regular"
                       type="radio"
                       name="enrollmentType"
                       value="regular"
@@ -200,9 +203,12 @@ export function StudentForm({
                   </label>
 
                   <label
+                    htmlFor="enrollment-transfer"
+                    aria-label="Transferência"
                     className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all h-full ${enrollmentType === 'transfer' ? 'bg-white border-blue-200 ring-1 ring-blue-500/20 shadow-sm' : 'bg-transparent border-gray-200 hover:bg-white hover:border-gray-300'}`}
                   >
                     <input
+                      id="enrollment-transfer"
                       type="radio"
                       name="enrollmentType"
                       value="transfer"
@@ -338,21 +344,23 @@ export function StudentForm({
             {/* 3. Status (Only for Editing) */}
             {initialData && (
               <div>
-                <label
+                <span
                   className="block text-sm font-medium text-gray-700 mb-2"
                   id="status-group-label"
                 >
                   Status Atual
-                </label>
+                </span>
                 <div
                   role="radiogroup"
                   aria-labelledby="status-group-label"
                   className="flex flex-col gap-2"
                 >
                   <label
+                    htmlFor="status-active"
                     className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'active' ? 'bg-green-50 border-green-200 ring-1 ring-green-500' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                     <input
+                      id="status-active"
                       type="radio"
                       name="status"
                       value="active"
@@ -379,9 +387,11 @@ export function StudentForm({
                   </label>
 
                   <label
+                    htmlFor="status-inactive"
                     className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'inactive' ? 'bg-gray-50 border-gray-300 ring-1 ring-gray-500' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                     <input
+                      id="status-inactive"
                       type="radio"
                       name="status"
                       value="inactive"
@@ -408,9 +418,11 @@ export function StudentForm({
                   </label>
 
                   <label
+                    htmlFor="status-transferred"
                     className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'transferred' ? 'bg-red-50 border-red-200 ring-1 ring-red-500' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                     <input
+                      id="status-transferred"
                       type="radio"
                       name="status"
                       value="transferred"

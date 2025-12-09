@@ -1,10 +1,13 @@
+import { ArrowLeft } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
 interface PageLayoutProps {
-  icon?: React.ElementType
+  readonly icon?: React.ElementType
   readonly title: string
   readonly description?: string
   readonly children: React.ReactNode
   readonly action?: React.ReactNode
-  readonly breadcrumbs?: { label: string; href?: string }[]
+  readonly backButton?: boolean
 }
 
 export function PageLayout({
@@ -12,8 +15,12 @@ export function PageLayout({
   title,
   description,
   children,
-  action
+  action,
+  backButton
 }: PageLayoutProps): React.ReactElement {
+  const navigate = useNavigate()
+  // Actually, for backButton we need useNavigate from react-router-dom
+
   return (
     <div className="flex flex-col h-full w-full overflow-hidden p-5 gap-4">
       {/* Fixed Page Sub-Header */}
@@ -21,6 +28,15 @@ export function PageLayout({
         <div className="flex justify-between items-center shrink-0">
           <div>
             <div className="flex items-center gap-3">
+              {backButton && (
+                <button
+                  onClick={() => navigate(-1)}
+                  className="mr-2 p-1 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+                  aria-label="Voltar"
+                >
+                  <ArrowLeft size={24} />
+                </button>
+              )}
               {Icon && <Icon className="text-sesi-blue" size={28} />}
               <h1 className="text-2xl font-bold text-gray-800 tracking-tight">{title}</h1>
             </div>

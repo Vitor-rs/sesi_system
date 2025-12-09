@@ -101,8 +101,7 @@ export const StudentsTable = ({
                   <td className="px-3 py-2 text-xs border-b border-gray-100 group-hover:border-transparent">
                     {student.status === 'active' && (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-100">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                        Ativo
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Ativo
                       </span>
                     )}
                     {student.status === 'inactive' && (

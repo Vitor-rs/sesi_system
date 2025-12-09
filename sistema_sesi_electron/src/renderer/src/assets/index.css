@@ -63,7 +63,6 @@
   --animate-subtle-bounce: subtle-bounce 1s infinite;
 
   @keyframes subtle-bounce {
-
     0%,
     100% {
       transform: translateY(-3%);
@@ -98,7 +97,6 @@
   If we unquote it, it breaks.
 */
 @layer base {
-
   *,
   ::after,
   ::before,

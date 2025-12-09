@@ -1,6 +1,9 @@
 import { ipcMain, app, BrowserWindow, shell } from 'electron'
 import { StudentService } from '../services/StudentService'
 import { ClassService } from '../services/ClassService'
+import { DisciplineService } from '../services/DisciplineService'
+import { FormativeTemplateService } from '../services/FormativeTemplateService'
+import { ClassDisciplineService } from '../services/ClassDisciplineService'
 import { SettingsService } from '../services/SettingsService'
 import { BackupService } from '../services/BackupService'
 import { SecurityService } from '../services/SecurityService'
@@ -11,6 +14,23 @@ import { logger } from '../services/LoggerService'
 import { z } from 'zod'
 
 // Schemas
+const FormativeTemplateSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  type: z.enum(['simple', 'composite']),
+  defaultMaxPoints: z.number(),
+  isGeneric: z.boolean(),
+  disciplineId: z.string().optional().nullable()
+})
+
+const ClassDisciplineSchema = z.object({
+  classId: z.string(),
+  disciplineId: z.string(),
+  teacherName: z.string().optional()
+})
+
+const DisciplineSchema = z.object({
+  name: z.string().min(1, 'Name is required')
+})
 const StudentSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   classId: z.string().optional(),
@@ -111,6 +131,86 @@ export function registerHandlers(): void {
 
   ipcMain.handle('classes:delete', async (_event, id) => {
     return ClassService.delete(id)
+  })
+
+  // --- Disciplines ---
+  ipcMain.handle('disciplines:getAll', async () => {
+    return DisciplineService.getAll()
+  })
+
+  ipcMain.handle('disciplines:create', async (_event, data) => {
+    try {
+      const validated = DisciplineSchema.parse(data)
+      return await DisciplineService.create({ ...validated, id: randomUUID() })
+    } catch (error) {
+      logger.error('Invalid discipline data', error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('disciplines:update', async (_event, { id, data }) => {
+    try {
+      const validated = DisciplineSchema.partial().parse(data)
+      return await DisciplineService.update(id, validated)
+    } catch (error) {
+      logger.error(`Invalid discipline update data for ID ${id}`, error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('disciplines:delete', async (_event, id) => {
+    return DisciplineService.delete(id)
+  })
+
+  // --- Class Disciplines ---
+  ipcMain.handle('classDisciplines:getByClass', async (_event, classId) => {
+    return ClassDisciplineService.getByClassId(classId)
+  })
+
+  ipcMain.handle('classDisciplines:create', async (_event, data) => {
+    try {
+      // Validation might fail if UUIDs are not strictly compliant, so we might relax schema if needed, but assuming UUIDs for now as per schema.ts comments
+      // Actually schema.ts uses text('id').primaryKey() for everything. Let's adjust validation to string() if needed.
+      // Let's stick to string() for safety in Zod if we aren't sure they are UUIDs (though we are using randomUUID())
+      const validated = ClassDisciplineSchema.parse(data)
+      return await ClassDisciplineService.create({ ...validated, id: randomUUID() })
+    } catch (error) {
+      logger.error('Invalid class discipline data', error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('classDisciplines:delete', async (_event, id) => {
+    return ClassDisciplineService.delete(id)
+  })
+
+  // --- Formative Templates ---
+  ipcMain.handle('formativeTemplates:getAll', async () => {
+    return FormativeTemplateService.getAll()
+  })
+
+  ipcMain.handle('formativeTemplates:create', async (_event, data) => {
+    try {
+      const validated = FormativeTemplateSchema.parse(data)
+      return await FormativeTemplateService.create({ ...validated, id: randomUUID() })
+    } catch (error) {
+      logger.error('Invalid formative template data', error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('formativeTemplates:update', async (_event, { id, data }) => {
+    try {
+      const validated = FormativeTemplateSchema.partial().parse(data)
+      return await FormativeTemplateService.update(id, validated)
+    } catch (error) {
+      logger.error(`Invalid formative template update data for ID ${id}`, error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('formativeTemplates:delete', async (_event, id) => {
+    return FormativeTemplateService.delete(id)
   })
 
   // --- Settings ---

@@ -5,7 +5,10 @@ interface SplashScreenProps {
   readonly customImage?: string | null
 }
 
-export function SplashScreen({ onFinish, customImage }: Readonly<SplashScreenProps>): React.ReactElement {
+export function SplashScreen({
+  onFinish,
+  customImage
+}: Readonly<SplashScreenProps>): React.ReactElement {
   const [isVisible, setIsVisible] = useState(true)
   const [imageError, setImageError] = useState(false)
 
@@ -23,8 +26,9 @@ export function SplashScreen({ onFinish, customImage }: Readonly<SplashScreenPro
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${
+        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
     >
       <div className="relative flex flex-col items-center justify-center">
         {showCustomImage ? (

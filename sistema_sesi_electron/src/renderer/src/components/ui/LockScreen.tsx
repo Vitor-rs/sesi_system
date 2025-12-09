@@ -196,8 +196,9 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
 
   return (
     <div
-      className={`fixed inset-0 z-40 bg-gray-50 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${isExiting ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'
-        }`}
+      className={`fixed inset-0 z-40 bg-gray-50 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${
+        isExiting ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'
+      }`}
     >
       <div className="w-full max-w-sm animate-in fade-in zoom-in duration-300">
         {/* Header Icon */}
@@ -242,12 +243,13 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
                   mode === 'login' ? setPassword(e.target.value) : setRecoveryCode(e.target.value)
                 }
                 placeholder={mode === 'login' ? 'Senha' : 'XXXX-XXXX-XXXX'}
-                className={`w-full bg-white border text-gray-900 px-5 py-4 rounded-xl outline-none transition-all duration-300 placeholder:text-gray-400 font-medium shadow-sm ${error
-                  ? 'border-red-500/50 focus:border-red-500 shadow-lg shadow-red-900/5'
-                  : dragActive && mode === 'recovery'
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
-                  } ${shake ? 'animate-shake' : ''}`}
+                className={`w-full bg-white border text-gray-900 px-5 py-4 rounded-xl outline-none transition-all duration-300 placeholder:text-gray-400 font-medium shadow-sm ${
+                  error
+                    ? 'border-red-500/50 focus:border-red-500 shadow-lg shadow-red-900/5'
+                    : dragActive && mode === 'recovery'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                } ${shake ? 'animate-shake' : ''}`}
                 autoFocus
                 onDragEnter={mode === 'recovery' ? handleDrag : undefined}
                 onDragLeave={mode === 'recovery' ? handleDrag : undefined}
@@ -287,10 +289,11 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
           <button
             type="submit"
             disabled={isVerifying || isUnlocking}
-            className={`w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all transform active:scale-[0.98] shadow-lg ${mode === 'login'
-              ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-900/20'
-              : 'bg-green-600 text-white hover:bg-green-700 shadow-green-900/20'
-              }`}
+            className={`w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all transform active:scale-[0.98] shadow-lg ${
+              mode === 'login'
+                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-900/20'
+                : 'bg-green-600 text-white hover:bg-green-700 shadow-green-900/20'
+            }`}
           >
             {isUnlocking ? (
               <div className="flex items-center justify-center gap-2">

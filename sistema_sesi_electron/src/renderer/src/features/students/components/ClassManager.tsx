@@ -31,8 +31,8 @@ export function ClassManager(): React.ReactElement {
     if (cls) {
       setEditingClass(cls)
       setFormData({
-        grade: cls.grade,
-        letter: cls.letter,
+        grade: cls.grade || '',
+        letter: cls.letter || '',
         period: cls.period
       })
     } else {
@@ -73,9 +73,17 @@ export function ClassManager(): React.ReactElement {
     }
 
     if (editingClass) {
-      updateClass(editingClass.id, formData)
+      updateClass(editingClass.id, {
+        ...formData,
+        year: editingClass.year || 2024,
+        capacity: editingClass.capacity || 30
+      })
     } else {
-      addClass(formData)
+      addClass({
+        ...formData,
+        year: 2024,
+        capacity: 30
+      })
     }
     setIsFormOpen(false)
   }

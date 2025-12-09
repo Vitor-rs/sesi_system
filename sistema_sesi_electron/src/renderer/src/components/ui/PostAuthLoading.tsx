@@ -61,8 +61,9 @@ export function PostAuthLoading({ onFinish }: Readonly<PostAuthLoadingProps>): R
 
   return (
     <div
-      className={`fixed inset-0 z-30 flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
+      className={`fixed inset-0 z-30 flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
     >
       <div className="w-full max-w-md p-8 animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
         {/* Animated Icon Container */}

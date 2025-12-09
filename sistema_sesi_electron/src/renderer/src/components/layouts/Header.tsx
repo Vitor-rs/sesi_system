@@ -18,17 +18,15 @@ export function Header(): React.ReactElement {
         if (subItem) {
           return { parent: entry, item: subItem }
         }
-      } else {
+      } else if (entry.href === path) {
         // Check exact match. TS knows this is MenuItem here because of isSection check.
-        if (entry.href === path) {
-          return { item: entry }
-        }
+        return { item: entry }
       }
     }
     // Default fallback
-    const defaultEntry = menuStructure.find(
-      (e) => !isSection(e) && (e as MenuItem).href === '/'
-    ) as MenuItem | undefined
+    const defaultEntry = menuStructure.find((e) => !isSection(e) && e.href === '/') as
+      | MenuItem
+      | undefined
     return { item: defaultEntry }
   }
 

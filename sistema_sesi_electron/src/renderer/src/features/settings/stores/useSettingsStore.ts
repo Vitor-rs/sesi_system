@@ -20,8 +20,8 @@ export type SecurityStatus = {
 
 interface SettingsState {
   // UI State
-  activeTab: 'personalization' | 'profile' | 'backup' | 'security'
-  setActiveTab: (tab: 'personalization' | 'profile' | 'backup' | 'security') => void
+  activeTab: 'personalization' | 'profile' | 'backup' | 'security' | 'templates'
+  setActiveTab: (tab: 'personalization' | 'profile' | 'backup' | 'security' | 'templates') => void
   resetMessages: () => void
 
   // Icon State

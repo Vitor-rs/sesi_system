@@ -16,6 +16,26 @@ const api = {
   updateClass: (id: string, data: unknown) => ipcRenderer.invoke('classes:update', { id, data }),
   deleteClass: (id: string) => ipcRenderer.invoke('classes:delete', id),
 
+  // Disciplines
+  getDisciplines: () => ipcRenderer.invoke('disciplines:getAll'),
+  createDiscipline: (data: unknown) => ipcRenderer.invoke('disciplines:create', data),
+  updateDiscipline: (id: string, data: unknown) =>
+    ipcRenderer.invoke('disciplines:update', { id, data }),
+  deleteDiscipline: (id: string) => ipcRenderer.invoke('disciplines:delete', id),
+
+  // Class Disciplines
+  getClassDisciplines: (classId: string) =>
+    ipcRenderer.invoke('classDisciplines:getByClass', classId),
+  createClassDiscipline: (data: unknown) => ipcRenderer.invoke('classDisciplines:create', data),
+  deleteClassDiscipline: (id: string) => ipcRenderer.invoke('classDisciplines:delete', id),
+
+  // Formative Templates
+  getFormativeTemplates: () => ipcRenderer.invoke('formativeTemplates:getAll'),
+  createFormativeTemplate: (data: unknown) => ipcRenderer.invoke('formativeTemplates:create', data),
+  updateFormativeTemplate: (id: string, data: unknown) =>
+    ipcRenderer.invoke('formativeTemplates:update', { id, data }),
+  deleteFormativeTemplate: (id: string) => ipcRenderer.invoke('formativeTemplates:delete', id),
+
   // Settings
   getSettings: (key: string) => ipcRenderer.invoke('settings:get', key),
   uploadIcon: (buffer: ArrayBuffer, fileName: string) =>

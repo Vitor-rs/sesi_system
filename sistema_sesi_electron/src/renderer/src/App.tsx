@@ -1,33 +1,27 @@
-import React from 'react'
-import { Button } from '@/components/ui/button'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AppLayout } from './components/layouts/AppLayout'
+import { DashboardPage } from './pages/DashboardPage'
+import { StudentsPage } from './pages/StudentsPage'
+import { SettingsPage } from './pages/SettingsPage'
+import { ClassesPage } from './pages/ClassesPage'
+import { ClassDetailsPage } from './features/class-management/pages/ClassDetailsPage'
+import { DisciplinesPage } from './pages/DisciplinesPage'
 
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
-
-function App(): React.JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-
+function App(): React.ReactElement {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-background text-foreground">
-      <img alt="logo" className="h-24 w-24" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-
-      <Button onClick={ipcHandle}>Send IPC Ping</Button>
-
-      <div className="flex gap-4">
-        <Button variant="outline" asChild>
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </Button>
-      </div>
-
-      <Versions />
-    </div>
+    <HashRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/students" element={<StudentsPage />} />
+          <Route path="/classes" element={<ClassesPage />} />
+          <Route path="/classes/:id" element={<ClassDetailsPage />} />
+          <Route path="/disciplines" element={<DisciplinesPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </HashRouter>
   )
 }
 

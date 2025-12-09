@@ -197,9 +197,9 @@ export function BackupTab(): React.ReactElement {
 
       <div
         className={
-          !isSudoUnlocked
-            ? 'filter blur-md pointer-events-none select-none opacity-50 duration-300 space-y-6'
-            : 'duration-300 space-y-6'
+          isSudoUnlocked
+            ? 'duration-300 space-y-6'
+            : 'filter blur-md pointer-events-none select-none opacity-50 duration-300 space-y-6'
         }
       >
         <div className="mb-6 flex items-center justify-between bg-amber-50 text-amber-900 px-4 py-3 rounded-xl border border-amber-100 animate-in fade-in slide-in-from-top-2">

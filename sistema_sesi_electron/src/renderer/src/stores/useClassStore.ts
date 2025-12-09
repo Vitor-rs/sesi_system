@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { Class } from '../../../shared/types'
-export type { Class }
+
+export type { Class } from '../../../shared/types'
 
 interface ClassState {
   classes: Class[]
@@ -21,7 +22,7 @@ export const useClassStore = create<ClassState>((set, get) => ({
   fetchClasses: async () => {
     set({ isLoading: true, error: null })
     try {
-      const classes = await window.api.getClasses()
+      const classes = await globalThis.window.api.getClasses()
       set({ classes, isLoading: false })
     } catch (error) {
       console.error('Failed to fetch classes:', error)
@@ -35,7 +36,7 @@ export const useClassStore = create<ClassState>((set, get) => ({
       // Backend handles name generation if needed, or we send it?
       // Helper to generate name if missing
       const name = `${data.grade} ${data.letter}`
-      await window.api.createClass({ ...data, name, id: crypto.randomUUID() })
+      await globalThis.window.api.createClass({ ...data, name, id: crypto.randomUUID() })
       await get().fetchClasses()
     } catch (error) {
       console.error('Failed to create class:', error)
@@ -55,7 +56,7 @@ export const useClassStore = create<ClassState>((set, get) => ({
       // But let's assume UI handles it or Backend triggers.
       // Actually, let's just send what we have.
 
-      await window.api.updateClass(id, updatedData)
+      await globalThis.window.api.updateClass(id, updatedData)
       await get().fetchClasses()
     } catch (error) {
       console.error('Failed to update class:', error)
@@ -66,7 +67,7 @@ export const useClassStore = create<ClassState>((set, get) => ({
   removeClass: async (id) => {
     set({ isLoading: true, error: null })
     try {
-      await window.api.deleteClass(id)
+      await globalThis.window.api.deleteClass(id)
       await get().fetchClasses()
     } catch (error) {
       console.error('Failed to delete class:', error)

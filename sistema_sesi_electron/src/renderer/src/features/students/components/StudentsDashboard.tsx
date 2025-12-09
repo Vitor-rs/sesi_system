@@ -55,7 +55,7 @@ export function StudentsDashboard(): React.ReactElement {
     .filter((student) => {
       const matchesSearch =
         student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (student.number && student.number.toString().includes(searchTerm))
+        student.number?.toString().includes(searchTerm)
       const matchesClass = selectedClassId === 'all' || student.classId === selectedClassId
       const matchesStatus = showArchived
         ? student.status === 'inactive' || student.status === 'transferred'

@@ -1,6 +1,13 @@
 /// <reference types="vite/client" />
 
-import { Student, Class, BackupProvider } from '../../shared/types'
+import {
+  Student,
+  Class,
+  Discipline,
+  FormativeTemplate,
+  ClassDiscipline,
+  BackupProvider
+} from '../../shared/types'
 
 interface Api {
   // Students
@@ -16,6 +23,23 @@ interface Api {
   createClass: (data: unknown) => Promise<Class>
   updateClass: (id: string, data: unknown) => Promise<void>
   deleteClass: (id: string) => Promise<void>
+
+  // Disciplines
+  getDisciplines: () => Promise<Discipline[]>
+  createDiscipline: (data: unknown) => Promise<Discipline>
+  updateDiscipline: (id: string, data: unknown) => Promise<void>
+  deleteDiscipline: (id: string) => Promise<void>
+
+  // Class Disciplines
+  getClassDisciplines: (classId: string) => Promise<ClassDiscipline[]>
+  createClassDiscipline: (data: unknown) => Promise<ClassDiscipline>
+  deleteClassDiscipline: (id: string) => Promise<void>
+
+  // Formative Templates
+  getFormativeTemplates: () => Promise<FormativeTemplate[]>
+  createFormativeTemplate: (data: unknown) => Promise<FormativeTemplate>
+  updateFormativeTemplate: (id: string, data: unknown) => Promise<void>
+  deleteFormativeTemplate: (id: string) => Promise<void>
 
   // Settings
   getSettings: (key: string) => Promise<string | null>
