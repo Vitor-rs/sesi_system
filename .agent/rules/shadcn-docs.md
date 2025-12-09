@@ -4,7 +4,7 @@ trigger: always_on
 
 # Shadcn/UI — Guia Completo para AI Agents (Always On)
 
-Este documento capacita AI Agents a usar Shadcn/UI de forma proficiente no projeto SESI System. Referência completa em `docs/shadcn_guide/`.
+Este documento capacita AI Agents a usar Shadcn/UI de forma proficiente no projeto SESI System. Referência completa em `C:\Users\Vitor\Documents\projetos\sesi_system\docs\shadcn_guide`.
 
 ---
 
@@ -23,7 +23,7 @@ npx shadcn@latest add button card input table dialog
 npx shadcn@latest add @v0/dashboard
 ```
 
-### Localização após instalação
+### Localização após instalação (no projeto C:\Users\Vitor\Documents\projetos\sesi_system\sistema_sesi_electron)
 
 Componentes são adicionados em `src/components/ui/` conforme configurado em `components.json`.
 
@@ -312,7 +312,7 @@ npx shadcn@latest search @v0
 
 ## 📁 Documentação Completa
 
-A pasta `docs/shadcn_guide/` contém:
+A pasta `C:\Users\Vitor\Documents\projetos\sesi_system\docs\shadcn_guide\` contém:
 
 ```
 shadcn_guide/

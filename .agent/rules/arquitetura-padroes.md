@@ -4,7 +4,7 @@ trigger: always_on
 
 # Arquitetura, SOLID e Clean Code — SESI System (Always On)
 
-Este documento estabelece as convenções arquiteturais e de código para o projeto SESI System. Deve ser seguido ao criar, modificar ou revisar código.
+Este documento estabelece as convenções arquiteturais e de código para o projeto SESI System. Deve ser seguido ao criar, modificar ou revisar código em C:\Users\Vitor\Documents\projetos\sesi_system\sistema_sesi_electron.
 
 ---
 
@@ -12,7 +12,7 @@ Este documento estabelece as convenções arquiteturais e de código para o proj
 
 O projeto segue **arquitetura Feature-Based** (também chamada de "Vertical Slices"), onde cada feature é uma pasta autocontida.
 
-### Estrutura de Pastas
+### Estrutura de Pastas no projeto Electron (sistema_sesi_electron)
 
 ```
 src/
@@ -211,7 +211,7 @@ Baseado em `docs/praticas_design_system.md`:
 
 ---
 
-## 📁 Convenções de Arquivos
+## 📁 Convenções de Arquivos (em C:\Users\Vitor\Documents\projetos\sesi_system\sistema_sesi_electron)
 
 ```
 features/students/
@@ -259,4 +259,3 @@ features/students/
 
 - P3: `docs/logica_negocio/P3_Construção do Sesi System...` — Arquitetura completa
 - P4: `docs/logica_negocio/P4_sesi-system-docs...` — Estrutura de pastas detalhada
-- TkDodo: `docs/praticas_design_system.md` — Princípios de Design System
