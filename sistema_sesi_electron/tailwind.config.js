@@ -57,9 +57,31 @@ module.exports = {
           ring: 'hsl(var(--sidebar-ring))'
         },
         sesi: {
-          blue: '#0066cc',
+          blue: {
+            DEFAULT: '#0047BB', // Official FIEMS Blue
+            hover: '#003388',
+            light: '#4d94ff'
+          },
+          green: {
+            DEFAULT: '#009540', // Official FIEMS Green
+            hover: '#007a33',
+            light: '#45a247'
+          },
           dark: '#003366',
-          light: '#4d94ff'
+          gray: '#F3F4F6'
+        },
+        backgroundImage: {
+          'gradient-meridian': 'linear-gradient(to right, #45a247, #283c86)',
+          'gradient-lush': 'linear-gradient(to right, #a8e063, #56ab2f)',
+          'gradient-quepal': 'linear-gradient(to right, #38ef7d, #11998e)',
+          'gradient-visions': 'linear-gradient(to right, #1CB5E0, #000046)',
+          'gradient-cristal': 'linear-gradient(to left, #155799, #159957)',
+          'gradient-lagoon': 'linear-gradient(to left, #191654, #43C6AC)',
+          'gradient-frost': 'linear-gradient(to left, #004e92, #000428)',
+          'gradient-telegram': 'linear-gradient(to left, #f2fcfe, #1c92d2)',
+          // Official SESI/FIEMS Brand Gradients
+          'gradient-sesi': 'linear-gradient(to right, #0047BB, #009540)',
+          'gradient-sesi-subtle': 'linear-gradient(to right, #0047BB20, #00954020)'
         }
       },
       borderRadius: {

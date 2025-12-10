@@ -4,8 +4,12 @@
 
 @theme {
   --color-sesi-dark: #003366;
-  --color-sesi-blue: #0066cc;
+  --color-sesi-blue: #0047BB;
+  --color-sesi-green: #009540;
   --color-sesi-light: #4d94ff;
+
+  --gradient-sesi: linear-gradient(to right, #0047BB, #009540);
+
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
