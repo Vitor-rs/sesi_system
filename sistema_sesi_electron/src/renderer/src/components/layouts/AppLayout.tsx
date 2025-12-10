@@ -55,7 +55,7 @@ function CustomTrigger(): React.ReactElement {
             onMouseLeave={handleMouseLeave}
             variant="ghost"
             size="icon"
-            className="absolute -left-2.5 top-[55px] -translate-y-1/2 h-5 w-5 p-0 rounded-full bg-sesi-blue text-white border-2 border-transparent shadow-md hover:bg-white hover:text-sesi-blue hover:rounded-sm hover:border-sesi-blue hover:scale-110 transition-all duration-200 ease-out z-50 flex items-center justify-center group ring-0 outline-none"
+            className="absolute -left-2.5 top-[63px] -translate-y-1/2 h-5 w-5 p-0 rounded-full bg-sesi-blue text-white border-2 border-transparent shadow-md hover:bg-white hover:text-sesi-blue hover:rounded-[4px] hover:border-sesi-blue hover:scale-110 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-50 flex items-center justify-center group ring-0 outline-none will-change-[border-radius,transform]"
           >
             <ArrowLeft
               className={`size-3.5 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${shouldRotate ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'}`}
