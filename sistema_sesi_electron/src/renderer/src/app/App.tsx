@@ -34,16 +34,14 @@ function App(): React.ReactElement {
         if (securityStatus.isEnabled === false) {
           setLocked(false)
           setAuthenticated(true)
-          // If no security, maybe skip post-auth or show it briefly?
-          // User wants "Flow". Let's show it.
-          setShowPostAuth(true)
+          // Delayed: PostAuth will be triggered by SplashScreen.onFinish checking these states
         } else {
           // If security is enabled, but we are already authenticated (persisted session),
           // we should ensure we are unlocked.
           const { isAuthenticated } = useAuthStore.getState()
           if (isAuthenticated) {
             setLocked(false)
-            setShowPostAuth(true)
+            // Delayed: PostAuth will be triggered by SplashScreen.onFinish checking these states
           }
         }
 
@@ -88,10 +86,7 @@ function App(): React.ReactElement {
         <Router />
       </BrowserRouter>
 
-      {/* 2. Post-Auth Loading Layer (z-30) - Shows after unlock */}
-      {showPostAuth && <PostAuthLoading onFinish={() => setShowPostAuth(false)} />}
-
-      {/* 3. Lock Screen Layer (z-40) - Shows if locked */}
+      {/* 2. Lock Screen Layer (z-100) - Shows if locked */}
       {isLocked && (
         <LockScreen
           isExiting={false}
@@ -100,22 +95,35 @@ function App(): React.ReactElement {
             // 1. Mark as Authenticated
             setAuthenticated(true)
 
-            // 2. Unmount Lock Immediately (It replaced by PostAuth which starts blank)
+            // 2. Unmount Lock Immediately
             setLocked(false)
 
             // 3. Mount PostAuth (Starts invisible/blank for 800ms)
             setShowPostAuth(true)
 
             // 4. Maximize Immediately
-            // The expansion happens on a blank canvas, preventing visual glitches.
             globalThis.window.api.maximizeWindow()
           }}
         />
       )}
 
-      {/* 4. Splash Screen Layer (z-50) - Topmost, fades out on finish */}
+      {/* 3. Post-Auth Loading Layer (z-110) - Moving after LockScreen to ensure stacking on top if concurrent */}
+      {showPostAuth && <PostAuthLoading onFinish={() => setShowPostAuth(false)} />}
+
+      {/* 4. Splash Screen Layer (z-200) - Topmost, fades out on finish */}
       {showSplash && (
-        <SplashScreen onFinish={() => setShowSplash(false)} customImage={welcomeImage} />
+        <SplashScreen
+          onFinish={() => {
+            setShowSplash(false)
+            // If we are already authenticated and unlocked (e.g. No Security mode or Persisted Session),
+            // we should show the PostAuth loading now that Splash is gone.
+            const { isLocked, isAuthenticated } = useAuthStore.getState()
+            if (!isLocked && isAuthenticated) {
+              setShowPostAuth(true)
+            }
+          }}
+          customImage={welcomeImage}
+        />
       )}
     </>
   )
