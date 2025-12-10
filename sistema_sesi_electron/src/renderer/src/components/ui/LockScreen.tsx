@@ -247,7 +247,7 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
 
   return (
     <div
-      className={`fixed inset-0 z-40 bg-gray-50 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${
+      className={`fixed inset-0 z-[100] bg-gray-50 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${
         isExiting ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'
       }`}
     >

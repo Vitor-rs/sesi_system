@@ -26,9 +26,8 @@ export function SplashScreen({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${
-        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}
+      className={`fixed inset-0 z-[200] flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
     >
       <div className="relative flex flex-col items-center justify-center">
         {showCustomImage ? (

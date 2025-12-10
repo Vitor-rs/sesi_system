@@ -61,7 +61,7 @@ export function PostAuthLoading({ onFinish }: Readonly<PostAuthLoadingProps>): R
 
   return (
     <div
-      className={`fixed inset-0 z-30 flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${
+      className={`fixed inset-0 z-[100] flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     >
