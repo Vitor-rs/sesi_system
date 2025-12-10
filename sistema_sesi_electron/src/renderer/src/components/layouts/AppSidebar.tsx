@@ -9,11 +9,15 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { menuStructure, isSection } from '../../config/menu'
 import { useLocation, Link } from 'react-router-dom'
-import { LogOut } from 'lucide-react'
+import { LogOut, ChevronRight } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,7 +55,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>): 
             {menuStructure
               .filter((item) => !isSection(item))
               .map((item) => {
-                // Type guard manual aqui pois o filter já garantiu, mas TS pode reclamar
+                // Type guard manual
                 if ('items' in item) return null
                 const isActive = location.pathname === item.href
                 return (
@@ -68,28 +72,46 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>): 
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* Render Seções */}
+        {/* Render Seções com Collapsible Pattern */}
         {menuStructure.filter(isSection).map((section) => (
-          <SidebarGroup key={section.id}>
-            <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {section.items.map((item) => {
-                  const isActive = location.pathname === item.href
-                  return (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
-                        <Link to={item.href}>
-                          {item.icon && <item.icon />}
-                          <span>{item.label}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <Collapsible
+            key={section.id}
+            title={section.title}
+            defaultOpen
+            className="group/collapsible"
+          >
+            <SidebarGroup>
+              <SidebarGroupLabel
+                asChild
+                className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+              >
+                <CollapsibleTrigger>
+                  {section.icon && <section.icon className="mr-2 h-4 w-4" />}
+                  {section.title}
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenuSub>
+                    {section.items.map((item) => {
+                      const isActive = location.pathname === item.href
+                      return (
+                        <SidebarMenuSubItem key={item.href}>
+                          <SidebarMenuSubButton asChild isActive={isActive}>
+                            <Link to={item.href}>
+                              {item.icon && <item.icon />}
+                              <span>{item.label}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      )
+                    })}
+                  </SidebarMenuSub>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
         ))}
       </SidebarContent>
       <SidebarFooter>
