@@ -36,12 +36,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>): 
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sesi-blue text-sidebar-primary-foreground">
-                  <span className="font-bold text-white">S</span>
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sesi-blue text-white">
+                  <span className="font-bold text-lg">S</span>
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">SESI System</span>
-                  <span className="truncate text-xs">Gestão Escolar</span>
+                  <span className="truncate font-semibold text-sesi-dark">SESI System</span>
+                  <span className="truncate text-xs text-muted-foreground">Gestão Escolar</span>
                 </div>
               </Link>
             </SidebarMenuButton>
