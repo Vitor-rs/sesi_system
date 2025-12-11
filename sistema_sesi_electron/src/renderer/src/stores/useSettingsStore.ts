@@ -21,6 +21,8 @@ export type SecurityStatus = {
 
 interface SettingsState {
   // Global Settings
+  teacherProfile: 'pedagogue' | 'specialist'
+  setTeacherProfile: (profile: 'pedagogue' | 'specialist') => void
   schoolYearStart: string // ISO Date String
   schoolYearEnd: string // ISO Date String
   setSchoolYear: (start: string, end: string) => void
@@ -94,6 +96,8 @@ export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
       // Defaults
+      teacherProfile: 'pedagogue',
+      setTeacherProfile: (profile) => set({ teacherProfile: profile }),
       schoolYearStart: '2025-02-03T00:00:00.000Z',
       schoolYearEnd: '2025-12-19T00:00:00.000Z',
       setSchoolYear: (start, end) => set({ schoolYearStart: start, schoolYearEnd: end }),
@@ -177,6 +181,7 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'sesi-settings-storage',
       partialize: (state) => ({
+        teacherProfile: state.teacherProfile,
         schoolYearStart: state.schoolYearStart,
         schoolYearEnd: state.schoolYearEnd,
         archivingReasons: state.archivingReasons,

@@ -9,7 +9,7 @@ interface ClassState {
   error: string | null
 
   fetchClasses: () => Promise<void>
-  addClass: (data: Omit<Class, 'id' | 'name'>) => Promise<void>
+  addClass: (data: Omit<Class, 'id' | 'name'>) => Promise<string>
   updateClass: (id: string, data: Partial<Omit<Class, 'id' | 'name'>>) => Promise<void>
   removeClass: (id: string) => Promise<void>
 }
@@ -35,18 +35,21 @@ export const useClassStore = create<ClassState>((set, get) => ({
     try {
       // Name is auto-generated from Grade + Letter
       const name = `${data.grade} ${data.letter}`
+      const newId = crypto.randomUUID()
       // Remove deprecated fields from payload if they exist in UI code momentarily,
       // but here strict typing should guide us.
       // We pass generic ID generation to client for now as per previous pattern.
       await globalThis.window.api.createClass({
         ...data,
         name,
-        id: crypto.randomUUID()
+        id: newId
       })
       await get().fetchClasses()
+      return newId
     } catch (error) {
       console.error('Failed to create class:', error)
       set({ error: 'Failed to create class', isLoading: false })
+      throw error
     }
   },
 

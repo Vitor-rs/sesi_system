@@ -100,7 +100,7 @@ export function SettingsPage(): React.ReactElement {
               className="px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-none rounded-t-lg data-[state=active]:border-green-600 data-[state=active]:text-green-700 data-[state=active]:bg-gray-100 data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent"
             >
               <Database size={18} className={activeTab === 'backup' ? 'text-green-600' : ''} />
-              Backup e Dados
+              Dados e Compartilhamento
             </TabsTrigger>
             <TabsTrigger
               value="security"
