@@ -5,6 +5,7 @@ import { StudentsPage } from './pages/StudentsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { ClassesPage } from './pages/ClassesPage'
 import { ClassDetailsPage } from './features/class-management/pages/ClassDetailsPage'
+import { DisciplineGradebookPage } from './features/grades/pages/DisciplineGradebookPage'
 import { DisciplinesPage } from './pages/DisciplinesPage'
 
 function App(): React.ReactElement {
@@ -16,6 +17,7 @@ function App(): React.ReactElement {
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/classes" element={<ClassesPage />} />
           <Route path="/classes/:id" element={<ClassDetailsPage />} />
+          <Route path="/classes/:classId/disciplines/:classDisciplineId" element={<DisciplineGradebookPage />} />
           <Route path="/disciplines" element={<DisciplinesPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

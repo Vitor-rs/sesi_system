@@ -79,3 +79,51 @@ export interface Discipline {
   id: string
   name: string
 }
+
+export interface FormativeInstance {
+  id: string
+  templateId?: string // If linked to a template
+  name: string
+  type: 'simple' | 'composite'
+  maxPoints: number
+  weight: number // Standard is 1, but could be weighted
+  classDisciplineId: string
+  bimester: number
+}
+
+export interface FormativeEntry {
+  id: string
+  formativeInstanceId: string
+  studentId: string
+  value: number // The actual score
+  activityStatus?: 'delivered' | 'not_delivered' | 'absence' // For composite
+}
+
+export interface Activity {
+  id: string
+  formativeInstanceId: string // Must be a composite instance
+  name: string
+  date?: string
+  description?: string
+}
+
+export interface ActivityEntry {
+  id: string
+  activityId: string
+  studentId: string
+  status: 'delivered' | 'not_delivered' | 'absence'
+}
+
+export interface Grade {
+  id: string
+  studentId: string
+  classDisciplineId: string
+  bimester: number
+  av1: number | null
+  av2: number | null
+  // av3 is calculated from formativas usually, but could be overridden?
+  // For now, assume av3 is derived in frontend or backend, but maybe stored for caching
+  av3?: number | null
+  average?: number | null
+  recovery?: number | null
+}

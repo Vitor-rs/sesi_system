@@ -27,14 +27,14 @@ export type MenuEntry = MenuItem | MenuSection
 
 export const menuStructure: MenuEntry[] = [
   { icon: Home, label: 'Dashboard', href: '/' },
+  { icon: BookOpen, label: 'Minhas Turmas', href: '/classes' },
   {
-    id: 'management',
-    title: 'Gerenciamento',
+    id: 'library',
+    title: 'Biblioteca Global',
     icon: Database,
     items: [
-      { icon: Users, label: 'Estudantes', href: '/alunos' },
-      { icon: BookOpen, label: 'Disciplinas', href: '/disciplinas' },
-      { icon: GraduationCap, label: 'Formativas', href: '/formativas' }
+      { icon: Users, label: 'Todos os Alunos', href: '/students' },
+      { icon: GraduationCap, label: 'Banco de Questões', href: '/formativas' } // Placeholder for future
     ]
   },
   {
@@ -43,7 +43,7 @@ export const menuStructure: MenuEntry[] = [
     icon: BarChart3,
     items: [{ icon: FileText, label: 'Relatórios Gerais', href: '/relatorios' }]
   },
-  { icon: Settings, label: 'Configurações', href: '/configuracoes' }
+  { icon: Settings, label: 'Configurações', href: '/settings' }
 ]
 
 export const isSection = (entry: MenuEntry): entry is MenuSection => {

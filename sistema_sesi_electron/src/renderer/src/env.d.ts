@@ -67,6 +67,28 @@ interface Api {
   disableSecurity: () => Promise<boolean>
   appReady: () => void
   maximizeWindow: () => Promise<boolean>
+
+  // Grades & Formatives instances
+  getGrades: (
+    classDisciplineId: string,
+    bimester: number
+  ) => Promise<import('../../shared/types').Grade[]>
+  saveGrade: (data: unknown) => Promise<void>
+
+  getFormativeInstances: (
+    classDisciplineId: string,
+    bimester: number
+  ) => Promise<import('../../shared/types').FormativeInstance[]>
+  createFormativeInstance: (
+    data: unknown
+  ) => Promise<import('../../shared/types').FormativeInstance>
+  updateFormativeInstance: (id: string, data: unknown) => Promise<void>
+  deleteFormativeInstance: (id: string) => Promise<void>
+
+  getFormativeEntries: (
+    formativeInstanceId: string
+  ) => Promise<import('../../shared/types').FormativeEntry[]>
+  saveFormativeEntry: (data: unknown) => Promise<void>
 }
 
 declare global {

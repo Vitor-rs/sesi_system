@@ -4,8 +4,9 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { useSidebar } from '@/components/ui/sidebar-context'
 import { AppSidebar } from './AppSidebar'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Eye, X } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useSessionStore } from '../../stores/useSessionStore'
 
 function CustomTrigger(): React.ReactElement {
   const { toggleSidebar, state } = useSidebar()
@@ -86,13 +87,35 @@ function CustomTrigger(): React.ReactElement {
 }
 
 export function AppLayout(): React.ReactElement {
+  const { isReadOnly, sourceTeacherName, exitReadOnlyMode } = useSessionStore()
+
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="relative">
-        <CustomTrigger />
-        <div className="flex flex-col h-full w-full overflow-hidden bg-gray-50/50">
-          <Outlet />
+      <SidebarInset className="relative flex flex-col h-screen overflow-hidden">
+        {isReadOnly && (
+          <div className="bg-amber-400 text-amber-950 px-4 py-2 text-sm font-bold flex items-center justify-between shadow-md z-50 shrink-0">
+            <div className="flex items-center gap-2">
+              <Eye size={18} />
+              <span>
+                MODO LEITURA: Visualizando dados de {sourceTeacherName || 'Professor Externo'}
+              </span>
+            </div>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={exitReadOnlyMode}
+              className="h-7 text-xs bg-white/20 hover:bg-white/40 border-none text-amber-950"
+            >
+              <X size={14} className="mr-1" /> Sair do Modo Leitura
+            </Button>
+          </div>
+        )}
+        <div className="relative flex-1 flex flex-col overflow-hidden">
+          <CustomTrigger />
+          <div className="flex flex-col h-full w-full overflow-hidden bg-gray-50/50">
+            <Outlet />
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

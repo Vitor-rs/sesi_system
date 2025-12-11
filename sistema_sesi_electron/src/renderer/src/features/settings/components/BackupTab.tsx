@@ -1,8 +1,20 @@
-import { Cloud, RefreshCw, Save, CheckCircle, FolderOpen, Share2, Upload, Download, FileArchive } from 'lucide-react'
+import {
+  Cloud,
+  RefreshCw,
+  Save,
+  CheckCircle,
+  FolderOpen,
+  Share2,
+  Upload,
+  Download,
+  FileArchive
+} from 'lucide-react'
 import { useSettingsStore } from '../../../stores/useSettingsStore'
+import { useSessionStore } from '../../../stores/useSessionStore'
 import { SudoLockScreen } from './SudoLockScreen'
 
 export function BackupTab(): React.ReactElement {
+  const { enterReadOnlyMode } = useSessionStore()
   const {
     isSudoUnlocked,
     backupLocations,
@@ -95,10 +107,11 @@ export function BackupTab(): React.ReactElement {
 
   const GoogleDriveBlock = (
     <div
-      className={`p-4 border rounded-xl flex flex-col gap-3 transition-colors ${backupLocations.some((l) => l.provider === 'googledrive')
+      className={`p-4 border rounded-xl flex flex-col gap-3 transition-colors ${
+        backupLocations.some((l) => l.provider === 'googledrive')
           ? 'border-green-200 bg-green-50/50'
           : 'border-gray-100 bg-gray-50/50 opacity-60'
-        }`}
+      }`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-gray-700 font-medium">
@@ -152,10 +165,11 @@ export function BackupTab(): React.ReactElement {
 
   const OneDriveBlock = (
     <div
-      className={`p-4 border rounded-xl flex flex-col gap-3 transition-colors ${backupLocations.some((l) => l.provider === 'onedrive')
+      className={`p-4 border rounded-xl flex flex-col gap-3 transition-colors ${
+        backupLocations.some((l) => l.provider === 'onedrive')
           ? 'border-blue-200 bg-blue-50/50'
           : 'border-gray-100 bg-gray-50/50 opacity-60'
-        }`}
+      }`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-gray-700 font-medium">
@@ -316,9 +330,7 @@ export function BackupTab(): React.ReactElement {
               <Share2 size={24} />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-800">
-                Compartilhamento & Histórico
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-800">Compartilhamento & Histórico</h2>
               <p className="text-sm text-gray-500">
                 Importe ou exporte pacotes de dados para compartilhar com outros professores.
               </p>
@@ -332,14 +344,19 @@ export function BackupTab(): React.ReactElement {
                 <div className="p-2 bg-gray-100 rounded-lg text-gray-600">
                   <Upload size={20} />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Meu Dados</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  Meu Dados
+                </span>
               </div>
               <h3 className="font-bold text-gray-900 mb-1">Exportar Ano Atual</h3>
               <p className="text-xs text-gray-500 mb-4 h-10">
-                Gera um arquivo <code>.sesi</code> contendo todas as suas turmas, alunos e notas do ano letivo atual para backup ou transferência.
+                Gera um arquivo <code>.sesi</code> contendo todas as suas turmas, alunos e notas do
+                ano letivo atual para backup ou transferência.
               </p>
               <button
-                onClick={() => alert('Funcionalidade de exportação será implementada na próxima etapa.')}
+                onClick={() =>
+                  alert('Funcionalidade de exportação será implementada na próxima etapa.')
+                }
                 className="w-full py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-black transition-colors flex items-center justify-center gap-2"
               >
                 <FileArchive size={14} />
@@ -354,14 +371,22 @@ export function BackupTab(): React.ReactElement {
                 <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
                   <Download size={20} />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600">Modo Leitura</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600">
+                  Modo Leitura
+                </span>
               </div>
               <h3 className="font-bold text-gray-900 mb-1">Importar de Terceiros</h3>
               <p className="text-xs text-gray-500 mb-4 h-10">
-                Abre um arquivo de outro professor (ex: Histórico 2024) para consulta sem misturar com seus dados atuais.
+                Abre um arquivo de outro professor (ex: Histórico 2024) para consulta sem misturar
+                com seus dados atuais.
               </p>
               <button
-                onClick={() => alert('O visualizador "Read-Only" será aberto ao selecionar o arquivo.')}
+                onClick={() => {
+                  const mockTeacherName = 'Prof. Júlio (3º Ano A)'
+                  if (confirm(`Simular importação de arquivo .sesi de "${mockTeacherName}"?`)) {
+                    enterReadOnlyMode(mockTeacherName, {})
+                  }
+                }}
                 className="w-full py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
               >
                 <FolderOpen size={14} />
@@ -395,10 +420,11 @@ export function BackupTab(): React.ReactElement {
         <div className="text-sm text-center">
           {backupMessage && (
             <span
-              className={`flex items-center justify-center gap-2 ${backupMessage.includes('Erro')
+              className={`flex items-center justify-center gap-2 ${
+                backupMessage.includes('Erro')
                   ? 'text-red-600'
                   : 'text-green-600 animate-in fade-in'
-                }`}
+              }`}
             >
               {backupMessage.includes('Erro') ? null : <CheckCircle size={16} />}
               {backupMessage}
