@@ -22,7 +22,7 @@ function CustomTrigger(): React.ReactElement {
     if (showTimerRef.current) clearTimeout(showTimerRef.current)
     if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
 
-    // Wait 2.5s before showing
+    // Wait 1s before showing
     showTimerRef.current = setTimeout(() => {
       setShowTooltip(true)
 
@@ -30,7 +30,7 @@ function CustomTrigger(): React.ReactElement {
       hideTimerRef.current = setTimeout(() => {
         setShowTooltip(false)
       }, 2500)
-    }, 2500)
+    }, 1000)
   }
 
   const handleMouseLeave = (): void => {
@@ -55,7 +55,17 @@ function CustomTrigger(): React.ReactElement {
             onMouseLeave={handleMouseLeave}
             variant="ghost"
             size="icon"
-            className="absolute -left-2.5 top-[63px] -translate-y-1/2 h-5 w-5 p-0 rounded-full bg-sesi-blue text-white border-2 border-transparent shadow-md hover:bg-white hover:text-sesi-blue hover:rounded-[4px] hover:border-sesi-blue hover:scale-110 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-50 flex items-center justify-center group ring-0 outline-none will-change-[border-radius,transform]"
+            className="absolute -left-2.5 top-[63px] -translate-y-1/2 h-5 w-5 p-0 rounded-full bg-sesi-blue text-white border-2 border-transparent shadow-md hover:scale-110 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-50 flex items-center justify-center group ring-0 outline-none will-change-[transform,background]"
+            style={
+              isHovered
+                ? {
+                    background:
+                      'linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #009540, #005C97) border-box',
+                    border: '2px solid transparent',
+                    color: 'var(--sesi-blue)'
+                  }
+                : {}
+            }
           >
             <ArrowLeft
               className={`size-3.5 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${shouldRotate ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'}`}
