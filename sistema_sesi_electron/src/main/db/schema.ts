@@ -26,12 +26,10 @@ export const students = sqliteTable('students', {
 })
 
 // Classes Table
+// Classes Table
 export const classes = sqliteTable('classes', {
   id: text('id').primaryKey(),
   name: text('name').notNull(), // e.g., "4º Ano A"
-  period: text('period').notNull(), // e.g., "Matutino"
-  year: integer('year').notNull(), // e.g., 2024
-  capacity: integer('capacity').notNull(),
   createdAt: text('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`)

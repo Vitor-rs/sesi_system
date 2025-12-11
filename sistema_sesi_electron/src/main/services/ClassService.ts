@@ -15,8 +15,7 @@ export class ClassService {
       return {
         ...c,
         grade,
-        letter,
-        period: c.period as 'Matutino' | 'Vespertino' | 'Noturno'
+        letter
       }
     })
   }

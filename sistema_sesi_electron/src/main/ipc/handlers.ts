@@ -49,9 +49,8 @@ const StudentUpdateSchema = StudentSchema.partial()
 
 const ClassSchema = z.object({
   name: z.string().min(1),
-  period: z.string(),
-  year: z.number(),
-  capacity: z.number()
+  grade: z.string().optional(),
+  letter: z.string().optional()
 })
 
 export function registerHandlers(): void {
@@ -112,7 +111,8 @@ export function registerHandlers(): void {
   ipcMain.handle('classes:create', async (_event, data) => {
     try {
       const validated = ClassSchema.parse(data)
-      return await ClassService.create({ ...validated, id: randomUUID() })
+      const { name } = validated
+      return await ClassService.create({ name, id: randomUUID() })
     } catch (error) {
       logger.error('Invalid class data', error)
       throw error

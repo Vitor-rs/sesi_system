@@ -57,9 +57,6 @@ export async function seedDatabase(): Promise<void> {
       await db.insert(classes).values({
         id,
         name: cls.name,
-        period: cls.period,
-        year: Number.parseInt(cls.grade[0]), // Extract year number
-        capacity: cls.capacity,
         createdAt: new Date().toISOString()
       })
     }
