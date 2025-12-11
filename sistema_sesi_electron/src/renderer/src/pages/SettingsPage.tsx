@@ -7,6 +7,7 @@ import { BackupTab } from '../features/settings/components/BackupTab'
 import { SecurityTab } from '../features/settings/components/SecurityTab'
 import { FormativeTemplatesTab } from '../features/settings/components/templates/FormativeTemplatesTab'
 import { PageLayout } from '../components/layouts/PageLayout'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const SUDO_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
 
@@ -50,80 +51,78 @@ export function SettingsPage(): React.ReactElement {
       icon={Settings}
       description="Gerencie suas preferências e perfil."
     >
-      <div className="h-full flex flex-col gap-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) =>
+          setActiveTab(v as 'personalization' | 'profile' | 'templates' | 'backup' | 'security')
+        }
+        className="h-full flex flex-col gap-6"
+      >
         {/* Tabs - Fixed at top of content area */}
         <div className="flex border-b border-gray-200 overflow-x-auto flex-none">
-          <button
-            onClick={() => setActiveTab('personalization')}
-            className={`px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-t-lg font-semibold whitespace-nowrap ${
-              activeTab === 'personalization'
-                ? 'border-purple-600 text-purple-700 bg-gray-100'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <Palette
-              size={18}
-              className={activeTab === 'personalization' ? 'text-purple-600' : ''}
-            />
-            Personalização
-          </button>
-          <button
-            onClick={() => setActiveTab('profile')}
-            className={`px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-t-lg font-semibold whitespace-nowrap ${
-              activeTab === 'profile'
-                ? 'border-blue-600 text-blue-700 bg-gray-100'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <User size={18} className={activeTab === 'profile' ? 'text-blue-600' : ''} />
-            Perfil
-          </button>
-          <button
-            onClick={() => setActiveTab('templates')}
-            className={`px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-t-lg font-semibold whitespace-nowrap ${
-              activeTab === 'templates'
-                ? 'border-orange-600 text-orange-700 bg-gray-100'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <Library size={18} className={activeTab === 'templates' ? 'text-orange-600' : ''} />
-            Modelos de Avaliação
-          </button>
-          <button
-            onClick={() => setActiveTab('backup')}
-            className={`px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-t-lg font-semibold whitespace-nowrap ${
-              activeTab === 'backup'
-                ? 'border-green-600 text-green-700 bg-gray-100'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <Database size={18} className={activeTab === 'backup' ? 'text-green-600' : ''} />
-            Backup e Dados
-          </button>
-          <button
-            onClick={() => setActiveTab('security')}
-            className={`px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-t-lg font-semibold whitespace-nowrap ${
-              activeTab === 'security'
-                ? 'border-red-600 text-red-700 bg-gray-100'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <Shield size={18} className={activeTab === 'security' ? 'text-red-600' : ''} />
-            Segurança (Cofre)
-          </button>
+          <TabsList className="bg-transparent p-0 h-auto space-x-0 w-full justify-start rounded-none">
+            <TabsTrigger
+              value="personalization"
+              className="px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-none rounded-t-lg data-[state=active]:border-purple-600 data-[state=active]:text-purple-700 data-[state=active]:bg-gray-100 data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent "
+            >
+              <Palette
+                size={18}
+                className={activeTab === 'personalization' ? 'text-purple-600' : ''}
+              />
+              Personalização
+            </TabsTrigger>
+            <TabsTrigger
+              value="profile"
+              className="px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-none rounded-t-lg data-[state=active]:border-blue-600 data-[state=active]:text-blue-700 data-[state=active]:bg-gray-100 data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent"
+            >
+              <User size={18} className={activeTab === 'profile' ? 'text-blue-600' : ''} />
+              Perfil
+            </TabsTrigger>
+            <TabsTrigger
+              value="templates"
+              className="px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-none rounded-t-lg data-[state=active]:border-orange-600 data-[state=active]:text-orange-700 data-[state=active]:bg-gray-100 data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent"
+            >
+              <Library size={18} className={activeTab === 'templates' ? 'text-orange-600' : ''} />
+              Modelos de Avaliação
+            </TabsTrigger>
+            <TabsTrigger
+              value="backup"
+              className="px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-none rounded-t-lg data-[state=active]:border-green-600 data-[state=active]:text-green-700 data-[state=active]:bg-gray-100 data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent"
+            >
+              <Database size={18} className={activeTab === 'backup' ? 'text-green-600' : ''} />
+              Backup e Dados
+            </TabsTrigger>
+            <TabsTrigger
+              value="security"
+              className="px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-none rounded-t-lg data-[state=active]:border-red-600 data-[state=active]:text-red-700 data-[state=active]:bg-gray-100 data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent"
+            >
+              <Shield size={18} className={activeTab === 'security' ? 'text-red-600' : ''} />
+              Segurança (Cofre)
+            </TabsTrigger>
+          </TabsList>
         </div>
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto min-h-0 pr-2">
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            {activeTab === 'personalization' && <PersonalizationTab />}
-            {activeTab === 'profile' && <ProfileTab />}
-            {activeTab === 'templates' && <FormativeTemplatesTab />}
-            {activeTab === 'backup' && <BackupTab />}
-            {activeTab === 'security' && <SecurityTab />}
+            <TabsContent value="personalization">
+              <PersonalizationTab />
+            </TabsContent>
+            <TabsContent value="profile">
+              <ProfileTab />
+            </TabsContent>
+            <TabsContent value="templates">
+              <FormativeTemplatesTab />
+            </TabsContent>
+            <TabsContent value="backup">
+              <BackupTab />
+            </TabsContent>
+            <TabsContent value="security">
+              <SecurityTab />
+            </TabsContent>
           </div>
         </div>
-      </div>
+      </Tabs>
     </PageLayout>
   )
 }

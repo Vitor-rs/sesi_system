@@ -11,6 +11,7 @@ import { StudentHistory } from './StudentHistory'
 import { StudentsStats } from './StudentsStats'
 import { StudentsToolbar } from './StudentsToolbar'
 import { StudentsTable } from './StudentsTable'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export function StudentsDashboard(): React.ReactElement {
   const { students, removeStudent, toggleStatus, fetchStudents } = useStudentStore()
@@ -174,36 +175,29 @@ export function StudentsDashboard(): React.ReactElement {
   return (
     <div className="h-full flex flex-col bg-gray-50/50 p-6">
       {/* Tabs */}
-      <div className="mb-6">
-        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
-          <button
-            onClick={() => setActiveTab('students')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-              activeTab === 'students'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <Users size={16} />
-            <span>Estudantes</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('classes')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-              activeTab === 'classes'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <GraduationCap size={16} />
-            <span>Turmas</span>
-          </button>
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => setActiveTab(v as 'students' | 'classes')}
+        className="h-full flex flex-col min-h-0"
+      >
+        <div className="mb-6 flex-none">
+          <TabsList>
+            <TabsTrigger value="students" className="gap-2">
+              <Users size={16} />
+              Estudantes
+            </TabsTrigger>
+            <TabsTrigger value="classes" className="gap-2">
+              <GraduationCap size={16} />
+              Turmas
+            </TabsTrigger>
+          </TabsList>
         </div>
-      </div>
 
-      {/* TAB CONTENT: STUDENTS */}
-      {activeTab === 'students' && (
-        <div className="flex-1 flex flex-col min-h-0">
+        {/* TAB CONTENT: STUDENTS */}
+        <TabsContent
+          value="students"
+          className="flex-1 flex flex-col min-h-0 mt-0 data-[state=inactive]:hidden"
+        >
           {/* Stats Cards */}
           <StudentsStats
             activeCount={activeCount}
@@ -212,7 +206,7 @@ export function StudentsDashboard(): React.ReactElement {
           />
 
           {/* Main Content Area */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 mt-6">
             {/* Toolbar */}
             <StudentsToolbar
               searchTerm={searchTerm}
@@ -240,15 +234,18 @@ export function StudentsDashboard(): React.ReactElement {
               onDeleteRequest={handleDeleteRequest}
             />
           </div>
-        </div>
-      )}
+        </TabsContent>
 
-      {/* TAB CONTENT: CLASSES */}
-      {activeTab === 'classes' && (
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <ClassManager />
-        </div>
-      )}
+        {/* TAB CONTENT: CLASSES */}
+        <TabsContent
+          value="classes"
+          className="flex-1 flex flex-col min-h-0 mt-0 data-[state=inactive]:hidden"
+        >
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 h-full">
+            <ClassManager />
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Modals */}
       {isFormOpen && (

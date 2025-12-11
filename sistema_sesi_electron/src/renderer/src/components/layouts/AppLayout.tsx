@@ -68,7 +68,7 @@ function CustomTrigger(): React.ReactElement {
             }
           >
             <ArrowLeft
-              className={`size-3.5 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${shouldRotate ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'}`}
+              className={`size-3.5 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${shouldRotate ? 'transform-[rotateY(180deg)]' : 'transform-[rotateY(0deg)]'}`}
             />
             <span className="sr-only">Toggle Sidebar</span>
           </Button>
@@ -76,7 +76,7 @@ function CustomTrigger(): React.ReactElement {
         <TooltipContent
           side="right"
           sideOffset={10}
-          className="bg-[#e6efff] text-[#0047BB] border border-[#0047BB]/20 rounded-md shadow-sm font-medium"
+          className="bg-[#e6efff] text-sesi-blue border border-sesi-blue/20 rounded-md shadow-sm font-medium"
         >
           <p>{isCollapsed ? 'Expandir' : 'Recolher'}</p>
         </TooltipContent>
