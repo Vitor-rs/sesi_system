@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
 import { Palette, User, Database, Shield, Settings, Library } from 'lucide-react'
-import { useSettingsStore } from '../features/settings/stores/useSettingsStore'
+import { useSettingsStore } from '../stores/useSettingsStore'
 import { PersonalizationTab } from '../features/settings/components/PersonalizationTab'
 import { ProfileTab } from '../features/settings/components/ProfileTab'
 import { BackupTab } from '../features/settings/components/BackupTab'
 import { SecurityTab } from '../features/settings/components/SecurityTab'
 import { FormativeTemplatesTab } from '../features/settings/components/templates/FormativeTemplatesTab'
+import { RegistersTab } from '../features/settings/components/RegistersTab'
 import { PageLayout } from '../components/layouts/PageLayout'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -54,7 +55,9 @@ export function SettingsPage(): React.ReactElement {
       <Tabs
         value={activeTab}
         onValueChange={(v) =>
-          setActiveTab(v as 'personalization' | 'profile' | 'templates' | 'backup' | 'security')
+          setActiveTab(
+            v as 'personalization' | 'profile' | 'templates' | 'backup' | 'security' | 'registers'
+          )
         }
         className="h-full flex flex-col gap-6"
       >
@@ -77,6 +80,13 @@ export function SettingsPage(): React.ReactElement {
             >
               <User size={18} className={activeTab === 'profile' ? 'text-blue-600' : ''} />
               Perfil
+            </TabsTrigger>
+            <TabsTrigger
+              value="registers"
+              className="px-6 py-3 text-sm flex items-center gap-2 transition-all border-b-2 rounded-none rounded-t-lg data-[state=active]:border-slate-600 data-[state=active]:text-slate-700 data-[state=active]:bg-gray-100 data-[state=inactive]:border-transparent data-[state=inactive]:bg-transparent"
+            >
+              <Library size={18} className={activeTab === 'registers' ? 'text-slate-600' : ''} />
+              Cadastros
             </TabsTrigger>
             <TabsTrigger
               value="templates"
@@ -110,6 +120,9 @@ export function SettingsPage(): React.ReactElement {
             </TabsContent>
             <TabsContent value="profile">
               <ProfileTab />
+            </TabsContent>
+            <TabsContent value="registers">
+              <RegistersTab />
             </TabsContent>
             <TabsContent value="templates">
               <FormativeTemplatesTab />

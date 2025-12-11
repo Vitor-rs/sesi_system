@@ -1,5 +1,5 @@
 import { Cloud, RefreshCw, Save, CheckCircle, FolderOpen } from 'lucide-react'
-import { useSettingsStore } from '../stores/useSettingsStore'
+import { useSettingsStore } from '../../../stores/useSettingsStore'
 import { SudoLockScreen } from './SudoLockScreen'
 
 export function BackupTab(): React.ReactElement {

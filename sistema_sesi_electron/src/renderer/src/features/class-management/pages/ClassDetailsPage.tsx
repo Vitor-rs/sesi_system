@@ -84,7 +84,7 @@ export function ClassDetailsPage(): React.ReactElement {
     <PageLayout
       title={`Turma ${currentClass.name}`}
       icon={BookOpen}
-      description={`Visualizar e gerenciar as disciplinas da turma ${currentClass.name} - ${currentClass.grade} (${currentClass.period}) ${currentClass.year || ''}`}
+      description={`Visualizar e gerenciar as disciplinas da turma ${currentClass.name} - ${currentClass.grade}`}
       backButton
     >
       <div className="space-y-8">

@@ -24,7 +24,7 @@ function LockScreenSuccess({
   readonly onEnterApp: () => void
 }): React.ReactElement {
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
       <div className="text-center animate-in zoom-in slide-in-from-bottom-4 duration-500">
         <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-900/10">
           {isUnlocking ? (
@@ -247,7 +247,7 @@ export function LockScreen({ onUnlock, isExiting }: LockScreenProps): React.Reac
 
   return (
     <div
-      className={`fixed inset-0 z-[100] bg-gray-50 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${
+      className={`fixed inset-0 z-50 bg-gray-50 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${
         isExiting ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'
       }`}
     >

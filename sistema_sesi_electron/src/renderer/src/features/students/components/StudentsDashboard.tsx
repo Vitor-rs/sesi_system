@@ -5,6 +5,7 @@ import { useClassStore } from '../../../stores/useClassStore'
 import { StudentForm, type StudentFormData } from './StudentForm'
 import { ClassManager } from './ClassManager'
 import { ConfirmModal } from '../../../components/ui/ConfirmModal'
+import { ArchiveStudentModal } from './ArchiveStudentModal'
 import { StudentHistory } from './StudentHistory'
 
 // Sub-components
@@ -32,10 +33,15 @@ export function StudentsDashboard(): React.ReactElement {
   const [showArchived, setShowArchived] = useState(false)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
+
+  // Modals for Actions
   const [editingStudent, setEditingStudent] = useState<Student | null>(null)
   const [viewingHistoryStudent, setViewingHistoryStudent] = useState<Student | null>(null)
+  const [studentToArchive, setStudentToArchive] = useState<{ id: string; name: string } | null>(
+    null
+  )
 
-  // Modal State
+  // Generic Confirm Modal
   const [confirmModalState, setConfirmModalState] = useState<{
     isOpen: boolean
     title: string
@@ -59,7 +65,7 @@ export function StudentsDashboard(): React.ReactElement {
         student.number?.toString().includes(searchTerm)
       const matchesClass = selectedClassId === 'all' || student.classId === selectedClassId
       const matchesStatus = showArchived
-        ? student.status === 'inactive' || student.status === 'transferred'
+        ? student.status === 'inactive'
         : student.status === 'active'
 
       return matchesSearch && matchesClass && matchesStatus
@@ -75,7 +81,11 @@ export function StudentsDashboard(): React.ReactElement {
 
   const activeCount = students.filter((s) => s.status === 'active').length
   const archivedCount = students.filter((s) => s.status === 'inactive').length
-  const transferredCount = students.filter((s) => s.status === 'transferred').length
+  // Transferred is now a subset of inactive, but for stats we might want to separate them via reason?
+  // For now, simplify stats.
+  const transferredCount = students.filter(
+    (s) => s.status === 'inactive' && s.inactiveReason?.includes('Transfer')
+  ).length
 
   // Handlers
   const handleAddStudent = (): void => {
@@ -116,21 +126,19 @@ export function StudentsDashboard(): React.ReactElement {
     })
   }
 
-  const handleArchiveStudent = (id: string, name: string): void => {
-    setConfirmModalState({
-      isOpen: true,
-      title: 'Arquivar Estudante',
-      description: `Deseja arquivar o estudante "${name}"? Ele não aparecerá na lista de ativos, mas o histórico será preservado.`,
-      confirmLabel: 'Arquivar',
-      variant: 'warning',
-      onConfirm: () => {
-        toggleStatus(id, 'inactive')
-        setConfirmModalState((prev) => ({ ...prev, isOpen: false }))
-      }
-    })
+  const handleArchiveClick = (id: string, name: string): void => {
+    setStudentToArchive({ id, name })
+  }
+
+  const confirmArchive = (reason: string): void => {
+    if (studentToArchive) {
+      toggleStatus(studentToArchive.id, 'inactive', reason)
+      setStudentToArchive(null)
+    }
   }
 
   const handleReactivateStudent = (id: string): void => {
+    // Determine reactivate reason or just clear it? Default clearing in store.
     toggleStatus(id, 'active')
   }
 
@@ -148,11 +156,9 @@ export function StudentsDashboard(): React.ReactElement {
           name: data.name,
           classId: data.classId,
           enrollmentType: data.enrollmentType,
-          transferDate: data.transferDate,
-          transferOrigin: data.transferOrigin,
-          transferCity: data.transferCity,
-          transferState: data.transferState,
-          transferObservation: data.transferObservation
+          admissionDate: data.admissionDate || undefined,
+          originType: data.originType || undefined,
+          originDescription: data.originDescription || undefined
         })
       }
       setIsFormOpen(false)
@@ -229,7 +235,7 @@ export function StudentsDashboard(): React.ReactElement {
               showArchived={showArchived}
               onViewHistory={handleViewHistory}
               onEdit={handleEditStudent}
-              onArchive={handleArchiveStudent}
+              onArchive={handleArchiveClick}
               onReactivate={handleReactivateStudent}
               onDeleteRequest={handleDeleteRequest}
             />
@@ -253,6 +259,15 @@ export function StudentsDashboard(): React.ReactElement {
           initialData={editingStudent}
           onSubmit={handleFormSubmit}
           onCancel={() => setIsFormOpen(false)}
+        />
+      )}
+
+      {studentToArchive && (
+        <ArchiveStudentModal
+          isOpen={!!studentToArchive}
+          studentName={studentToArchive.name}
+          onConfirm={confirmArchive}
+          onCancel={() => setStudentToArchive(null)}
         />
       )}
 

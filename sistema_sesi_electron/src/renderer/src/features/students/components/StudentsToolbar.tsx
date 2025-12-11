@@ -86,7 +86,7 @@ export const StudentsToolbar = ({
 
         <button
           onClick={onAddStudent}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm font-medium whitespace-nowrap h-[40px]"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm font-medium whitespace-nowrap h-10"
           title="Novo Estudante"
         >
           <Plus size={18} />

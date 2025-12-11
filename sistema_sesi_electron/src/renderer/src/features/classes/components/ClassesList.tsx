@@ -58,14 +58,11 @@ export function ClassesList(): React.ReactElement {
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 text-lg">{cls.name}</h3>
-                <p className="text-sm text-gray-500">
-                  {cls.grade} • {cls.period}
-                </p>
+                <p className="text-sm text-gray-500">{cls.grade}</p>
               </div>
             </div>
 
             <div className="mt-4 pt-4 border-t border-gray-50 flex justify-between text-sm text-gray-500">
-              <span>Ano: {cls.period}</span>
               {/* Note: sharedTypes says 'grade' e 'letter', but schema has 'year'.
                      ClassService maps 'name' to grade/letter.
                      The UI relies on properties returned by ClassService. */}

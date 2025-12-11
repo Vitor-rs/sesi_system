@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Lock } from 'lucide-react'
-import { useSettingsStore } from '../stores/useSettingsStore'
+import { useSettingsStore } from '../../../stores/useSettingsStore'
 
 export function SudoLockScreen(): React.ReactElement {
   const [password, setPassword] = useState('')

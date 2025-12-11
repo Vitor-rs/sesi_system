@@ -101,8 +101,16 @@ export const useStudentStore = create<StudentState>((set, get) => ({
 
   toggleStatus: async (id, status, reason) => {
     try {
-      // 1. Update status
-      await globalThis.api.updateStudent(id, { status })
+      // 1. Update status and inactiveReason (if provided)
+      const updatePayload: Partial<Student> = { status }
+      if (status === 'inactive') {
+        updatePayload.inactiveReason = reason
+      } else {
+        // Clear reason if reactivating
+        updatePayload.inactiveReason = undefined
+      }
+
+      await globalThis.api.updateStudent(id, updatePayload)
 
       // 2. Add history event
       let eventType: StudentHistoryEvent['type'] = 'info_update'
@@ -114,13 +122,12 @@ export const useStudentStore = create<StudentState>((set, get) => ({
       } else if (status === 'active') {
         eventType = 'reactivated'
         description = reason || 'Estudante reativado.'
-      } else if (status === 'transferred') {
-        eventType = 'transfer_out'
-        description = reason || 'Estudante transferido.'
       }
+      // 'transferred' is now just a reason for 'inactive', but we might still want a specific history event?
+      // For now keeping simpler mapping.
 
       await globalThis.api.addStudentHistory({
-        id: crypto.randomUUID(), // Generator on client or server? Client is fine for UUID
+        id: crypto.randomUUID(),
         studentId: id,
         type: eventType,
         description,

@@ -3,11 +3,13 @@ import React from 'react'
 export interface FloatingInputProps extends React.ComponentProps<'input'> {
   label: string
   icon?: React.ReactNode
+  helperText?: string
 }
 
 export const FloatingLabelInput = ({
   label,
   icon,
+  helperText,
   className,
   ...props
 }: FloatingInputProps): React.ReactElement => (
@@ -25,5 +27,6 @@ export const FloatingLabelInput = ({
         {icon}
       </div>
     )}
+    {helperText && <p className="text-[10px] text-gray-500 mt-1 ml-1">{helperText}</p>}
   </div>
 )

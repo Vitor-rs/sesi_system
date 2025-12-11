@@ -26,8 +26,9 @@ export function SplashScreen({
 
   return (
     <div
-      className={`fixed inset-0 z-[200] flex items-center justify-center bg-gray-50 transition-opacity duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+      className={`fixed inset-0 z-200 flex flex-col items-center justify-center overflow-hidden bg-white text-gray-900 transition-opacity duration-500 ease-in-out ${
+        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
     >
       <div className="relative flex flex-col items-center justify-center">
         {showCustomImage ? (
@@ -48,15 +49,15 @@ export function SplashScreen({
               {/* Subtle backdrop glow */}
               <div className="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full" />
 
-              <h1 className="relative text-9xl font-black italic tracking-tighter bg-linear-to-r from-[#0047BB] via-[#009540] to-[#0047BB] bg-size-[200%_auto] animate-floating-gradient bg-clip-text text-transparent drop-shadow-sm select-none">
+              <h1 className="relative text-9xl font-black italic tracking-tighter bg-linear-to-br from-sesi-blue via-sesi-green to-sesi-blue bg-size-[200%_auto] animate-floating-gradient bg-clip-text text-transparent drop-shadow-sm select-none">
                 SESI
               </h1>
             </div>
             <div className="mt-2 flex items-center gap-2">
               <div className="h-px w-8 bg-gray-300" />
-              <p className="text-sm font-bold tracking-[0.3em] text-[#0047BB] uppercase">
+              <h1 className="mb-2 text-2xl font-bold tracking-tight text-sesi-blue">
                 Sistema FIEMS
-              </p>
+              </h1>
               <div className="h-px w-8 bg-gray-300" />
             </div>
           </div>

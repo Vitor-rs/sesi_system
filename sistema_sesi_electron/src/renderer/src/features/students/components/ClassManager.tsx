@@ -1,8 +1,13 @@
 import React, { useState } from 'react'
-import { Plus, Edit2, Trash2, X, School, TrendingUp, Calendar } from 'lucide-react'
+import { Plus, Edit2, Trash2, X, School, Users, AlertCircle } from 'lucide-react'
 import { useClassStore, type Class } from '../../../stores/useClassStore'
-import { useStudentStore } from '../../../stores/useStudentStore'
+import { useStudentStore, type Student } from '../../../stores/useStudentStore'
 import { ConfirmModal } from '../../../components/ui/ConfirmModal'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent } from '@/components/ui/card'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 export function ClassManager(): React.ReactElement {
   const { classes, addClass, updateClass, removeClass } = useClassStore()
@@ -11,36 +16,30 @@ export function ClassManager(): React.ReactElement {
   // Modal States
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
 
   // Selection States
   const [editingClass, setEditingClass] = useState<Class | null>(null)
   const [classToDelete, setClassToDelete] = useState<Class | null>(null)
-  const [viewingHistoryClass, setViewingHistoryClass] = useState<Class | null>(null)
 
   const [formData, setFormData] = useState({
     grade: '',
-    letter: '',
-    period: 'Matutino' as Class['period']
+    letter: ''
   })
 
-  // derived state for history modal
-  const historyYear = 2024 // Mock year for the requested feature
+  // State for Blocked Deletion Popover
 
   const handleOpenForm = (cls?: Class): void => {
     if (cls) {
       setEditingClass(cls)
       setFormData({
-        grade: cls.grade || '',
-        letter: cls.letter || '',
-        period: cls.period
+        grade: cls.grade,
+        letter: cls.letter
       })
     } else {
       setEditingClass(null)
       setFormData({
         grade: '',
-        letter: '',
-        period: 'Matutino'
+        letter: ''
       })
     }
     setIsFormOpen(true)
@@ -48,64 +47,47 @@ export function ClassManager(): React.ReactElement {
 
   const handleGradeBlur = (): void => {
     // Auto-format "4" -> "4º Ano"
-    // Regex to check if it's just a number
     const numberMatch = /^(\d+)$/.exec(formData.grade)
     if (numberMatch) {
       setFormData((prev) => ({ ...prev, grade: `${numberMatch[1]}º Ano` }))
     }
   }
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
 
     // Uniqueness Check
     const isDuplicate = classes.some(
-      (c) =>
-        c.grade === formData.grade &&
-        c.letter === formData.letter &&
-        c.period === formData.period &&
-        c.id !== editingClass?.id
+      (c) => c.grade === formData.grade && c.letter === formData.letter && c.id !== editingClass?.id
     )
 
     if (isDuplicate) {
-      alert(`A turma ${formData.grade} ${formData.letter} (${formData.period}) já existe!`)
+      alert(`A turma ${formData.grade} ${formData.letter} já existe!`)
       return
     }
 
     if (editingClass) {
-      updateClass(editingClass.id, {
-        ...formData,
-        year: editingClass.year || 2024,
-        capacity: editingClass.capacity || 30
-      })
+      await updateClass(editingClass.id, formData)
     } else {
-      addClass({
-        ...formData,
-        year: 2024,
-        capacity: 30
-      })
+      await addClass(formData)
     }
     setIsFormOpen(false)
   }
 
-  const handleDeleteClick = (cls: Class): void => {
-    // Referral Integrity Check
-    const linkedStudents = students.filter((s) => s.classId === cls.id && s.status === 'active')
-
-    if (linkedStudents.length > 0) {
-      alert(
-        `Não é possível excluir a turma "${cls.name}".\n\nExistem ${linkedStudents.length} estudantes ativos vinculados a ela.\nRemova ou transfira os estudantes antes de excluir a turma.`
-      )
-      return
-    }
-
-    setClassToDelete(cls)
-    setIsDeleteModalOpen(true)
+  const getLinkedStudents = (classId: string): Student[] => {
+    return students.filter((s) => s.classId === classId && s.status === 'active')
   }
 
-  const handleViewHistory = (cls: Class): void => {
-    setViewingHistoryClass(cls)
-    setIsHistoryModalOpen(true)
+  const handleDeleteClick = (cls: Class): void => {
+    const linked = getLinkedStudents(cls.id)
+    if (linked.length > 0) {
+      // Logic handled by opening Popover via state or simple alert fallback if Popover logic fails,
+      // but UI requires sticky Popover or similar.
+      // Actually, distinct UX: The Trash button should distinctively show it's disabled or show popover when clicked.
+      return
+    }
+    setClassToDelete(cls)
+    setIsDeleteModalOpen(true)
   }
 
   const confirmDelete = (): void => {
@@ -116,12 +98,6 @@ export function ClassManager(): React.ReactElement {
     }
   }
 
-  const periodColors = {
-    Matutino: 'bg-yellow-100 text-yellow-800',
-    Vespertino: 'bg-orange-100 text-orange-800',
-    Noturno: 'bg-indigo-100 text-indigo-800'
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -129,13 +105,9 @@ export function ClassManager(): React.ReactElement {
           <h2 className="text-lg font-semibold text-gray-800">Gerenciamento de Turmas</h2>
           <p className="text-sm text-gray-500">Cadastre e organize as turmas da escola.</p>
         </div>
-        <button
-          onClick={() => handleOpenForm()}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-        >
-          <Plus size={20} />
-          Nova Turma
-        </button>
+        <Button onClick={() => handleOpenForm()}>
+          <Plus className="mr-2 h-4 w-4" /> Nova Turma
+        </Button>
       </div>
 
       {classes.length === 0 ? (
@@ -149,64 +121,91 @@ export function ClassManager(): React.ReactElement {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {classes.map((cls) => {
-            // Deterministic mock data based on ID for lint compliance (no impure Math.random)
-            const seed = (cls.id.codePointAt(0) ?? 0) + (cls.id.codePointAt(cls.id.length - 1) ?? 0)
-            const mockHistoryStudents = (seed % 10) + 20
+            const linkedStudents = getLinkedStudents(cls.id)
+            const isBlocked = linkedStudents.length > 0
 
             return (
-              <div
-                key={cls.id}
-                className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow relative group flex flex-col h-full"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                      <School size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800">
-                        {cls.grade} {cls.letter}
-                      </h3>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded-full ${periodColors[cls.period]}`}
-                      >
-                        {cls.period}
-                      </span>
+              <Card key={cls.id} className="relative group hover:shadow-md transition-shadow">
+                <CardContent className="p-4 flex flex-col h-full">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg">
+                        <School size={24} />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">
+                          {cls.grade} <span className="text-blue-600">{cls.letter}</span>
+                        </h3>
+                        <div className="flex items-center text-sm text-gray-500 mt-0.5">
+                          <Users size={14} className="mr-1.5" />
+                          {linkedStudents.length} alunos
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
+
+                  <div className="border-t border-gray-100 pt-3 mt-auto flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-gray-400 hover:text-blue-600"
                       onClick={() => handleOpenForm(cls)}
-                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full"
                       title="Editar"
                     >
                       <Edit2 size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(cls)}
-                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full"
-                      title="Excluir"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
+                    </Button>
 
-                <div className="mt-auto pt-3 border-t border-gray-100">
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => handleViewHistory(cls)}
-                      className="group/tag flex items-center gap-1.5 px-2 py-1 bg-pink-50 text-pink-700 rounded text-xs hover:bg-pink-100 transition-colors border border-pink-100"
-                      title="Ver detalhes de 2024"
-                    >
-                      <Calendar size={12} />
-                      <span className="font-medium">2024</span>
-                      <span className="w-px h-3 bg-pink-200 mx-1"></span>
-                      <span className="text-pink-600">{mockHistoryStudents} alunos</span>
-                    </button>
+                    {isBlocked ? (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-300 hover:text-red-400 hover:bg-red-50"
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                          <div className="space-y-3">
+                            <div className="flex items-start gap-2 text-red-600">
+                              <AlertCircle size={18} className="mt-0.5 shrink-0" />
+                              <div className="space-y-1">
+                                <h4 className="font-medium text-sm">Não é possível excluir</h4>
+                                <p className="text-xs text-muted-foreground">
+                                  Esta turma possui {linkedStudents.length} alunos ativos. Remova-os
+                                  primeiro.
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="max-h-[200px] overflow-y-auto rounded-md border text-xs">
+                              {linkedStudents.map((s) => (
+                                <div
+                                  key={s.id}
+                                  className="p-2 border-b last:border-0 bg-gray-50/50 flex justify-between"
+                                >
+                                  <span>{s.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => handleDeleteClick(cls)}
+                        title="Excluir"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    )}
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             )
           })}
         </div>
@@ -228,132 +227,43 @@ export function ClassManager(): React.ReactElement {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-4 space-y-4">
-              <div>
-                <label
-                  htmlFor="grade-input"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Série / Ano
-                </label>
-                <input
-                  id="grade-input"
-                  type="text"
-                  required
-                  placeholder="Ex: 4"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-gray-900"
-                  value={formData.grade}
-                  onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                  onBlur={handleGradeBlur}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  O sistema adicionará &quot;º Ano&quot; automaticamente.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="letter-input"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Letra
-                  </label>
-                  <input
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2">
+                  <Label htmlFor="grade-input">Série / Ano</Label>
+                  <Input
+                    id="grade-input"
+                    type="text"
+                    required
+                    placeholder="Ex: 4"
+                    value={formData.grade}
+                    onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                    onBlur={handleGradeBlur}
+                  />
+                  <p className="text-[10px] text-gray-500 mt-1">
+                    Ex: &quot;4&quot; vira &quot;4º Ano&quot;
+                  </p>
+                </div>
+                <div className="col-span-1">
+                  <Label htmlFor="letter-input">Letra</Label>
+                  <Input
                     id="letter-input"
                     type="text"
                     required
                     placeholder="Ex: A"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none uppercase text-gray-900"
-                    maxLength={3}
+                    className="uppercase"
+                    maxLength={2}
                     value={formData.letter}
                     onChange={(e) =>
                       setFormData({ ...formData, letter: e.target.value.toUpperCase() })
                     }
                   />
                 </div>
-                <div>
-                  <label
-                    htmlFor="period-select"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Período
-                  </label>
-                  <select
-                    id="period-select"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none bg-white"
-                    value={formData.period}
-                    onChange={(e) =>
-                      setFormData({ ...formData, period: e.target.value as Class['period'] })
-                    }
-                  >
-                    <option value="Matutino">Matutino</option>
-                    <option value="Vespertino">Vespertino</option>
-                    <option value="Noturno">Noturno</option>
-                  </select>
-                </div>
               </div>
+
               <div className="flex justify-end pt-2">
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
-                >
-                  Salvar
-                </button>
+                <Button type="submit">Salvar</Button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* History Modal (Mini Dashboard) */}
-      {isHistoryModalOpen && viewingHistoryClass && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm border border-gray-100 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between p-4 border-b border-pink-100 bg-pink-50 rounded-t-lg">
-              <div>
-                <h3 className="font-semibold text-pink-900">
-                  Resumo da Turma: {viewingHistoryClass.grade} {viewingHistoryClass.letter}
-                </h3>
-                <p className="text-xs text-pink-700 font-medium opacity-80">
-                  Ano Letivo {historyYear} • {viewingHistoryClass.period}
-                </p>
-              </div>
-              <button
-                onClick={() => setIsHistoryModalOpen(false)}
-                className="text-pink-400 hover:text-pink-600 p-1 hover:bg-white/50 rounded-full transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="text-center">
-                <p className="text-sm text-gray-500">Média Geral da Turma</p>
-                <div className="flex items-end justify-center gap-1 mt-1">
-                  <span className="text-3xl font-bold text-gray-800">8.4</span>
-                  <span className="text-sm text-green-500 font-medium mb-1 flex items-center">
-                    <TrendingUp size={14} className="mr-0.5" /> +0.2
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="bg-gray-50 p-3 rounded-lg text-center border border-gray-100">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Início</p>
-                  <p className="text-xl font-semibold text-gray-800 mt-1">28</p>
-                  <p className="text-[10px] text-gray-400">Estudantes</p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg text-center border border-gray-100">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Fim</p>
-                  <p className="text-xl font-semibold text-gray-800 mt-1">26</p>
-                  <p className="text-[10px] text-gray-400">Estudantes</p>
-                </div>
-              </div>
-
-              <div className="text-center pt-2">
-                <span className="inline-flex items-center px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">
-                  Professor Titular: [Nome do Professor]
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       )}

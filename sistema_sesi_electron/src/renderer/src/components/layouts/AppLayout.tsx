@@ -55,7 +55,7 @@ function CustomTrigger(): React.ReactElement {
             onMouseLeave={handleMouseLeave}
             variant="ghost"
             size="icon"
-            className="absolute -left-2.5 top-[63px] -translate-y-1/2 h-5 w-5 p-0 rounded-full bg-sesi-blue text-white border-2 border-transparent shadow-md hover:scale-110 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-50 flex items-center justify-center group ring-0 outline-none will-change-[transform,background]"
+            className="absolute -left-2.5 top-16 -translate-y-1/2 h-5 w-5 p-0 rounded-full bg-sesi-blue text-white border-2 border-transparent shadow-md hover:scale-110 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-50 flex items-center justify-center group ring-0 outline-none will-change-[transform,background]"
             style={
               isHovered
                 ? {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Shield, Lock, ChevronDown, Key, FileText, CheckCircle } from 'lucide-react'
-import { useSettingsStore } from '../stores/useSettingsStore'
+import { useSettingsStore } from '../../../stores/useSettingsStore'
 import { SudoLockScreen } from './SudoLockScreen'
 
 export function SecurityTab(): React.ReactElement {

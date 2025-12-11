@@ -7,7 +7,7 @@ import {
   Upload,
   MonitorPlay
 } from 'lucide-react'
-import { useSettingsStore } from '../stores/useSettingsStore'
+import { useSettingsStore } from '../../../stores/useSettingsStore'
 
 export function PersonalizationTab(): React.ReactElement {
   const {

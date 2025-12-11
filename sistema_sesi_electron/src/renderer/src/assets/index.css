@@ -1,15 +1,12 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:is(.dark *));
-
 @theme {
   --color-sesi-dark: #003366;
-  --color-sesi-blue: #0047BB;
+  --color-sesi-blue: #0047bb;
   --color-sesi-green: #009540;
   --color-sesi-light: #4d94ff;
 
-  --gradient-sesi: linear-gradient(to right, #0047BB, #009540);
-
+  --gradient-sesi: linear-gradient(to right, #0047bb, #009540);
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -69,7 +66,6 @@
   --animate-subtle-bounce: subtle-bounce 1s infinite;
 
   @keyframes subtle-bounce {
-
     0%,
     100% {
       transform: translateY(-3%);
@@ -106,7 +102,6 @@
   If we unquote it, it breaks.
 */
 @layer base {
-
   *,
   ::after,
   ::before,

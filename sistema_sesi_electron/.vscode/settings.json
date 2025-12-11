@@ -12,5 +12,6 @@
     "connectionId": "vitor-rs",
     "projectKey": "Vitor-rs_sesi_system"
   },
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.validate": false
 }

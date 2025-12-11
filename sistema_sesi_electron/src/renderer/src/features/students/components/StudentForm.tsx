@@ -1,20 +1,29 @@
 import React, { useState } from 'react'
-import { X, Check, AlertCircle, Calendar } from 'lucide-react'
+import { X, Calendar, AlertCircle } from 'lucide-react'
 import type { Student } from '../../../stores/useStudentStore'
 import { useClassStore } from '../../../stores/useClassStore'
-import { useSettingsStore } from '../../../stores/useSettingsStore'
 import { formatStudentName } from '../../../utils/formatters'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Textarea } from '@/components/ui/textarea'
 
 export interface StudentFormData {
   name: string
   classId?: string
   status?: Student['status']
-  enrollmentType: 'regular' | 'transfer'
-  transferDate?: string
-  transferOrigin?: string
-  transferCity?: string
-  transferState?: string
-  transferObservation?: string
+  enrollmentType: 'regular' | 'transfer_in' | 'late_admission'
+  admissionDate?: string
+  originType?: 'sesi_internal' | 'public' | 'private_scholarship' | 'private_paying' | 'other'
+  originDescription?: string
 }
 
 interface StudentFormProps {
@@ -29,36 +38,22 @@ export function StudentForm({
   onCancel
 }: StudentFormProps): React.ReactElement {
   const { classes } = useClassStore()
-  const { schoolYearStart } = useSettingsStore()
 
   // Core State
   const [name, setName] = useState(initialData?.name ?? '')
   const [classId, setClassId] = useState(initialData?.classId ?? '')
-  const [status, setStatus] = useState<Student['status']>(initialData?.status ?? 'active')
+  const [status] = useState<Student['status']>(initialData?.status ?? 'active')
 
-  // Enrollment Logic State - Initialized purely to avoid useEffect
-  const [enrollmentType, setEnrollmentType] = useState<'regular' | 'transfer'>(() => {
-    if (initialData?.enrollmentType) return initialData.enrollmentType
-    if (initialData) return 'regular' // Fallback for edits without type
-
-    // Auto-detection logic for new students
-    const start = new Date(schoolYearStart)
-    const today = new Date()
-    const diffDays = Math.ceil(Math.abs(today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
-
-    return today > start && diffDays > 30 ? 'transfer' : 'regular'
-  })
-
-  // Transfer Fields
-  const [transferDate, setTransferDate] = useState(
-    initialData?.transferDate ?? new Date().toISOString().split('T')[0]
+  // Enrollment State
+  const [enrollmentType, setEnrollmentType] = useState<StudentFormData['enrollmentType']>(
+    initialData?.enrollmentType ?? 'regular'
   )
-  const [transferOrigin, setTransferOrigin] = useState(initialData?.transferOrigin ?? '')
-  const [transferCity, setTransferCity] = useState(initialData?.transferCity ?? '')
-  const [transferState, setTransferState] = useState(initialData?.transferState ?? '')
-  const [transferObservation, setTransferObservation] = useState(
-    initialData?.transferObservation ?? ''
+  const [admissionDate, setAdmissionDate] = useState(
+    initialData?.admissionDate ?? new Date().toISOString().split('T')[0]
   )
+  const [originType, setOriginType] = useState(initialData?.originType ?? undefined)
+
+  const [originDescription, setOriginDescription] = useState(initialData?.originDescription ?? '')
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault()
@@ -68,16 +63,9 @@ export function StudentForm({
         classId: classId || undefined,
         status,
         enrollmentType,
-        transferDate: enrollmentType === 'transfer' ? transferDate : undefined,
-        transferOrigin: enrollmentType === 'transfer' ? transferOrigin : undefined,
-        transferCity:
-          enrollmentType === 'transfer' && transferOrigin !== 'Outros' ? transferCity : undefined,
-        transferState:
-          enrollmentType === 'transfer' && transferOrigin !== 'Outros' ? transferState : undefined,
-        transferObservation:
-          enrollmentType === 'transfer' && transferOrigin === 'Outros'
-            ? transferObservation
-            : undefined
+        admissionDate: enrollmentType === 'regular' ? undefined : admissionDate,
+        originType: enrollmentType === 'regular' ? undefined : originType,
+        originDescription: enrollmentType === 'regular' ? undefined : originDescription
       })
     }
   }
@@ -88,384 +76,148 @@ export function StudentForm({
     }
   }
 
-  const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const val = e.target.value
-      .toUpperCase()
-      .slice(0, 2)
-      .replaceAll(/[^A-Z]/g, '')
-    setTransferState(val)
-  }
-
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg border border-gray-100 animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 shrink-0">
-          <h2 className="text-lg font-semibold text-gray-800">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg border border-gray-200 animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 shrink-0">
+          <h2 className="text-xl font-semibold text-gray-900">
             {initialData ? 'Editar Estudante' : 'Novo Estudante'}
           </h2>
-          <button
-            onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-full transition-colors"
-          >
+          <Button variant="ghost" size="icon" onClick={onCancel}>
             <X size={20} />
-          </button>
+          </Button>
         </div>
 
-        <div className="overflow-y-auto p-4 space-y-6 flex-1">
+        <div className="overflow-y-auto p-6 space-y-6 flex-1">
           <form id="student-form" onSubmit={handleSubmit} className="space-y-6">
             {/* 1. Basic Info */}
             <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="student-name"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Nome Completo
-                </label>
-                <input
-                  id="student-name"
-                  type="text"
+              <div className="grid gap-2">
+                <Label htmlFor="name">Nome Completo</Label>
+                <Input
+                  id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onBlur={handleBlur}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder-gray-400 text-gray-900"
                   placeholder="Ex: Ana da Silva"
                   autoFocus
                   required
                 />
-                <p className="text-xs text-gray-500 mt-1">O nome será formatado automaticamente.</p>
+                <p className="text-[10px] text-muted-foreground">
+                  O nome será formatado automaticamente e capitalizado.
+                </p>
               </div>
-              <div>
-                <label
-                  htmlFor="student-class"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
+
+              <div className="grid gap-2">
+                <Label htmlFor="class">
                   Turma <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="student-class"
-                  value={classId}
-                  onChange={(e) => setClassId(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white invalid:border-red-300 invalid:text-red-600 text-gray-900"
-                  required
-                >
-                  <option value="">Selecione uma turma...</option>
-                  {classes.map((cls) => (
-                    <option key={cls.id} value={cls.id}>
-                      {cls.name} ({cls.period})
-                    </option>
-                  ))}
-                </select>
-                {classes.length === 0 ? (
-                  <p className="text-xs text-red-600 mt-1 font-medium flex items-center gap-1">
-                    <AlertCircle size={12} />É necessário criar uma turma antes de cadastrar
-                    estudantes.
-                  </p>
-                ) : (
-                  <p className="text-xs text-gray-500 mt-1">
-                    O estudante deve ser vinculado a uma turma.
+                </Label>
+                <Select value={classId} onValueChange={setClassId} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione uma turma..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes.map((cls) => (
+                      <SelectItem key={cls.id} value={cls.id}>
+                        {cls.grade} {cls.letter}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {classes.length === 0 && (
+                  <p className="text-xs text-red-600 flex items-center gap-1">
+                    <AlertCircle size={12} /> É necessário criar uma turma antes.
                   </p>
                 )}
               </div>
             </div>
 
-            {/* 2. Enrollment Details (Only for New Students or Editing Admission Info) */}
+            {/* 2. Enrollment Details */}
             {!initialData && (
-              <div className="bg-gray-50/50 p-4 rounded-lg border border-gray-100 space-y-3">
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-800">
-                  <Calendar size={16} className="text-blue-600" />
+              <div className="bg-muted/30 p-4 rounded-lg border border-border space-y-4">
+                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  <Calendar size={16} className="text-primary" />
                   Tipo de Ingresso
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <label
-                    htmlFor="enrollment-regular"
-                    aria-label="Matrícula Regular"
-                    className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all h-full ${enrollmentType === 'regular' ? 'bg-white border-blue-200 ring-1 ring-blue-500/20 shadow-sm' : 'bg-transparent border-gray-200 hover:bg-white hover:border-gray-300'}`}
-                  >
-                    <input
-                      id="enrollment-regular"
-                      type="radio"
-                      name="enrollmentType"
-                      value="regular"
-                      checked={enrollmentType === 'regular'}
-                      onChange={() => setEnrollmentType('regular')}
-                      className="mt-1"
-                    />
-                    <div>
-                      <span className="block text-sm font-medium text-gray-900">
-                        Matrícula Regular
-                      </span>
-                      <span className="block text-xs text-gray-500 mt-0.5">
-                        Início do ano letivo
-                      </span>
-                    </div>
-                  </label>
+                <RadioGroup
+                  value={enrollmentType}
+                  onValueChange={(v) => setEnrollmentType(v as StudentFormData['enrollmentType'])}
+                  className="grid grid-cols-2 gap-4"
+                >
+                  <div className="flex items-center space-x-2 border p-3 rounded-md bg-background hover:bg-muted/50 transition-colors">
+                    <RadioGroupItem value="regular" id="r1" />
+                    <Label htmlFor="r1" className="cursor-pointer font-normal">
+                      <span className="font-medium block">Matrícula Regular</span>
+                      <span className="text-xs text-muted-foreground">Início do ano letivo</span>
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border p-3 rounded-md bg-background hover:bg-muted/50 transition-colors">
+                    <RadioGroupItem value="transfer_in" id="r2" />
+                    <Label htmlFor="r2" className="cursor-pointer font-normal">
+                      <span className="font-medium block">Transferência</span>
+                      <span className="text-xs text-muted-foreground">Vindo de outra escola</span>
+                    </Label>
+                  </div>
+                </RadioGroup>
 
-                  <label
-                    htmlFor="enrollment-transfer"
-                    aria-label="Transferência"
-                    className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all h-full ${enrollmentType === 'transfer' ? 'bg-white border-blue-200 ring-1 ring-blue-500/20 shadow-sm' : 'bg-transparent border-gray-200 hover:bg-white hover:border-gray-300'}`}
-                  >
-                    <input
-                      id="enrollment-transfer"
-                      type="radio"
-                      name="enrollmentType"
-                      value="transfer"
-                      checked={enrollmentType === 'transfer'}
-                      onChange={() => setEnrollmentType('transfer')}
-                      className="mt-1"
-                    />
-                    <div>
-                      <span className="block text-sm font-medium text-gray-900">Transferência</span>
-                      <span className="block text-xs text-gray-500 mt-0.5">
-                        Admissão tardia / pós-início
-                      </span>
-                    </div>
-                  </label>
-                </div>
-
-                {/* Conditional Fields for Transfer */}
-                {enrollmentType === 'transfer' && (
-                  <div className="animate-in fade-in slide-in-from-top-2 pt-2 space-y-3 border-t border-gray-100 mt-3">
-                    <div>
-                      <label
-                        htmlFor="transfer-date"
-                        className="block text-xs font-medium text-gray-600 mb-1"
-                      >
-                        Data de Admissão <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        id="transfer-date"
+                {enrollmentType !== 'regular' && (
+                  <div className="space-y-4 pt-2 animate-in fade-in slide-in-from-top-2">
+                    <div className="grid gap-2">
+                      <Label htmlFor="admissionDate">Data de Admissão</Label>
+                      <Input
+                        id="admissionDate"
                         type="date"
-                        value={transferDate}
-                        onChange={(e) => setTransferDate(e.target.value)}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                        value={admissionDate}
+                        onChange={(e) => setAdmissionDate(e.target.value)}
                         required
                       />
                     </div>
-                    <div>
-                      <label
-                        htmlFor="transfer-origin"
-                        className="block text-xs font-medium text-gray-600 mb-1"
-                      >
-                        Origem / Observação <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        id="transfer-origin"
-                        value={transferOrigin}
-                        onChange={(e) => setTransferOrigin(e.target.value)}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-white"
+
+                    <div className="grid gap-2">
+                      <Label>Origem</Label>
+                      <Select
+                        value={originType}
+                        onValueChange={(v) => setOriginType(v as StudentFormData['originType'])}
                         required
                       >
-                        <option value="">Selecione a origem...</option>
-                        <option value="Unidade SESI (Transferência Interna)">
-                          Unidade SESI (Transferência Interna)
-                        </option>
-                        <option value="Escola Pública (Transferência Externa) - Não Bolsista">
-                          Escola Pública (Transf. Externa) - Não Bolsista
-                        </option>
-                        <option value="Escola Particular (Transferência Externa) - Não Bolsista">
-                          Escola Particular (Transf. Externa) - Não Bolsista
-                        </option>
-                        <option value="Escola Pública (Transferência Externa) - Bolsista">
-                          Escola Pública (Transf. Externa) - Bolsista
-                        </option>
-                        <option value="Escola Particular (Transferência Externa) - Bolsista">
-                          Escola Particular (Transf. Externa) - Bolsista
-                        </option>
-                        <option value="Outros">Outros</option>
-                      </select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a origem..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sesi_internal">Unidade SESI (Interna)</SelectItem>
+                          <SelectItem value="public">Escola Pública</SelectItem>
+                          <SelectItem value="private_scholarship">Particular (Bolsista)</SelectItem>
+                          <SelectItem value="private_paying">Particular (Pagante)</SelectItem>
+                          <SelectItem value="other">Outros</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
-                    {/* Optional Fields: City/State (If NOT Outros and Origin Selected) */}
-                    {transferOrigin && transferOrigin !== 'Outros' && (
-                      <div className="flex gap-3 animate-in fade-in slide-in-from-top-1">
-                        <div className="flex-1">
-                          <label
-                            htmlFor="transfer-city"
-                            className="block text-xs font-medium text-gray-600 mb-1"
-                          >
-                            Cidade (Opcional)
-                          </label>
-                          <input
-                            id="transfer-city"
-                            type="text"
-                            value={transferCity}
-                            onChange={(e) => setTransferCity(e.target.value)}
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 placeholder-gray-300"
-                            placeholder="Ex: Dourados"
-                          />
-                        </div>
-                        <div className="w-24">
-                          <label
-                            htmlFor="transfer-state"
-                            className="block text-xs font-medium text-gray-600 mb-1"
-                          >
-                            Estado (UF)
-                          </label>
-                          <input
-                            id="transfer-state"
-                            type="text"
-                            value={transferState}
-                            onChange={handleStateChange}
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 placeholder-gray-300 uppercase text-center"
-                            placeholder="MS"
-                            maxLength={2}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Optional Field: Observation (If Outros) */}
-                    {transferOrigin === 'Outros' && (
-                      <div className="animate-in fade-in slide-in-from-top-1">
-                        <label
-                          htmlFor="transfer-obs"
-                          className="block text-xs font-medium text-gray-600 mb-1"
-                        >
-                          Descrição / Observação (Opcional)
-                        </label>
-                        <textarea
-                          id="transfer-obs"
-                          value={transferObservation}
-                          onChange={(e) => setTransferObservation(e.target.value)}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 placeholder-gray-300 resize-none"
-                          rows={3}
-                          placeholder="Descreva a origem ou motivo..."
-                        />
-                      </div>
-                    )}
+                    <div className="grid gap-2">
+                      <Label htmlFor="description">Observação / Detalhes</Label>
+                      <Textarea
+                        id="description"
+                        value={originDescription}
+                        onChange={(e) => setOriginDescription(e.target.value)}
+                        placeholder="Nome da escola anterior ou detalhes..."
+                        rows={2}
+                      />
+                    </div>
                   </div>
                 )}
-              </div>
-            )}
-
-            {/* 3. Status (Only for Editing) */}
-            {initialData && (
-              <div>
-                <span
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                  id="status-group-label"
-                >
-                  Status Atual
-                </span>
-                <div
-                  role="radiogroup"
-                  aria-labelledby="status-group-label"
-                  className="flex flex-col gap-2"
-                >
-                  <label
-                    htmlFor="status-active"
-                    className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'active' ? 'bg-green-50 border-green-200 ring-1 ring-green-500' : 'border-gray-200 hover:bg-gray-50'}`}
-                  >
-                    <input
-                      id="status-active"
-                      type="radio"
-                      name="status"
-                      value="active"
-                      checked={status === 'active'}
-                      onChange={() => setStatus('active')}
-                      className="sr-only"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-2 h-2 rounded-full ${status === 'active' ? 'bg-green-500' : 'bg-gray-300'}`}
-                        />
-                        <span
-                          className={`font-medium ${status === 'active' ? 'text-green-900' : 'text-gray-700'}`}
-                        >
-                          Ativo
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-0.5">
-                        Estudante frequentando aulas normalmente.
-                      </p>
-                    </div>
-                    {status === 'active' && <Check size={16} className="text-green-600" />}
-                  </label>
-
-                  <label
-                    htmlFor="status-inactive"
-                    className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'inactive' ? 'bg-gray-50 border-gray-300 ring-1 ring-gray-500' : 'border-gray-200 hover:bg-gray-50'}`}
-                  >
-                    <input
-                      id="status-inactive"
-                      type="radio"
-                      name="status"
-                      value="inactive"
-                      checked={status === 'inactive'}
-                      onChange={() => setStatus('inactive')}
-                      className="sr-only"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-2 h-2 rounded-full ${status === 'inactive' ? 'bg-gray-500' : 'bg-gray-300'}`}
-                        />
-                        <span
-                          className={`font-medium ${status === 'inactive' ? 'text-gray-900' : 'text-gray-700'}`}
-                        >
-                          Arquivado / Inativo
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-0.5">
-                        Matrícula trancada ou desistente.
-                      </p>
-                    </div>
-                    {status === 'inactive' && <Check size={16} className="text-gray-600" />}
-                  </label>
-
-                  <label
-                    htmlFor="status-transferred"
-                    className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${status === 'transferred' ? 'bg-red-50 border-red-200 ring-1 ring-red-500' : 'border-gray-200 hover:bg-gray-50'}`}
-                  >
-                    <input
-                      id="status-transferred"
-                      type="radio"
-                      name="status"
-                      value="transferred"
-                      checked={status === 'transferred'}
-                      onChange={() => setStatus('transferred')}
-                      className="sr-only"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-2 h-2 rounded-full ${status === 'transferred' ? 'bg-red-500' : 'bg-gray-300'}`}
-                        />
-                        <span
-                          className={`font-medium ${status === 'transferred' ? 'text-red-900' : 'text-gray-700'}`}
-                        >
-                          Transferido
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-0.5">Transferido para outra escola.</p>
-                    </div>
-                    {status === 'transferred' && <Check size={16} className="text-red-600" />}
-                  </label>
-                </div>
               </div>
             )}
           </form>
         </div>
 
-        <div className="flex justify-end gap-2 p-4 border-t border-gray-100 bg-gray-50/50 rounded-b-lg">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-          >
+        <div className="flex justify-end gap-2 p-6 border-t border-gray-100 bg-gray-50/50 rounded-b-lg">
+          <Button variant="outline" onClick={onCancel}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            form="student-form"
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors"
-          >
-            {initialData ? 'Salvar Alterações' : 'Adicionar Estudante'}
-          </button>
+          </Button>
+          <Button type="submit" form="student-form">
+            {initialData ? 'Salvar Alterações' : 'Cadastrar Estudante'}
+          </Button>
         </div>
       </div>
     </div>

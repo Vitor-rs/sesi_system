@@ -33,10 +33,16 @@ export const useClassStore = create<ClassState>((set, get) => ({
   addClass: async (data) => {
     set({ isLoading: true, error: null })
     try {
-      // Backend handles name generation if needed, or we send it?
-      // Helper to generate name if missing
+      // Name is auto-generated from Grade + Letter
       const name = `${data.grade} ${data.letter}`
-      await globalThis.window.api.createClass({ ...data, name, id: crypto.randomUUID() })
+      // Remove deprecated fields from payload if they exist in UI code momentarily,
+      // but here strict typing should guide us.
+      // We pass generic ID generation to client for now as per previous pattern.
+      await globalThis.window.api.createClass({
+        ...data,
+        name,
+        id: crypto.randomUUID()
+      })
       await get().fetchClasses()
     } catch (error) {
       console.error('Failed to create class:', error)
@@ -47,16 +53,26 @@ export const useClassStore = create<ClassState>((set, get) => ({
   updateClass: async (id, data) => {
     set({ isLoading: true, error: null })
     try {
-      // Logic to regenerate name if grade/letter changes should ideally be in backend or shared
-      // For now, let's keep it simple (optimistic updates or backend trigger)
-      // Since we refresh, Backend should handle it OR we send updated name
-      const updatedData = { ...data }
-      // To properly update name we might need current state, but simple overwrite is safer:
-      // If grade/letter is updated, we should ideally recompute name.
-      // But let's assume UI handles it or Backend triggers.
-      // Actually, let's just send what we have.
+      // If grade/letter changes, we might want to update name.
+      // Ideally we check if grade/letter are present in data.
+      // For simplicity, we assume backend or UI handles full object or we just send partial.
+      // But if grade/letter are in data, we should update name too.
+      // However 'data' is Partial<Omit<Class, 'id' | 'name'>>.
+      // If we don't have current state here easily, we might miss name update.
+      // Let's rely on the fact that for this refactor, we usually send full updates or we can grab current class.
 
-      await globalThis.window.api.updateClass(id, updatedData)
+      const currentClass = get().classes.find((c) => c.id === id)
+      let updatedName: string | undefined = undefined
+
+      if (currentClass) {
+        const newGrade = data.grade || currentClass.grade
+        const newLetter = data.letter || currentClass.letter
+        updatedName = `${newGrade} ${newLetter}`
+      }
+
+      const payload = { ...data, ...(updatedName ? { name: updatedName } : {}) }
+
+      await globalThis.window.api.updateClass(id, payload)
       await get().fetchClasses()
     } catch (error) {
       console.error('Failed to update class:', error)

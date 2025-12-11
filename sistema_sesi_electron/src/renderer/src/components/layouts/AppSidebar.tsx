@@ -34,14 +34,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>): 
       collapsible="icon"
       variant="sidebar"
       {...props}
-      className="bg-gradient-to-br from-[#005C97] to-[#363795] border-none overflow-x-hidden"
+      className="bg-linear-to-br from-[#005C97] to-[#363795] border-none overflow-x-hidden"
     >
       <SidebarHeader className="h-16 border-b border-white/10 px-4 group-data-[collapsible=icon]:px-1 bg-transparent transition-[padding] duration-300 overflow-hidden">
         <SidebarMenu className="text-center">
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="hover:bg-sidebar-accent/10">
               <Link to="/">
-                <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-linear-to-br from-[#009540] to-[#007a33] text-white shadow-lg shadow-black/10 border border-white/10 transition-all hover:scale-105 shrink-0">
+                <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-linear-to-br from-sesi-green to-[#007a33] text-white shadow-lg shadow-black/10 border border-white/10 transition-all hover:scale-105 shrink-0">
                   <GraduationCap className="size-6" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight ml-1 transition-[width,opacity,margin] duration-300 ease-in-out group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:ml-0 overflow-hidden whitespace-nowrap">
@@ -152,7 +152,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>): 
                 >
                   <Avatar className="h-9 w-9 rounded-xl border border-white/20 shadow-sm shrink-0">
                     <AvatarImage src="" alt="Vitor R." />
-                    <AvatarFallback className="rounded-xl bg-linear-to-br from-[#009540] to-[#007a33] text-white font-bold">
+                    <AvatarFallback className="rounded-xl bg-linear-to-br from-sesi-green to-[#007a33] text-white font-bold">
                       VR
                     </AvatarFallback>
                   </Avatar>
