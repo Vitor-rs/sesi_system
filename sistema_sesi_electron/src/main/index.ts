@@ -84,54 +84,58 @@ app.disableHardwareAcceleration()
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-await app.whenReady()
-
-// NOSONAR
-// Set app user model id for windows
-if (process.platform === 'win32') {
-  app.setAppUserModelId('com.sistema_sesi.app')
-}
-
-// Check for --reset-db flag
-if (process.argv.includes('--reset-db')) {
-  const dbPath = join(app.getPath('userData'), 'sistema_sesi.db')
-  if (existsSync(dbPath)) {
-    try {
-      logger.info('[Main] Resetting database...')
-      unlinkSync(dbPath)
-      logger.info('[Main] Database deleted.')
-    } catch (error) {
-      logger.error('[Main] Failed to delete database:', error)
-    }
-  }
-}
-
-try {
-  initDb()
-  runMigrations()
-  await seedDatabase()
-  registerHandlers()
-
-  // Load Custom Icon if exists
+async function bootstrap(): Promise<void> {
   try {
-    const iconPath = await SettingsService.get('app_icon_path')
-    if (iconPath && existsSync(iconPath)) {
-      const win = BrowserWindow.getAllWindows()[0]
-      if (win) {
-        win.setIcon(iconPath)
+    await app.whenReady()
+
+    // NOSONAR
+    // Set app user model id for windows
+    if (process.platform === 'win32') {
+      app.setAppUserModelId('com.sistema_sesi.app')
+    }
+
+    // Check for --reset-db flag
+    if (process.argv.includes('--reset-db')) {
+      const dbPath = join(app.getPath('userData'), 'sistema_sesi.db')
+      if (existsSync(dbPath)) {
+        try {
+          logger.info('[Main] Resetting database...')
+          unlinkSync(dbPath)
+          logger.info('[Main] Database deleted.')
+        } catch (error) {
+          logger.error('[Main] Failed to delete database:', error)
+        }
       }
     }
+
+    initDb()
+    runMigrations()
+    await seedDatabase()
+    registerHandlers()
+
+    // Load Custom Icon if exists
+    try {
+      const iconPath = await SettingsService.get('app_icon_path')
+      if (iconPath && existsSync(iconPath)) {
+        const win = BrowserWindow.getAllWindows()[0]
+        if (win) {
+          win.setIcon(iconPath)
+        }
+      }
+    } catch (error) {
+      logger.error('Failed to load custom icon:', error)
+    }
+
+    // IPC test
+    ipcMain.on('ping', () => logger.debug('pong'))
+
+    createWindow()
   } catch (error) {
-    logger.error('Failed to load custom icon:', error)
+    logger.error('Failed to initialize app:', error)
   }
-
-  // IPC test
-  ipcMain.on('ping', () => logger.debug('pong'))
-
-  createWindow()
-} catch (error) {
-  logger.error('Failed to initialize app:', error)
 }
+
+bootstrap() // NOSONAR
 
 app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
