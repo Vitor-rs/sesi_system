@@ -210,8 +210,8 @@ const Sidebar = React.forwardRef<
             'group-data-[collapsible=offcanvas]:w-0',
             'group-data-[side=right]:rotate-180',
             state === 'collapsed' &&
-            collapsible === 'icon' &&
-            'group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)]',
+              collapsible === 'icon' &&
+              'group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)]',
             variant === 'floating' || variant === 'inset'
               ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+var(--spacing-4))]'
               : 'group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)]'
@@ -591,7 +591,7 @@ const SidebarMenuAction = React.forwardRef<
         'peer-data-[size=lg]/menu-button:top-2.5',
         'group-data-[collapsible=icon]:hidden',
         showOnHover &&
-        'group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0',
+          'group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0',
         className
       )}
       {...props}
