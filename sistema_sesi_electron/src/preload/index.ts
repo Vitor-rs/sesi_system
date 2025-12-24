@@ -3,7 +3,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
+  // Students
   getStudents: () => ipcRenderer.invoke('students:getAll'),
+  getStudentsByClass: (classId: string) => ipcRenderer.invoke('students:getByClass', classId),
   getStudentById: (id: string) => ipcRenderer.invoke('students:getById', id),
   createStudent: (data: unknown) => ipcRenderer.invoke('students:create', data),
   updateStudent: (id: string, data: unknown) => ipcRenderer.invoke('students:update', { id, data }),
@@ -35,6 +37,18 @@ const api = {
   updateFormativeTemplate: (id: string, data: unknown) =>
     ipcRenderer.invoke('formativeTemplates:update', { id, data }),
   deleteFormativeTemplate: (id: string) => ipcRenderer.invoke('formativeTemplates:delete', id),
+
+  // Grades & Assessments
+  getGrades: (classDisciplineId: string, bimester: number) =>
+    ipcRenderer.invoke('grades:getAll', { classDisciplineId, bimester }),
+  updateGrade: (studentId: string, assessmentId: string, value: number | null) =>
+    ipcRenderer.invoke('grades:update', { studentId, assessmentId, value }),
+  getFixedAssessments: (classDisciplineId: string, bimester: number) =>
+    ipcRenderer.invoke('fixedAssessments:getAll', { classDisciplineId, bimester }),
+  getFormativeInstances: (classDisciplineId: string, bimester: number) =>
+    ipcRenderer.invoke('formativeInstances:getAll', { classDisciplineId, bimester }),
+  getFormativeEntries: (assessmentId: string) =>
+    ipcRenderer.invoke('formativeEntries:getAll', assessmentId),
 
   // Settings
   getSettings: (key: string) => ipcRenderer.invoke('settings:get', key),

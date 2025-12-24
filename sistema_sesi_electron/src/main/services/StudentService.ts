@@ -14,6 +14,15 @@ export class StudentService {
     return result as unknown as Student[]
   }
 
+  static async getByClass(classId: string): Promise<Student[]> {
+    const db = getDb()
+    const result = db.query.students.findMany({
+      where: eq(students.classId, classId),
+      orderBy: (students, { asc }) => [asc(students.name)]
+    })
+    return result as unknown as Student[]
+  }
+
   static async getById(id: string): Promise<Student | undefined> {
     const db = getDb()
     const result = db.query.students.findFirst({

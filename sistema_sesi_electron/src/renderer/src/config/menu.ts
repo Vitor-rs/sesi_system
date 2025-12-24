@@ -6,7 +6,8 @@ import {
   GraduationCap,
   Database,
   BarChart3,
-  FileText
+  FileText,
+  Book
 } from 'lucide-react'
 import React from 'react'
 
@@ -34,6 +35,7 @@ export const menuStructure: MenuEntry[] = [
     icon: Database,
     items: [
       { icon: Users, label: 'Todos os Alunos', href: '/students' },
+      { icon: Book, label: 'Disciplinas', href: '/disciplines' },
       { icon: GraduationCap, label: 'Banco de Questões', href: '/formativas' } // Placeholder for future
     ]
   },

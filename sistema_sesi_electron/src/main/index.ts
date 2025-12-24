@@ -7,7 +7,7 @@ import { initDb } from './db/client'
 import { runMigrations } from './db/migrator'
 import { seedDatabase } from './db/seed'
 
-import { SettingsService } from './services/SettingsService'
+import { SettingsService } from './services'
 import { appConfig } from './config'
 import { existsSync, unlinkSync } from 'node:fs'
 import { logger } from './services/LoggerService'

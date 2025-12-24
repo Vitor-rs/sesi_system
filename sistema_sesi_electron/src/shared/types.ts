@@ -93,7 +93,7 @@ export interface FormativeInstance {
 
 export interface FormativeEntry {
   id: string
-  formativeInstanceId: string
+  assessmentId: string
   studentId: string
   value: number // The actual score
   activityStatus?: 'delivered' | 'not_delivered' | 'absence' // For composite
@@ -115,15 +115,23 @@ export interface ActivityEntry {
 }
 
 export interface Grade {
+  // Keeping this for backward compatibility or summary views if needed,
+  // but we are moving to GradeEntry for the gradebook.
   id: string
   studentId: string
   classDisciplineId: string
   bimester: number
   av1: number | null
   av2: number | null
-  // av3 is calculated from formativas usually, but could be overridden?
-  // For now, assume av3 is derived in frontend or backend, but maybe stored for caching
   av3?: number | null
   average?: number | null
   recovery?: number | null
+}
+
+export interface GradeEntry {
+  id: string
+  studentId: string
+  assessmentId: string
+  value: number | null
+  updatedAt?: string
 }

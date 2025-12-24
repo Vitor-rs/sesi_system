@@ -27,6 +27,7 @@ export function DisciplineGradebookPage(): React.ReactElement {
     isLoading,
     fetchGradebookData,
     updateGrade,
+    updateFormativeEntry,
     calculateAv3,
     calculateAverage
   } = useGradesStore()
@@ -143,7 +144,23 @@ export function DisciplineGradebookPage(): React.ReactElement {
                     </TableHeader>
                     <TableBody>
                       {students.map((student, index) => {
-                        const grade = grades.find((g) => g.studentId === student.id)
+                        // Find Assessment IDs for AV1/AV2
+                        const av1Id = useGradesStore
+                          .getState()
+                          .fixedAssessments.find((a) => a.type === 'av1')?.id
+                        const av2Id = useGradesStore
+                          .getState()
+                          .fixedAssessments.find((a) => a.type === 'av2')?.id
+
+                        // Helper to get value
+                        const getGradeVal = (assessmentId?: string): string => {
+                          if (!assessmentId) return ''
+                          const g = grades.find(
+                            (g) => g.studentId === student.id && g.assessmentId === assessmentId
+                          )
+                          return g?.value?.toString() || ''
+                        }
+
                         const av3 = calculateAv3(student.id)
                         const average = calculateAverage(student.id)
 
@@ -160,11 +177,12 @@ export function DisciplineGradebookPage(): React.ReactElement {
                             <TableCell>
                               <Input
                                 className="h-8 text-center"
-                                value={grade?.av1?.toString() || ''}
+                                value={getGradeVal(av1Id)}
                                 onChange={(e) =>
                                   handleGradeChange(student.id, 'av1', e.target.value)
                                 }
-                                placeholder="-"
+                                placeholder={av1Id ? '-' : 'N/A'}
+                                disabled={!av1Id}
                               />
                             </TableCell>
 
@@ -172,21 +190,45 @@ export function DisciplineGradebookPage(): React.ReactElement {
                             <TableCell>
                               <Input
                                 className="h-8 text-center"
-                                value={grade?.av2?.toString() || ''}
+                                value={getGradeVal(av2Id)}
                                 onChange={(e) =>
                                   handleGradeChange(student.id, 'av2', e.target.value)
                                 }
-                                placeholder="-"
+                                placeholder={av2Id ? '-' : 'N/A'}
+                                disabled={!av2Id}
                               />
                             </TableCell>
 
                             {/* Formatives */}
-                            {formativeInstances.map((f) => (
-                              <TableCell key={f.id} className="text-center">
-                                {/* Placeholder for formative entry input */}
-                                <div className="text-xs text-gray-400 italic">--</div>
-                              </TableCell>
-                            ))}
+                            {formativeInstances.map((f) => {
+                              const entry = useGradesStore
+                                .getState()
+                                .formativeEntries.find(
+                                  (e) => e.assessmentId === f.id && e.studentId === student.id
+                                )
+                              // We need an updateFormativeEntry handler in the Page or expose it from store
+                              // The store has updateFormativeEntry(studentId, instanceId, value)
+
+                              return (
+                                <TableCell key={f.id} className="text-center">
+                                  <Input
+                                    className="h-8 text-center w-full px-1"
+                                    value={entry?.value?.toString() || ''}
+                                    onChange={(e) => {
+                                      const val =
+                                        e.target.value === '' ? null : Number(e.target.value)
+                                      // Validation?
+                                      if (val !== null && (val < 0 || val > f.maxPoints)) return
+                                      // Call store method directly or wrap in handler?
+                                      // Let's call store method. We need to export it or use it from hook.
+                                      // 'updateFormativeEntry' is exposed from useGradesStore() hook.
+                                      updateFormativeEntry(student.id, f.id, val)
+                                    }}
+                                    placeholder="-"
+                                  />
+                                </TableCell>
+                              )
+                            })}
                             <TableCell />
 
                             {/* AV3 (Calculated) */}

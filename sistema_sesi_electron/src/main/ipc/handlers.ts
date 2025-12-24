@@ -4,6 +4,7 @@ import { ClassService } from '../services/ClassService'
 import { DisciplineService } from '../services/DisciplineService'
 import { FormativeTemplateService } from '../services/FormativeTemplateService'
 import { ClassDisciplineService } from '../services/ClassDisciplineService'
+import { GradeService } from '../services/GradeService'
 import { SettingsService } from '../services/SettingsService'
 import { BackupService } from '../services/BackupService'
 import { SecurityService } from '../services/SecurityService'
@@ -64,6 +65,10 @@ export function registerHandlers(): void {
   // --- Students ---
   ipcMain.handle('students:getAll', async () => {
     return StudentService.getAll()
+  })
+
+  ipcMain.handle('students:getByClass', async (_event, classId) => {
+    return StudentService.getByClass(classId)
   })
 
   ipcMain.handle('students:getById', async (_event, id) => {
@@ -359,4 +364,25 @@ export function registerHandlers(): void {
     }
     return true
   })
+
+  // --- Grades & Assessments ---
+  ipcMain.handle('grades:getAll', (_, { classDisciplineId, bimester }) =>
+    GradeService.getGrades(classDisciplineId, bimester)
+  )
+
+  ipcMain.handle('grades:update', (_, { studentId, assessmentId, value }) =>
+    GradeService.updateGrade(studentId, assessmentId, value)
+  )
+
+  ipcMain.handle('fixedAssessments:getAll', (_, { classDisciplineId, bimester }) =>
+    GradeService.getFixedAssessments(classDisciplineId, bimester)
+  )
+
+  ipcMain.handle('formativeInstances:getAll', (_, { classDisciplineId, bimester }) =>
+    GradeService.getFormativeInstances(classDisciplineId, bimester)
+  )
+
+  ipcMain.handle('formativeEntries:getAll', (_, assessmentId) =>
+    GradeService.getFormativeEntries(assessmentId)
+  )
 }

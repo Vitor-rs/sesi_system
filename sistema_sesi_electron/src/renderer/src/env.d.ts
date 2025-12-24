@@ -12,6 +12,7 @@ import {
 interface Api {
   // Students
   getStudents: () => Promise<Student[]>
+  getStudentsByClass: (classId: string) => Promise<Student[]>
   getStudentById: (id: string) => Promise<Student | undefined>
   createStudent: (data: unknown) => Promise<Student>
   updateStudent: (id: string, data: unknown) => Promise<void>
@@ -68,12 +69,23 @@ interface Api {
   appReady: () => void
   maximizeWindow: () => Promise<boolean>
 
-  // Grades & Formatives instances
+  // Grades & Assessments
   getGrades: (
     classDisciplineId: string,
     bimester: number
-  ) => Promise<import('../../shared/types').Grade[]>
-  saveGrade: (data: unknown) => Promise<void>
+  ) => Promise<import('../../shared/types').GradeEntry[]>
+  updateGrade: (studentId: string, assessmentId: string, value: number | null) => Promise<void>
+  getFixedAssessments: (
+    classDisciplineId: string,
+    bimester: number
+  ) => Promise<
+    {
+      id: string
+      name: string
+      type: 'av1' | 'av2' | 'av3_simple' | 'av3_composite' | 'recuperacao'
+      maxPoints: number
+    }[]
+  >
 
   getFormativeInstances: (
     classDisciplineId: string,
@@ -86,7 +98,7 @@ interface Api {
   deleteFormativeInstance: (id: string) => Promise<void>
 
   getFormativeEntries: (
-    formativeInstanceId: string
+    assessmentId: string
   ) => Promise<import('../../shared/types').FormativeEntry[]>
   saveFormativeEntry: (data: unknown) => Promise<void>
 }

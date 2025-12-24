@@ -1,9 +1,10 @@
 import { create } from 'zustand'
-import { Grade, FormativeInstance, FormativeEntry, Student } from '../../../../../shared/types'
+import { Student, GradeEntry, FormativeInstance, FormativeEntry } from '../../../../../shared/types'
 
 interface GradesState {
   students: Student[]
-  grades: Grade[]
+  grades: GradeEntry[]
+  fixedAssessments: { id: string; type: string }[]
   formativeInstances: FormativeInstance[]
   formativeEntries: FormativeEntry[]
   isLoading: boolean
@@ -21,13 +22,18 @@ interface GradesState {
     field: 'av1' | 'av2' | 'recovery',
     value: number | null
   ) => Promise<void>
-  updateFormativeEntry: (studentId: string, instanceId: string, value: number) => Promise<void>
+
+  updateFormativeEntry: (
+    studentId: string,
+    assessmentId: string,
+    value: number | null
+  ) => Promise<void>
 
   // Formative Management
   addFormativeInstance: (data: Omit<FormativeInstance, 'id'>) => Promise<void>
   deleteFormativeInstance: (id: string) => Promise<void>
 
-  // Helpers (Selectors logic moved to component for responsiveness, but helper functions here)
+  // Helpers
   calculateAv3: (studentId: string) => number | null
   calculateAverage: (studentId: string) => number | null
 }
@@ -35,6 +41,7 @@ interface GradesState {
 export const useGradesStore = create<GradesState>((set, get) => ({
   students: [],
   grades: [],
+  fixedAssessments: [],
   formativeInstances: [],
   formativeEntries: [],
   isLoading: false,
@@ -43,134 +50,184 @@ export const useGradesStore = create<GradesState>((set, get) => ({
   fetchGradebookData: async (classId, classDisciplineId, bimester) => {
     set({ isLoading: true, error: null })
     try {
-      // Mock APIs for now or use the assumed ones
-      // In a real scenario, we'd probably have a specific endpoint 'getGradebook' to fetch all this at once
+      // 1. Fetch Students
+      // Fetch data in parallel
+      const [classStudents, grades, fixedAssessments, formativeInstances] = await Promise.all([
+        window.api.getStudentsByClass(classId),
+        window.api.getGrades(classDisciplineId, bimester),
+        window.api.getFixedAssessments(classDisciplineId, bimester),
+        window.api.getFormativeInstances(classDisciplineId, bimester)
+      ])
 
-      const students = await globalThis.api.getStudents() // Should filter by classId locally or via API
-      const filteredStudents = students.filter(
-        (s) => s.classId === classId && s.status === 'active'
+      // Filter active students (if backend doesn't filter status)
+      const activeStudents = classStudents.filter((s) => s.status === 'active')
+      activeStudents.sort((a: any, b: any) => a.name.localeCompare(b.name))
+
+      // For each formative instance, fetch entries
+      const entriesPromises = formativeInstances.map((inst) =>
+        window.api.getFormativeEntries(inst.id)
       )
-      // sort alphabetically
-      filteredStudents.sort((a, b) => a.name.localeCompare(b.name))
+      const entriesArrays = await Promise.all(entriesPromises)
+      // Flatten entries
+      const formativeEntries = entriesArrays.flat()
 
-      const grades = await globalThis.api.getGrades(classDisciplineId, bimester)
-      const instances = await globalThis.api.getFormativeInstances(classDisciplineId, bimester)
-
-      // We need entries for all instances
-      // This might be heavy if done individually. Assume we have a bulk fetch or we fetch per instance.
-      // For MVP, let's assume we can fetch all entries for these instances.
-      // Since API doesn't have 'getAllEntries', we might loop (inefficient) or mock a 'getGradebook' call.
-
-      const allEntries: FormativeEntry[] = []
-      for (const instance of instances) {
-        const entries = await globalThis.api.getFormativeEntries(instance.id)
-        allEntries.push(...entries)
-      }
-
+      // Filter students by class (client-side for now until api.getStudentsByClass exists)
       set({
-        students: filteredStudents,
+        students: activeStudents,
         grades,
-        formativeInstances: instances,
-        formativeEntries: allEntries,
+        fixedAssessments,
+        formativeInstances,
+        formativeEntries,
         isLoading: false
       })
     } catch (error) {
-      console.error(error)
-      set({ error: 'Falha ao carregar diário de classe', isLoading: false })
+      console.error('Failed to fetch gradebook data:', error)
+      set({ error: 'Falha ao carregar dados do diário', isLoading: false })
     }
   },
 
   updateGrade: async (studentId, field, value) => {
-    const { grades } = get()
-    // Optimistic update
-    const gradeIndex = grades.findIndex((g) => g.studentId === studentId)
-    const newGrades = [...grades]
+    const { fixedAssessments, grades } = get()
 
-    if (gradeIndex >= 0) {
-      newGrades[gradeIndex] = { ...newGrades[gradeIndex], [field]: value }
-    } else {
-      // Create local placeholder if doesn't exist (assuming backend handles creation)
-      // This is tricky without other required fields like ID.
-      // We'll rely on backend capability to 'upsert'
+    // Find the assessmentId for the given field (av1, av2)
+    const assessment = fixedAssessments.find((a) => a.type === field)
+
+    if (!assessment) {
+      console.error(
+        `Assessment definition for ${field} not found. Ensure fixed assessments are loaded.`
+      )
+      return
     }
 
-    set({ grades: newGrades })
+    const assessmentId = assessment.id
+    const previousGrades = grades
 
-    try {
-      // Call API
-      // await window.api.saveGrade(...)
-    } catch (error) {
-      // Revert on failure
-      console.error('Failed to save grade', error)
-      // trigger refetch or revert
-    }
-  },
+    // Optimistic Update
+    set((state) => ({
+      grades: state.grades.map((g) => {
+        // If we already have a grade entry for this student and assessment, update it
+        if (g.studentId === studentId && g.assessmentId === assessmentId) {
+          return { ...g, value }
+        }
+        return g
+      })
+    }))
 
-  updateFormativeEntry: async (studentId, instanceId, value) => {
-    const { formativeEntries } = get()
-    const entryIndex = formativeEntries.findIndex(
-      (e) => e.studentId === studentId && e.formativeInstanceId === instanceId
+    const gradeExists = grades.some(
+      (g) => g.studentId === studentId && g.assessmentId === assessmentId
     )
 
-    const newEntries = [...formativeEntries]
-    if (entryIndex >= 0) {
-      newEntries[entryIndex] = { ...newEntries[entryIndex], value }
-    } else {
-      // Create new entry logic
-      // newEntries.push({ id: 'temp', studentId, formativeInstanceId: instanceId, value })
+    if (!gradeExists && value !== null) {
+      set((state) => ({
+        grades: [
+          ...state.grades,
+          {
+            id: 'temp-' + Date.now(), // Temp ID
+            studentId,
+            assessmentId,
+            value,
+            updatedAt: new Date().toISOString()
+          } // We cast/fit into GradeEntry
+        ]
+      }))
     }
-    set({ formativeEntries: newEntries })
 
-    // API call
+    try {
+      await window.api.updateGrade(studentId, assessmentId, value)
+    } catch (error) {
+      console.error('Failed to update grade:', error)
+      set({ grades: previousGrades }) // Rollback
+    }
   },
 
+  updateFormativeEntry: async (studentId, assessmentId, value) => {
+    const { formativeEntries } = get()
+    const previousEntries = formativeEntries
+
+    // Optimistic Update
+    set((state) => ({
+      formativeEntries: state.formativeEntries.map((e) => {
+        if (e.studentId === studentId && e.assessmentId === assessmentId) {
+          return { ...e, value }
+        }
+        return e
+      })
+    }))
+
+    // Handle new entry
+    const exists = formativeEntries.some(
+      (e) => e.studentId === studentId && e.assessmentId === assessmentId
+    )
+    if (!exists && value !== null) {
+      set((state) => ({
+        formativeEntries: [
+          ...state.formativeEntries,
+          {
+            id: 'temp-' + Date.now(),
+            studentId,
+            assessmentId,
+            value,
+            updatedAt: new Date().toISOString()
+          }
+        ]
+      }))
+    }
+
+    try {
+      await window.api.updateGrade(studentId, assessmentId, value)
+    } catch (error) {
+      console.error('Falha ao atualizar formativa:', error)
+      set({ formativeEntries: previousEntries })
+    }
+  },
+
+  // Formative Management Placeholders
   addFormativeInstance: async () => {
-    // API call then refetch
+    // TODO: Implement
+    console.warn('addFormativeInstance not implemented yet')
+    return
   },
-
   deleteFormativeInstance: async () => {
-    // API call then refetch
+    // TODO: Implement
+    console.warn('deleteFormativeInstance not implemented yet')
+    return
   },
 
   calculateAv3: (studentId) => {
     const { formativeEntries, formativeInstances } = get()
-    // Find all entries for this student that belong to current instances
     const studentEntries = formativeEntries.filter(
-      (e) =>
-        e.studentId === studentId && formativeInstances.some((i) => i.id === e.formativeInstanceId)
+      (e) => e.studentId === studentId && formativeInstances.some((i) => i.id === e.assessmentId)
     )
 
     if (studentEntries.length === 0) return null
 
-    // Logic: Average of formativas? Or sum?
-    // P2 says: "AV.3 é a média aritmética de todas as Atividades Formativas cadastradas."
-    const sum = studentEntries.reduce((acc, curr) => acc + curr.value, 0)
+    // P2 Logic: "AV.3 é a média aritmética"
+    const sum = studentEntries.reduce((acc, curr) => acc + (curr.value || 0), 0)
+    // Avoid division by zero, though length check handles it.
     return Number.parseFloat((sum / studentEntries.length).toFixed(1))
   },
 
   calculateAverage: (studentId) => {
-    const { grades } = get()
-    const grade = grades.find((g) => g.studentId === studentId)
+    const { grades, fixedAssessments } = get()
+
+    // Need to find AV1 and AV2 grades
+    const av1Id = fixedAssessments.find((a) => a.type === 'av1')?.id
+    const av2Id = fixedAssessments.find((a) => a.type === 'av2')?.id
+
+    const av1Entry = grades.find((g) => g.studentId === studentId && g.assessmentId === av1Id)
+    const av2Entry = grades.find((g) => g.studentId === studentId && g.assessmentId === av2Id)
+
     const av3 = get().calculateAv3(studentId)
 
-    if (!grade) return null
-
-    const av1 = grade.av1
-    const av2 = grade.av2
+    const av1 = av1Entry?.value ?? null
+    const av2 = av2Entry?.value ?? null
 
     if (av1 === null || av2 === null || av3 === null) return null
 
     // Specific logic from P2: (AV1 + AV2 + AV3) / 3
-    // With rounding logic ARREDMULTB (Round to nearest 0.5 with 0.2 bias)
-
     const rawMean = (av1 + av2 + av3) / 3
-
     // SESI Rounding: Round(Value + 0.2) to nearest 0.5
-    // Implementation: Math.floor((Value + 0.2) * 2) / 2 ? No, let's check P2 example.
-    // 6.1 + 0.2 = 6.3 => 6.5.
-    // 6.0 + 0.2 = 6.2 => 6.0.
     // Logic: Math.round((Value + 0.2) * 2) / 2
-
     const rounded = Math.round((rawMean + 0.2) * 2) / 2
     return rounded
   }
