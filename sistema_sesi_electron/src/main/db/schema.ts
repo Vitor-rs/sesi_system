@@ -11,12 +11,22 @@ export const students = sqliteTable('students', {
   status: text('status', { enum: ['active', 'inactive', 'transferred'] })
     .notNull()
     .default('active'),
-  enrollmentType: text('enrollment_type', { enum: ['regular', 'transfer'] })
+  enrollmentType: text('enrollment_type', {
+    enum: ['regular', 'transfer', 'transfer_in', 'late_admission']
+  })
     .notNull()
     .default('regular'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
+  // New Fields
+  admissionDate: text('admission_date'),
+  originType: text('origin_type', {
+    enum: ['sesi_internal', 'public', 'private_scholarship', 'private_paying', 'other']
+  }),
+  originDescription: text('origin_description'),
+  originObservation: text('origin_observation'),
+  // Legacy Fields (Keep for safety until migration)
   transferDate: text('transfer_date'),
   transferOrigin: text('transfer_origin'),
   transferCity: text('transfer_city'),

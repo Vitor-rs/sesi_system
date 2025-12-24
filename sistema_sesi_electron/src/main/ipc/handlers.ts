@@ -35,9 +35,16 @@ const StudentSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   classId: z.string().optional(),
   status: z.enum(['active', 'inactive', 'transferred']).optional(),
-  enrollmentType: z.enum(['regular', 'transfer']).optional(),
+  enrollmentType: z.enum(['regular', 'transfer', 'transfer_in', 'late_admission']).optional(),
   number: z.number().optional(),
-  // Transfer Details
+  // New Fields
+  admissionDate: z.string().optional(),
+  originType: z
+    .enum(['sesi_internal', 'public', 'private_scholarship', 'private_paying', 'other'])
+    .optional(),
+  originDescription: z.string().optional(),
+  originObservation: z.string().optional(),
+  // Transfer Details (Legacy)
   transferDate: z.string().optional(),
   transferOrigin: z.string().optional(),
   transferCity: z.string().optional(),

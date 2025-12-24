@@ -17,7 +17,10 @@ function App(): React.ReactElement {
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/classes" element={<ClassesPage />} />
           <Route path="/classes/:id" element={<ClassDetailsPage />} />
-          <Route path="/classes/:classId/disciplines/:classDisciplineId" element={<DisciplineGradebookPage />} />
+          <Route
+            path="/classes/:classId/disciplines/:classDisciplineId"
+            element={<DisciplineGradebookPage />}
+          />
           <Route path="/disciplines" element={<DisciplinesPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

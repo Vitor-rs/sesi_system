@@ -1,11 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Shield, Lock, ChevronDown, Key, FileText, CheckCircle } from 'lucide-react'
 import { useSettingsStore } from '../../../stores/useSettingsStore'
-import { SudoLockScreen } from './SudoLockScreen'
 
 export function SecurityTab(): React.ReactElement {
   const {
-    isSudoUnlocked,
     securityStatus,
     activeSecurityAccordion,
     isSettingPassword,
@@ -26,13 +24,10 @@ export function SecurityTab(): React.ReactElement {
     try {
       const status = await globalThis.window.api.getSecurityStatus()
       setSecurityStatus(status)
-      if (!status.isEnabled) {
-        setIsSudoUnlocked(true)
-      }
     } catch (error) {
       console.error('Failed to load security status', error)
     }
-  }, [setSecurityStatus, setIsSudoUnlocked])
+  }, [setSecurityStatus])
 
   useEffect(() => {
     loadSecurityStatus()
@@ -98,19 +93,7 @@ export function SecurityTab(): React.ReactElement {
 
   return (
     <div className="relative animate-in fade-in slide-in-from-bottom-2 duration-300">
-      {!isSudoUnlocked && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-xl transition-all duration-300">
-          <SudoLockScreen />
-        </div>
-      )}
-
-      <div
-        className={
-          isSudoUnlocked
-            ? 'duration-300'
-            : 'filter blur-md pointer-events-none select-none opacity-50 duration-300'
-        }
-      >
+      <div className="duration-300">
         <div className="mb-6 flex items-center justify-between bg-amber-50 text-amber-900 px-4 py-3 rounded-xl border border-amber-100 animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2 text-sm font-medium">
             <Shield size={16} className="text-amber-600" />

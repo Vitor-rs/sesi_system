@@ -1,6 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'node:path'
 import icon from '../../resources/icon.png?asset'
+// Trigger rebuild
 import { registerHandlers } from './ipc/handlers'
 import { initDb } from './db/client'
 import { runMigrations } from './db/migrator'

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter } from 'react-router-dom'
+import { HashRouter } from 'react-router-dom'
 import { Router } from './Router'
 import { useAuthStore } from '../stores/useAuthStore'
 import { LockScreen } from '../components/ui/LockScreen'
@@ -82,9 +82,9 @@ function App(): React.ReactElement {
   return (
     <>
       {/* 1. Main App Layer (z-0) - Always mounted for seamless pre-rendering */}
-      <BrowserRouter>
+      <HashRouter>
         <Router />
-      </BrowserRouter>
+      </HashRouter>
 
       {/* 2. Lock Screen Layer (z-100) - Shows if locked */}
       {isLocked && (

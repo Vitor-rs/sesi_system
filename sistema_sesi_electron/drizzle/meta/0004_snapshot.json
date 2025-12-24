@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "81883745-2b5a-4185-8f9d-51fc3ec65037",
-  "prevId": "c7cbb890-417b-4107-93e0-5fd9eb7cb7a0",
+  "id": "e4585724-deba-4c59-815c-fdb7425a45fe",
+  "prevId": "81883745-2b5a-4185-8f9d-51fc3ec65037",
   "tables": {
     "activities": {
       "name": "activities",
@@ -574,6 +574,34 @@
           "notNull": true,
           "autoincrement": false,
           "default": "CURRENT_TIMESTAMP"
+        },
+        "admission_date": {
+          "name": "admission_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "origin_type": {
+          "name": "origin_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "origin_description": {
+          "name": "origin_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "origin_observation": {
+          "name": "origin_observation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "transfer_date": {
           "name": "transfer_date",

@@ -11,12 +11,10 @@ import {
 } from 'lucide-react'
 import { useSettingsStore } from '../../../stores/useSettingsStore'
 import { useSessionStore } from '../../../stores/useSessionStore'
-import { SudoLockScreen } from './SudoLockScreen'
 
 export function BackupTab(): React.ReactElement {
   const { enterReadOnlyMode } = useSessionStore()
   const {
-    isSudoUnlocked,
     backupLocations,
     isScanning,
     isBackingUp,
@@ -24,12 +22,11 @@ export function BackupTab(): React.ReactElement {
     customBackupPath,
     selectedDrivePath, // From Store
     setIsScanning,
-    setBackupLocations,
-    setIsBackingUp,
-    setBackupMessage,
-    setCustomBackupPath,
-    setSelectedDrivePath, // From Store
-    setIsSudoUnlocked // For the 'Block Now' button
+    setBackupLocations, // Used in detectBackups
+    setIsBackingUp, // Used in handleCreateBackup
+    setBackupMessage, // Used in handleCreateBackup
+    setCustomBackupPath, // Used in handleSelectFolder
+    setSelectedDrivePath
   } = useSettingsStore()
 
   const detectBackups = async (): Promise<void> => {
@@ -201,32 +198,7 @@ export function BackupTab(): React.ReactElement {
 
   return (
     <div className="relative animate-in fade-in slide-in-from-bottom-2 duration-300 pb-10">
-      {!isSudoUnlocked && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-xl transition-all duration-300">
-          <SudoLockScreen />
-        </div>
-      )}
-
-      <div
-        className={
-          isSudoUnlocked
-            ? 'duration-300 space-y-6'
-            : 'filter blur-md pointer-events-none select-none opacity-50 duration-300 space-y-6'
-        }
-      >
-        <div className="mb-6 flex items-center justify-between bg-amber-50 text-amber-900 px-4 py-3 rounded-xl border border-amber-100 animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Cloud size={16} className="text-amber-600" />
-            <span>Modo Seguro Ativo: Você tem acesso total às configurações sensíveis.</span>
-          </div>
-          <button
-            onClick={() => setIsSudoUnlocked(false)}
-            className="text-xs bg-white border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-50 transition-colors text-amber-700 font-medium shadow-sm"
-          >
-            Bloquear Agora
-          </button>
-        </div>
-
+      <div className="space-y-6">
         {/* Section 1: Backup & Mirroring */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-6">

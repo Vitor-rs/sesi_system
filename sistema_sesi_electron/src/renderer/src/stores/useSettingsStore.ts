@@ -190,8 +190,9 @@ export const useSettingsStore = create<SettingsState>()(
         selectedIconPath: state.selectedIconPath,
         welcomeImage: state.welcomeImage,
         backupLocations: state.backupLocations,
-        customBackupPath: state.customBackupPath,
-        securityStatus: state.securityStatus
+        customBackupPath: state.customBackupPath
+        // securityStatus is NOT persisted to avoid stale locking state.
+        // It is always fetched fresh from the backend on mount.
         // Exclude transient states:
         // isSudoUnlocked, sudoPassword, sudoError, etc.
       })
